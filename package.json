@@ -11,7 +11,7 @@
     "uri": "https://github.com/KTH/node-web"
   },
   "scripts": {
-    "test": "mocha --exit test/unit/*.js",
+    "test": "NODE_ENV=development mocha --exit test/unit/*.js",
     "codecheck": "standard",
     "codefix": "standard --fix",
     "docker": "npm install --development && npm run build && npm prune --production",
