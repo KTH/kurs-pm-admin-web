@@ -32,34 +32,6 @@ During local development the defaults in serverSettings.js should work fine. If 
 
 3. Navigate to the cloned project directory
 
-4. Add node-web or node-api as the upstream repository to use:
-
- ```bash
- git remote add upstream https://github.com/KTH/node-web.git
- ```
-
-5. Fetch the latest changes/branches for the upstream repository (use your KTH login if prompted):
-
- ```bash
- git fetch upstream
- ```
-
-6. Checkout the branch you want to use:
-
- ```bash
- git checkout master
- ```
-
-7. Merge the changes from node-api into your cloned repository:
-
- ```bash
- git merge upstream/master
- ```
-
-8. Solve merge conflicts and commit/push to your cloned repository.
-
-To keep your cloned repository up to date with the upstream repository, just repeat steps 5-7 from above. Make sure to commit and push your existing changes before you merge!
-
 ###If your application is going to be proxied
 If your application is going to be proxied on www.kth.se/api/your-api-path make sure you set the following paths and properties.
 
@@ -87,7 +59,7 @@ $ npm install
 
 Then you need to start the server:
 ```bash
-$ npm start
+$ npm start-dev
 ```
 
 This will 
