@@ -1,6 +1,5 @@
 'use strict'
 const gulp = require('gulp')
-const mergeStream = require('merge-stream')
 
 const globals = {
   dirname: __dirname
