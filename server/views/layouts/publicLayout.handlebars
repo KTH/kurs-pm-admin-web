@@ -33,11 +33,13 @@
     {{{render 'head-scripts'}}}
   </head>
   <body>
-    <div class="container">
       {{> kthHeader }}
-      {{{body}}}
+      <div class="container main">
+        <div class="row">
+          {{{body}}}
+        </div>
+      </div>
       {{> kthFooter }}
-    </div>
     {{{render 'scripts'}}}
   </body>
 </html>

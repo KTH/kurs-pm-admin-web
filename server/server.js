@@ -152,7 +152,10 @@ server.use(config.proxyPrefixPath.uri, require('kth-node-web-common/lib/web/cort
   blockUrl: config.blockApi.blockUrl,
   proxyPrefixPath: config.proxyPrefixPath.uri,
   hostUrl: config.hostUrl,
-  redisConfig: config.cache.cortinaBlock.redis
+  redisConfig: config.cache.cortinaBlock.redis,
+  blocks: {
+    secondaryMenu: '1.822592'
+  }
 }))
 
 /* ********************************

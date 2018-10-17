@@ -1,9 +1,12 @@
 {{prefixScript '/static/js/app/view/indexModule.js'}}
 
-<h1>node-web</h1>
+<div class="col">
+  <h1>node-web</h1>
 
-{{#if error}}
-  <p>Error: {{error}}</p>
-{{else}}
-  <div id="api-data">{{data}}</div>
-{{/if}}
+  {{#if error}}
+    <p>Error: {{error}}</p>
+  {{else}}
+    <div id="api-data">{{data}}</div>
+  {{/if}}
+</div>
+
