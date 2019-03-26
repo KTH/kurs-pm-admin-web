@@ -7,6 +7,10 @@ const globals = {
 
 const { webpack, sass, vendor, clean } = require('kth-node-build-commons').tasks(globals)
 
+const { moveHandlebarPages } = require('kth-node-web-common/gulp')
+
+gulp.task('moveHandlebarPages', moveHandlebarPages)
+
 /**
  * Usage:
  *
@@ -44,7 +48,7 @@ gulp.task('transpileSass', () => sass())
 
 gulp.task('clean', clean)
 
-gulp.task('build', ['vendor', 'webpack'], () => sass())
+gulp.task('build', ['moveHandlebarPages', 'vendor', 'webpack'], () => sass())
 
 gulp.task('watch', ['build'], function () {
   gulp.watch(['./public/js/app/**/*.js'], ['webpack'])
