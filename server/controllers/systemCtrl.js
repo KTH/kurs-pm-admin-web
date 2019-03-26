@@ -24,7 +24,7 @@ const { IHealthCheck } = require('kth-node-monitor').interfaces
  */
 
 module.exports = {
-  monitor: co.wrap(_monitor),
+  monitor: _monitor,
   about: _about,
   robotsTxt: _robotsTxt,
   paths: _paths,
