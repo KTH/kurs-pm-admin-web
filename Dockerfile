@@ -18,12 +18,10 @@ WORKDIR /application
 RUN cp -a /npm/node_modules /application && \
     rm -rf /npm
 
-# Copy files used by Gulp.
+# Copy files used by Parcel.
 COPY ["config", "config"]
 COPY ["public", "public"]
 COPY ["i18n", "i18n"]
-COPY ["gulpfile.js", "gulpfile.js"]
-COPY ["package.json", "package.json"]
 RUN npm run docker
 
 # Copy source files, so changes does not trigger gulp.
