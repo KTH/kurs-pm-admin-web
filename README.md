@@ -1,4 +1,4 @@
-node-web
+kurs-pm-admin-web-web
 ========
 
 In an attempt to simplify the process of starting up new node.js based projects, there exists two template projects to use as a foundation.  
