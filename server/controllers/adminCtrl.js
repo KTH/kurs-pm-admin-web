@@ -56,7 +56,7 @@ async function _getCourseIndex (req, res, next) {
     //   routes: renderProps.props.children.props.children.props.children.props.children
     // })
     const html = ReactDOMServer.renderToString(renderProps)
-    res.render('course/index', {
+    res.render('admin/index', {
       debug: 'debug' in req.query,
       // instrumentationKey: serverConfig.appInsights.instrumentationKey,
       html,
