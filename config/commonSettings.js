@@ -9,7 +9,7 @@
  */
 const { getEnv, devDefaults } = require('kth-node-configuration')
 
-const devPrefixPath = devDefaults('/node')
+const devPrefixPath = devDefaults('/kursinfoadmin/kurs-pm')
 
 module.exports = {
   // The proxy prefix path if the application is proxied. E.g /places

@@ -7,16 +7,17 @@
  * *************************************************
  *
  */
-const { getEnv, devDefaults, unpackLDAPConfig, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
+const { getEnv, devDefaults, unpackLDAPConfig, unpackKOPPSConfig, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
 const { safeGet } = require('safe-utils')
 
 // DEFAULT SETTINGS used for dev, if you want to override these for you local environment, use env-vars in .env
 const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
-const devInnovationApi = devDefaults('http://localhost:3001/api/node?defaultTimeout=10000') // required=true&
-const devSessionKey = devDefaults('node-web.sid')
+const devKursPmApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000') // required=true&
+const devSessionKey = devDefaults('kurs-pm-admin-web.sid')
 const devSessionUseRedis = devDefaults(true)
+const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/?defaultTimeout=60000') // required=true&
 const devRedis = devDefaults('redis://localhost:6379/')
 const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use env_vars
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
@@ -44,7 +45,7 @@ module.exports = {
 
   // API keys
   apiKey: {
-    nodeApi: getEnv('NODE_API_KEY', devDefaults('1234'))
+    kursPmApi: getEnv('KURS_PM_API_KEY', devDefaults('1234'))
   },
 
   // Authentication
@@ -55,10 +56,11 @@ module.exports = {
     ssoBaseURL: getEnv('CAS_SSO_URI', devSsoBaseURL)
   },
   ldap: unpackLDAPConfig('LDAP_URI', getEnv('LDAP_PASSWORD'), devLdap, ldapOptions),
+  kopps: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
 
   // Service API's
   nodeApi: {
-    nodeApi: unpackNodeApiConfig('NODE_API_URI', devInnovationApi)
+    kursPmApi: unpackNodeApiConfig('KURS_PM_API_URI', devKursPmApi)
   },
 
   // Cortina
@@ -91,8 +93,13 @@ module.exports = {
     useRedis: safeGet(() => getEnv('SESSION_USE_REDIS', devSessionUseRedis) === 'true'),
     sessionOptions: {
       // do not set session secret here!!
-      cookie: { secure: safeGet(() => getEnv('SESSION_SECURE_COOKIE', false) === 'true') }
+      cookie: { secure: safeGet(() => getEnv('SESSION_SECURE_COOKIE', false) === 'true') },
+      proxy: safeGet(() => getEnv('SESSION_TRUST_PROXY', true) === 'true')
     },
     redisOptions: unpackRedisConfig('REDIS_URI', devRedis)
+  },
+  // APPLICATION INSIGHTS IN AZURE
+  appInsights: {
+    instrumentationKey: getEnv('APPINSIGHTS_INSTRUMENTATIONKEY', '')
   }
 }
