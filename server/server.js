@@ -4,7 +4,19 @@ const server = require('kth-node-server')
 const config = require('./configuration').server
 require('./api')
 const AppRouter = require('kth-node-express-routing').PageRouter
-const getPaths = require('kth-node-express-routing').getPaths
+const { getPaths } = require('kth-node-express-routing')
+
+if (config.appInsights && config.appInsights.instrumentationKey) {
+  let appInsights = require('applicationinsights')
+  appInsights.setup(config.appInsights.instrumentationKey)
+    .setAutoDependencyCorrelation(true)
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true)
+    .start()
+}
 
 // Expose the server and paths
 server.locals.secret = new Map()
@@ -172,7 +184,7 @@ server.use(excludeExpression, require('kth-node-web-common/lib/web/crawlerRedire
  * ******* APPLICATION ROUTES *******
  * **********************************
  */
-const { System, Sample } = require('./controllers')
+const { System, Sample, Admin } = require('./controllers')
 const { requireRole } = require('./authentication')
 
 // System routes
@@ -185,6 +197,9 @@ server.use('/', systemRoute.getRouter())
 
 // App routes
 const appRoute = AppRouter()
+appRoute.get('admin.index', config.proxyPrefixPath.uri + '/:courseCode', Admin.getIndex)
+appRoute.get('admin.index', config.proxyPrefixPath.uri + '/:preview/:id', Admin.getIndex)
+
 appRoute.get('system.index', config.proxyPrefixPath.uri + '/', serverLogin, Sample.getIndex)
 appRoute.get('system.gateway', config.proxyPrefixPath.uri + '/gateway', getServerGatewayLogin('/'), requireRole('isAdmin'), Sample.getIndex)
 server.use('/', appRoute.getRouter())
