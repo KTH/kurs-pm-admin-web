@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-  Admin: require('./adminCtrl'),
   System: require('./systemCtrl'),
-  Sample: require('./sampleCtrl')
+  Admin: require('./adminCtrl')
 }

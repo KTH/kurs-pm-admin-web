@@ -1,15 +1,15 @@
 {
   "system": {
     "monitor": {
-      "uri": "/api/node/_monitor",
+      "uri": "/https://api-r.referens.sys.kth.se/api/kursplan/_monitor",
       "method": "get"
     },
     "about": {
-      "uri": "/api/node/_about",
+      "uri": "https://api-r.referens.sys.kth.se/api/kursplan/_about",
       "method": "get"
     },
     "paths": {
-      "uri": "/api/node/_paths",
+      "uri": "https://api-r.referens.sys.kth.se/api/kursplan/_paths",
       "method": "get"
     },
     "robots": {
@@ -17,13 +17,13 @@
       "method": "get"
     },
     "swagger": {
-      "uri": "/api/node/swagger.json",
+      "uri": "https://api-r.referens.sys.kth.se/api/kursplan/swagger.json",
       "method": "get"
     }
   },
   "api": {
     "checkAPIkey": {
-      "uri": "/api/node/_checkAPIkey",
+      "uri": "https://api-r.referens.sys.kth.se/api/kursplan/_checkAPIkey",
       "method": "GET",
       "apikey": {
         "scope_required": true,
@@ -33,24 +33,13 @@
         "type": "api_key"
       }
     },
-    "getDataById": {
-      "uri": "/api/node/v1/data/:id",
+    "getSyllabusByCourseCode": {
+      "uri": "https://api-r.referens.sys.kth.se/api/kursplan/v1/syllabus/courseCode/semester/language",
       "method": "GET",
       "apikey": {
         "scope_required": true,
         "scopes": [
           "read"
-        ],
-        "type": "api_key"
-      }
-    },
-    "postDataById": {
-      "uri": "/api/node/v1/data/:id",
-      "method": "POST",
-      "apikey": {
-        "scope_required": true,
-        "scopes": [
-          "write"
         ],
         "type": "api_key"
       }

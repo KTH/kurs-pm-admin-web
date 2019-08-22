@@ -4,7 +4,7 @@ const server = require('kth-node-server')
 const config = require('./configuration').server
 require('./api')
 const AppRouter = require('kth-node-express-routing').PageRouter
-const { getPaths } = require('kth-node-express-routing')
+const getPaths = require('kth-node-express-routing').getPaths
 
 if (config.appInsights && config.appInsights.instrumentationKey) {
   let appInsights = require('applicationinsights')
@@ -74,6 +74,13 @@ const browserConfig = require('./configuration').browser
 const browserConfigHandler = require('kth-node-configuration').getHandler(browserConfig, getPaths())
 const express = require('express')
 
+// const compression = require('compression')
+// server.use(compression({
+// filter: function () { return true }
+// }))
+// const minify = require('express-minify')
+// server.use(minify())
+
 // helper
 function setCustomCacheControl (res, path) {
   if (express.static.mime.lookup(path) === 'text/html') {
@@ -87,8 +94,12 @@ function setCustomCacheControl (res, path) {
 server.use(config.proxyPrefixPath.uri + '/static/js/components', express.static('./dist/js/components', { setHeaders: setCustomCacheControl }))
 // Expose browser configurations
 server.use(config.proxyPrefixPath.uri + '/static/browserConfig', browserConfigHandler)
-// Files/statics routes
+// Map Bootstrap.
+server.use(config.proxyPrefixPath.uri + '/static/bootstrap', express.static('./node_modules/bootstrap/dist'))
+// Map kth-style.
 server.use(config.proxyPrefixPath.uri + '/static/kth-style', express.static('./node_modules/kth-style/dist'))
+
+// server.use(config.proxyPrefixPath.uri + '/static/js/app.js', express.static('./dist/js/app.js'))
 // Map static content like images, css and js.
 server.use(config.proxyPrefixPath.uri + '/static', express.static('./dist'))
 // Return 404 if static file isn't found so we don't go through the rest of the pipeline
@@ -164,10 +175,7 @@ server.use(config.proxyPrefixPath.uri, require('kth-node-web-common/lib/web/cort
   blockUrl: config.blockApi.blockUrl,
   proxyPrefixPath: config.proxyPrefixPath.uri,
   hostUrl: config.hostUrl,
-  redisConfig: config.cache.cortinaBlock.redis,
-  blocks: {
-    secondaryMenu: '1.822592'
-  }
+  redisConfig: config.cache.cortinaBlock.redis
 }))
 
 /* ********************************
@@ -180,11 +188,21 @@ server.use(excludeExpression, require('kth-node-web-common/lib/web/crawlerRedire
   hostUrl: config.hostUrl
 }))
 
+/* ********************************
+ * ******* FILE UPLOAD*******
+ * ********************************
+ */
+
+const fileUpload = require('express-fileupload')
+server.use(fileUpload())
+server.use(bodyParser.json({ limit: '50mb' }))
+server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
+
 /* **********************************
  * ******* APPLICATION ROUTES *******
  * **********************************
  */
-const { System, Sample, Admin } = require('./controllers')
+const { System, Admin } = require('./controllers')
 const { requireRole } = require('./authentication')
 
 // System routes
@@ -197,11 +215,21 @@ server.use('/', systemRoute.getRouter())
 
 // App routes
 const appRoute = AppRouter()
-appRoute.get('admin.index', config.proxyPrefixPath.uri + '/:courseCode', Admin.getIndex)
-appRoute.get('admin.index', config.proxyPrefixPath.uri + '/:preview/:id', Admin.getIndex)
+appRoute.get('system.index', config.proxyPrefixPath.uri + '/:id', serverLogin, requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser'), Admin.getIndex)
+appRoute.get('system.index', config.proxyPrefixPath.uri + '/:preview/:id', serverLogin, requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'), Admin.getIndex)
+appRoute.get('system.gateway', config.proxyPrefixPath.uri + '/gateway', getServerGatewayLogin('/'), requireRole('isAdmin'), Admin.getIndex)
 
-appRoute.get('system.index', config.proxyPrefixPath.uri + '/', serverLogin, Sample.getIndex)
-appRoute.get('system.gateway', config.proxyPrefixPath.uri + '/gateway', getServerGatewayLogin('/'), requireRole('isAdmin'), Sample.getIndex)
+appRoute.get('api.kursutvecklingGetById', config.proxyPrefixPath.uri + '/apicall/getRoundAnalysisById/:id', Admin.getRoundAnalysis)
+appRoute.all('api.kursutvecklingPost', config.proxyPrefixPath.uri + '/apicall/postRoundAnalysisById/:id/:status', Admin.postRoundAnalysis)
+// appRoute.post('api.kursutvecklingPost', config.proxyPrefixPath.uri + '/apicall/postRoundAnalysisById/:id/:status', Admin.postRoundAnalysis)
+appRoute.delete('api.kursutvecklingDelete', config.proxyPrefixPath.uri + '/apicall/deleteRoundAnalysisById/:id', Admin.deleteRoundAnalysis)
+appRoute.get('api.kursutvecklingGetUsedRounds', config.proxyPrefixPath.uri + '/apicall/kursutvecklingGetUsedRounds/:courseCode/:semester', Admin.getUsedRounds)
+appRoute.get('api.koppsCourseData', config.proxyPrefixPath.uri + '/api/kursutveckling-admin/getKoppsCourseDataByCourse/:courseCode/:language', Admin.getKoppsCourseData)
+appRoute.get('redis.ugCache', config.proxyPrefixPath.uri + '/redis/ugChache/:key/:type', Admin.getCourseEmployees)
+appRoute.post('redis.ugCache', config.proxyPrefixPath.uri + '/redis/ugChache/:key/:type', Admin.getCourseEmployees)
+appRoute.post('storage.saveFile', config.proxyPrefixPath.uri + '/storage/saveFile/:analysisid/:type/:published', Admin.saveFileToStorage)
+appRoute.post('storage.updateFile', config.proxyPrefixPath.uri + '/storage/updateFile/:fileName/', Admin.updateFileInStorage)
+appRoute.post('storage.deleteFile', config.proxyPrefixPath.uri + '/storage/deleteFile/:id', Admin.deleteFileInStorage)
 server.use('/', appRoute.getRouter())
 
 // Not found etc

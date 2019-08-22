@@ -5,6 +5,7 @@ const config = require('./configuration').server
 const log = require('kth-node-log')
 const CasStrategy = require('kth-node-passport-cas').Strategy
 const GatewayStrategy = require('kth-node-passport-cas').GatewayStrategy
+const i18n = require('../i18n')
 
 /**
  * Passport will maintain persistent login sessions. In order for persistent sessions to work, the authenticated
@@ -63,6 +64,7 @@ passport.use(strategy)
 passport.use(new GatewayStrategy({
   casUrl: config.cas.ssoBaseURL
 }, function (result, done) {
+  console.log('ldapUser', result.user)
   log.debug({ result: result }, `CAS Gateway user: ${result.user}`)
   done(null, result.user, result)
 }))
@@ -71,7 +73,7 @@ passport.use(new GatewayStrategy({
 // redirects to appropriate place when returning from CAS login
 // The unpackLdapUser function transforms an ldap user to a user object that is stored as
 const ldapClient = require('./adldapClient')
-const { hasGroup } = require('kth-node-ldap').utils
+const { hasGroup, getGroups } = require('kth-node-ldap').utils
 module.exports.redirectAuthenticatedUserHandler = require('kth-node-passport-cas').routeHandlers.getRedirectAuthenticatedUser({
   ldapConfig: config.ldap,
   ldapClient: ldapClient,
@@ -81,32 +83,105 @@ module.exports.redirectAuthenticatedUserHandler = require('kth-node-passport-cas
       username: ldapUser.ugUsername,
       displayName: ldapUser.displayName,
       email: ldapUser.mail,
+      ugKthid: ldapUser.ugKthid,
       pgtIou: pgtIou,
-      // This is where you can set custom roles
-      isAdmin: hasGroup(config.auth.adminGroup, ldapUser)
+      memberOf: getGroups(ldapUser), // memberOf important for requireRole
+      isSuperUser: hasGroup(config.auth.superuserGroup, ldapUser)
     }
   }
 })
 
 /*
   Checks req.session.authUser as created above im unpackLdapUser.
-
   Usage:
-
   requireRole('isAdmin', 'isEditor')
 */
+function _hasCourseResponsibleGroup (courseCode, courseInitials, ldapUser, rounds, role, isPreview) {
+  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
+  const groups = ldapUser.memberOf
+  const startWith = `edu.courses.${courseInitials}.${courseCode}.` // TODO: What to do with years 20192. ?
+  if (rounds === undefined || rounds.length === 0) { // Not a analysis
+    const endWith = '.' + role
+    if (groups && groups.length > 0) {
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[ i ].indexOf(startWith) >= 0 && groups[ i ].indexOf(endWith) >= 0) {
+          return true
+        }
+      }
+    }
+  } else {
+    const endString = '.' + role
+    let endWith = ''
+    if (groups && groups.length > 0) {
+      for (let round = 0; round < rounds.length; round++) {
+        endWith = rounds[round] + endString
+        for (var i = 0; i < groups.length; i++) {
+          if (groups[ i ].indexOf(startWith) >= 0 && groups[ i ].indexOf(endWith) >= 0) {
+            return true
+          }
+          if (groups[ i ].indexOf(startWith) >= 0 && groups[ i ].indexOf(role) >= 0 && isPreview) {
+            return true
+          }
+        }
+      }
+    }
+  }
+  return false // OBS!!!! TODO!!
+}
 
-module.exports.requireRole = function () {
+function _hasCourseTeacherGroup (courseCode, courseInitials, ldapUser, rounds, role) {
+  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
+  if (rounds === undefined || rounds.length === 0) { // Not a analysis
+    return false
+  }
+  const groups = ldapUser.memberOf
+  const startWith = `edu.courses.${courseInitials}.${courseCode}.` // TODO: What to do with years 20192. ?
+  const endString = '.' + role
+  let endWith = ''
+  if (groups && groups.length > 0) {
+    for (let round = 0; round < rounds.length; round++) {
+      endWith = rounds[round] + endString
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[ i ].indexOf(startWith) >= 0 && groups[ i ].indexOf(endWith) >= 0) {
+          return true
+        }
+      }
+    }
+  }
+  return false // OBS!!!! TODO!!/
+}
+
+module.exports.requireRole = function () { // TODO:Different roles for selling text and course development
   const roles = Array.prototype.slice.call(arguments)
 
-  return function _hasNoneOfAcceptedRoles (req, res, next) {
+  return async function _hasCourseAcceptedRoles (req, res, next) {
+    const language = req.query.l
     const ldapUser = req.session.authUser || {}
+    const id = req.params.id
+    const isPreview = req.params.preview && req.params.preview === 'preview'
+    let courseCode = ''
+    let rounds = []
+    if (id.length > 7) {
+      let splitId = req.params.id.split('_')
+      courseCode = splitId[0].length > 12 ? id.slice(0, 7).toUpperCase() : id.slice(0, 6).toUpperCase()
+      rounds = splitId[1]
+    } else {
+      courseCode = id.toUpperCase()
+    }
+    const courseInitials = courseCode.slice(0, 2).toUpperCase()
+    // TODO: Add date for courseresponsible
+    const userCourseRoles = {
+      isExaminator: hasGroup(`edu.courses.${courseInitials}.${courseCode}.examiner`, ldapUser),
+      isCourseResponsible: _hasCourseResponsibleGroup(courseCode, courseInitials, ldapUser, rounds, 'courseresponsible', isPreview),
+      isCourseTeacher: _hasCourseTeacherGroup(courseCode, courseInitials, ldapUser, rounds, 'teachers'),
+      isSuperUser: ldapUser.isSuperUser
+    }
 
-    // Check if we have any of the roles passed
-    const hasAuthorizedRole = roles.reduce((prev, curr) => prev || ldapUser[curr], false)
     // If we don't have one of these then access is forbidden
+    const hasAuthorizedRole = roles.reduce((prev, curr) => prev || userCourseRoles[curr], false)
+
     if (!hasAuthorizedRole) {
-      const error = new Error('Forbidden')
+      const error = new Error(i18n.messages[language && language === 'sv' ? 1 : 0].messages.error_auth)
       error.status = 403
       return next(error)
     }

@@ -16,6 +16,7 @@ const co = require('co')
 const Promise = require('bluebird')
 const registry = require('component-registry').globalRegistry
 const { IHealthCheck } = require('kth-node-monitor').interfaces
+// const redis = require('kth-node-redis')
 
 /*
  * ----------------------------------------------------------------
@@ -24,7 +25,7 @@ const { IHealthCheck } = require('kth-node-monitor').interfaces
  */
 
 module.exports = {
-  monitor: _monitor,
+  monitor: co.wrap(_monitor),
   about: _about,
   robotsTxt: _robotsTxt,
   paths: _paths,
@@ -37,16 +38,23 @@ module.exports = {
  * Renders the view 'notFound' with the layout 'exampleLayout'.
  */
 function _notFound (req, res, next) {
+  // if (req.originalUrl.indexOf('.map') < 0) { // Temp TODO
   const err = new Error('Not Found: ' + req.originalUrl)
   err.status = 404
   next(err)
+  // }
 }
 
 // this function must keep this signature for it to work properly
 function _final (err, req, res, next) {
   log.error({ err: err }, 'Unhandled error')
+  let statusCode
+  let courseCode = ''
+  if (err.response) {
+    statusCode = err.response.status
+    courseCode = err.response.data ? err.response.data : ''
+  } else { statusCode = err.status || err.statusCode || 500 }
 
-  const statusCode = err.status || err.statusCode || 500
   const isProd = (/prod/gi).test(process.env.NODE_ENV)
   const lang = language.getLanguage(res)
 
@@ -55,7 +63,7 @@ function _final (err, req, res, next) {
       res.status(statusCode).render('system/error', {
         layout: 'errorLayout',
         message: err.message,
-        friendly: _getFriendlyErrorMessage(lang, statusCode),
+        friendly: _getFriendlyErrorMessage(lang, statusCode, courseCode),
         error: isProd ? {} : err,
         status: statusCode,
         debug: 'debug' in req.query
@@ -65,7 +73,7 @@ function _final (err, req, res, next) {
     'application/json': () => {
       res.status(statusCode).json({
         message: err.message,
-        friendly: _getFriendlyErrorMessage(lang, statusCode),
+        friendly: _getFriendlyErrorMessage(lang, statusCode, courseCode),
         error: isProd ? undefined : err.stack
       })
     },
@@ -76,9 +84,11 @@ function _final (err, req, res, next) {
   })
 }
 
-function _getFriendlyErrorMessage (lang, statusCode) {
+function _getFriendlyErrorMessage (lang, statusCode, courseCode) {
   switch (statusCode) {
     case 404:
+    // if(courseCode.length > 0)
+      // return i18n.message('error_course_not_found', lang) + courseCode
       return i18n.message('error_not_found', lang)
     default:
       return i18n.message('error_generic', lang)
@@ -111,8 +121,9 @@ function _about (req, res) {
 /* GET /_monitor
  * Monitor page
  */
-function _monitor (req, res) {
+async function _monitor (req, res) {
   const apiConfig = config.nodeApi
+  // const ugRedis = config.cache.ugRedis.redis
 
   // Check APIs
   const subSystems = Object.keys(api).map((apiKey) => {
@@ -121,7 +132,7 @@ function _monitor (req, res) {
   })
   // Check LDAP
   const ldapHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-ldap')
-  subSystems.push(ldapHealthUtil.status(ldapClient))
+  subSystems.push(ldapHealthUtil.status(ldapClient, config.ldap))
 
   // If we need local system checks, such as memory or disk, we would add it here.
   // Make sure it returns a promise which resolves with an object containing:
@@ -133,10 +144,37 @@ function _monitor (req, res) {
 
   // Determine system health based on the results of the checks above. Expects
   // arrays of promises as input. This returns a promise
+  /* try {
+    await redis('ugRedis', ugRedis.redis)
+      .then(function (ugClient) {
+        console.log('ugClient', ugClient)
+        const status = {
+          key: 'ugRedis',
+          message: '- ugRedis connection: OK ',
+          required: undefined,
+          responseTime: undefined,
+          statusCode: 200
+        }
+        subSystems.push(status)
+        return status
+      })
+  } catch (err) {
+    console.log('ugRedis - error:: ', err)
+    const status = {
+      key: 'ugRedis',
+      message: '- ugRedis connection: ' + err.message,
+      required: undefined,
+      responseTime: undefined,
+      statusCode: 500
+    }
+    subSystems.push(status)
+    return status
+  } */
+
   const systemHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-system-check')
   const systemStatus = systemHealthUtil.status(localSystems, subSystems)
 
-  systemStatus.then((status) => {
+  systemStatus.then((status) => { // console.log(status)
     // Return the result either as JSON or text
     if (req.headers['accept'] === 'application/json') {
       let outp = systemHealthUtil.renderJSON(status)

@@ -8,20 +8,25 @@
  *
  */
 const { getEnv, devDefaults, unpackLDAPConfig, unpackKOPPSConfig, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
+const { typeConversion } = require('kth-node-configuration/lib/utils')
 const { safeGet } = require('safe-utils')
 
 // DEFAULT SETTINGS used for dev, if you want to override these for you local environment, use env-vars in .env
 const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
-const devKursPmApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000') // required=true&
-const devSessionKey = devDefaults('kurs-pm-admin-web.sid')
+const devKursutvecklingApi = devDefaults('http://localhost:3001/api/kursutveckling?defaultTimeout=10000')
+const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/')
+const devSessionKey = devDefaults('node-web.sid') // TODO ??
 const devSessionUseRedis = devDefaults(true)
-const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/?defaultTimeout=60000') // required=true&
 const devRedis = devDefaults('redis://localhost:6379/')
+const devRedisUG = devDefaults('team-studam-ref-redis-193.redis.cache.windows.net:6380,password=9g1815SJ915fjWl1bqJ2wtn+TSX1i5vAL0z38eSLg7M=,ssl=True,abortConnect=False')
 const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use env_vars
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')
+const devStorageAccountName = devDefaults('kursinfostoragestage')
+const devStorageKey = devDefaults('ybZZ0R0y1/AFPj9o6kAEiPuCgmYSaD9AgbPccC4c9b1dj7J2+NXcMzXUowfLQULB3qsDBX0abpS9oi/p+mskyw==')
+
 // END DEFAULT SETTINGS
 
 // These options are fixed for this application
@@ -29,9 +34,21 @@ const ldapOptions = {
   base: getEnv('LDAP_BASE', devLdapBase),
   filter: '(ugKthid=KTHID)',
   filterReplaceHolder: 'KTHID',
-  userattrs: ['displayName', 'mail', 'ugUsername', 'memberOf'],
-  groupattrs: ['cn', 'objectCategory']
+  userattrs: ['displayName', 'mail', 'ugUsername', 'memberOf', 'ugKthid'],
+  groupattrs: ['cn', 'objectCategory'],
+  testSearch: true, // TODO: Should this be an ENV setting?
+  timeout: typeConversion(getEnv('LDAP_TIMEOUT', null)),
+  reconnectTime: typeConversion(getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
+  reconnectOnIdle: (!!getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
+  connecttimeout: typeConversion(getEnv('LDAP_CONNECT_TIMEOUT', null)),
+  searchtimeout: typeConversion(getEnv('LDAP_SEARCH_TIMEOUT', null))
 }
+
+Object.keys(ldapOptions).forEach(key => {
+  if (ldapOptions[key] === null) {
+    delete ldapOptions[key]
+  }
+})
 
 module.exports = {
   hostUrl: getEnv('SERVER_HOST_URL', devUrl),
@@ -45,27 +62,26 @@ module.exports = {
 
   // API keys
   apiKey: {
-    kursPmApi: getEnv('KURS_PM_API_KEY', devDefaults('1234'))
+    kursutvecklingApi: getEnv('API_KEY', devDefaults('9876'))
   },
 
   // Authentication
   auth: {
-    adminGroup: 'app.node.admin'
+    superuserGroup: 'app.kursinfo.kursinfo-admins'
   },
   cas: {
     ssoBaseURL: getEnv('CAS_SSO_URI', devSsoBaseURL)
   },
   ldap: unpackLDAPConfig('LDAP_URI', getEnv('LDAP_PASSWORD'), devLdap, ldapOptions),
-  kopps: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
 
   // Service API's
   nodeApi: {
-    kursPmApi: unpackNodeApiConfig('KURS_PM_API_URI', devKursPmApi)
+    kursutvecklingApi: unpackNodeApiConfig('API_URI', devKursutvecklingApi)
   },
 
   // Cortina
   blockApi: {
-    blockUrl: getEnv('SERVER_HOST_URL', devDefaults('https://www-r-new.referens.sys.kth.se/cm/')) // Block API base URL
+    blockUrl: getEnv('CM_HOST_URL', devDefaults('https://www-r.referens.sys.kth.se/cm/')) // Block API base URL
   },
 
   // Logging
@@ -83,6 +99,9 @@ module.exports = {
   cache: {
     cortinaBlock: {
       redis: unpackRedisConfig('REDIS_URI', devRedis)
+    },
+    ugRedis: {
+      redis: unpackRedisConfig('UG_REDIS_URI', devRedisUG)
     }
   },
 
@@ -98,8 +117,18 @@ module.exports = {
     },
     redisOptions: unpackRedisConfig('REDIS_URI', devRedis)
   },
-  // APPLICATION INSIGHTS IN AZURE
+
+  koppsApi: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
+
   appInsights: {
-    instrumentationKey: getEnv('APPINSIGHTS_INSTRUMENTATIONKEY', '')
+    instrumentationKey: getEnv('APPINSIGHTS_INSTRUMENTATIONKEY')
+  },
+
+  fileStorage: {
+    kursutvecklingStorage: {
+      account: getEnv('STORAGE_ACCOUNT_NAME', devStorageAccountName),
+      accountKey: getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)//, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
+    }
   }
+
 }
