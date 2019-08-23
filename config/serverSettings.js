@@ -15,7 +15,7 @@ const { safeGet } = require('safe-utils')
 const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
-const devKursutvecklingApi = devDefaults('http://localhost:3001/api/kursutveckling?defaultTimeout=10000')
+const devkursPmApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000')
 const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/')
 const devSessionKey = devDefaults('node-web.sid') // TODO ??
 const devSessionUseRedis = devDefaults(true)
@@ -26,7 +26,7 @@ const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')
 const devStorageAccountName = devDefaults('kursinfostoragestage')
 const devStorageKey = devDefaults('ybZZ0R0y1/AFPj9o6kAEiPuCgmYSaD9AgbPccC4c9b1dj7J2+NXcMzXUowfLQULB3qsDBX0abpS9oi/p+mskyw==')
-
+const devStorageContainer = devDefaults('memo-blob-container')
 // END DEFAULT SETTINGS
 
 // These options are fixed for this application
@@ -62,7 +62,7 @@ module.exports = {
 
   // API keys
   apiKey: {
-    kursutvecklingApi: getEnv('API_KEY', devDefaults('9876'))
+    kursPmApi: getEnv('PM_API_KEY', devDefaults('9876'))
   },
 
   // Authentication
@@ -76,7 +76,7 @@ module.exports = {
 
   // Service API's
   nodeApi: {
-    kursutvecklingApi: unpackNodeApiConfig('API_URI', devKursutvecklingApi)
+    kursPmApi: unpackNodeApiConfig('PM_API_URI', devkursPmApi)
   },
 
   // Cortina
@@ -125,9 +125,11 @@ module.exports = {
   },
 
   fileStorage: {
-    kursutvecklingStorage: {
+    kursPMStorage: {
       account: getEnv('STORAGE_ACCOUNT_NAME', devStorageAccountName),
-      accountKey: getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)//, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
+      accountKey: getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey),
+      storageContainer: getEnv('BLOB_CONTAINER', devStorageContainer)
+      //, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
     }
   }
 

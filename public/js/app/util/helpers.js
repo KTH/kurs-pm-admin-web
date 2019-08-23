@@ -19,26 +19,6 @@ const getTodayDate = (date = '') => {
   return yyyy + '-' + mm + '-' + dd
 }
 
-const getLanguageToUse = (roundList, roundIdlist, defaultLanguage) => {
-  if (roundIdlist.length === 1) {
-    for (let round = 0; round < roundList.length; round++) {
-      if (roundList[round].roundId === roundIdlist.toString()) {
-        return roundList[round].language
-      }
-    }
-  }
-
-  let tempLang = roundIdlist[0].language
-  for (let id = 0; id < roundIdlist.length; id++) {
-    for (let round = 0; round < roundList.length; round++) {
-      if (roundList[round].roundId === roundIdlist[id] && tempLang !== roundList[round].language) {
-        return defaultLanguage
-      }
-    }
-  }
-  return tempLang === defaultLanguage ? defaultLanguage : 'Svenska'
-}
-
 const formatDate = (date, lang) => {
   let thisDate = getTodayDate(date)
   return getDateFormat(thisDate, lang)
@@ -86,7 +66,6 @@ export {
   getAccess,
   noAccessToRoundsList,
   formatDate,
-  getLanguageToUse,
   getTodayDate,
   getDateFormat,
   getValueFromObjectList,

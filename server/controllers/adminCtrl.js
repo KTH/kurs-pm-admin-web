@@ -14,7 +14,7 @@ const serverConfig = require('../configuration').server
 
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
-const kursutvecklingAPI = require('../apiCalls/kursutvecklingAPI')
+const kursPmApi = require('../apiCalls/kursPmApi')
 const koppsCourseData = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 
@@ -25,7 +25,6 @@ module.exports = {
   getRoundAnalysis: co.wrap(_getRoundAnalysis),
   postRoundAnalysis: co.wrap(_postRoundAnalysis),
   deleteRoundAnalysis: co.wrap(_deleteRoundAnalysis),
-  getCourseEmployees: co.wrap(_getCourseEmployees),
   getUsedRounds: co.wrap(_getUsedRounds),
   getKoppsCourseData: co.wrap(_getKoppsCourseData),
   saveFileToStorage: co.wrap(_saveFileToStorage),
@@ -86,7 +85,7 @@ function * _getUsedRounds (req, res, next) {
   const semester = req.params.semester
   log.debug('_getUsedRounds with course code: ' + courseCode + 'and semester: ' + semester)
   try {
-    const apiResponse = yield kursutvecklingAPI.getUsedRounds(courseCode, semester)
+    const apiResponse = yield kursPmApi.getUsedRounds(courseCode, semester)
     log.debug('_getUsedRounds response: ', apiResponse.body)
     return httpResponse.json(res, apiResponse.body)
   } catch (error) {
@@ -114,7 +113,7 @@ function * _saveFileToStorage (req, res, next) {
   log.info('Saving uploaded file to storage ' + req.files.file)
   let file = req.files.file
   try {
-    const fileName = yield runBlobStorage(file, req.params.analysisid, req.params.type, req.params.published, req.body)
+    const fileName = yield runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
     return httpResponse.json(res, fileName)
   } catch (error) {
     log.error('Exception from saveFileToStorage ', { error: error })
@@ -145,48 +144,13 @@ function * _deleteFileInStorage (res, req, next) {
   }
 }
 
-// ------- EXAMINATOR AND RESPONSIBLES FROM UG-REDIS: ------- /
-function * _getCourseEmployees (req, res, next) {
-  let key = req.params.key
-  key = key.replace(/_/g, '.')
-
-  try {
-    const roundsKeys = JSON.parse(req.body.params)
-    log.info('_getCourseEmployees with keys: ' + roundsKeys.examiner, roundsKeys.responsibles)
-    yield redis('ugRedis', serverConfig.cache.ugRedis.redis)
-      .then(function (ugClient) {
-        return ugClient.multi()
-          .mget(roundsKeys.examiner)
-          .mget(roundsKeys.responsibles)
-          .execAsync()
-      })
-      .then(function (returnValue) {
-        log.debug('ugRedis - return:', returnValue)
-        return httpResponse.json(res, returnValue)
-      })
-      .catch(function (err) {
-        console.log('ugRedis - error:: ', err)
-        throw new Error(err)
-      })
-  } catch (err) {
-    log.error('Exception from ugRedis - multi', { error: err })
-    return next(err)
-  }
-}
-
 async function getIndex (req, res, next) {
+  console.log(api.kursPmApi)
+
   /** ------- CHECK OF CONNECTION TO API AND UG_REDIS ------- */
-  if (api.kursutvecklingApi.connected === false) {
-    log.error('No connection to kursutveckling-api', api.kursutvecklingApi)
+  if (api.kursPmApi.connected === false) {
+    log.error('No connection to kurs-pm-api', api.kursPmApi)
     const error = new Error('API - ERR_CONNECTION_REFUSED')
-    error.status = 500
-    return next(error)
-  }
-  try {
-    await redis('ugRedis', serverConfig.cache.ugRedis.redis)
-  } catch (err) {
-    log.error('No connection to kursutveckling-api', api.kursutvecklingApi)
-    const error = new Error('No access to  ugRedis - ' + err)
     error.status = 500
     return next(error)
   }
@@ -199,51 +163,22 @@ async function getIndex (req, res, next) {
 
   let lang = language.getLanguage(res) || 'sv'
   const ldapUser = req.session.authUser ? req.session.authUser.username : 'null'
-  const courseTitle = req.query.title || ''
   let status = req.query.status
-  const service = req.query.serv
 
   try {
     const renderProps = staticFactory()
     /* ------- Settings ------- */
-
-    renderProps.props.children.props.routerStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl, service)
+    renderProps.props.children.props.routerStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
     renderProps.props.children.props.routerStore.setLanguage(lang)
-    renderProps.props.children.props.routerStore.setService(service)
     await renderProps.props.children.props.routerStore.getMemberOf(req.session.authUser.memberOf, req.params.id.toUpperCase(), req.session.authUser.username, serverConfig.auth.superuserGroup)
     if (req.params.id.length <= 7) {
-    /** ------- Got course code -> prepare for Page 1 depending on status (draft or published) ------- */
+      /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ' + req.params.id)
       const apiResponse = await koppsCourseData.getKoppsCourseData(req.params.id.toUpperCase(), lang)
       if (apiResponse.statusCode >= 400) {
         renderProps.props.children.props.routerStore.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
       } else {
-        renderProps.props.children.props.routerStore.status = status === 'p' ? 'published' : 'new'
         await renderProps.props.children.props.routerStore.handleCourseData(apiResponse.body, req.params.id.toUpperCase(), ldapUser, lang)
-      }
-    } else {
-      /** ------- Got analysisId  -> request analysis data from api ------- */
-      log.debug(' getIndex, get analysis data for : ' + req.params.id)
-      const apiResponse = await kursutvecklingAPI.getRoundAnalysisData(req.params.id.toUpperCase(), lang)
-      if (apiResponse.statusCode >= 400) {
-        renderProps.props.children.props.routerStore.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
-      } else {
-        renderProps.props.children.props.routerStore.analysisId = req.params.id
-        renderProps.props.children.props.routerStore.analysisData = apiResponse.body
-
-        /** ------- Setting status ------- */
-        status = req.params.preview && req.params.preview === 'preview' ? 'preview' : status
-        switch (status) {
-          case 'p' : renderProps.props.children.props.routerStore.status = 'published'
-            break
-          case 'n' : renderProps.props.children.props.routerStore.status = 'draft'
-            break
-          default : renderProps.props.children.props.routerStore.status = 'draft'
-        }
-        log.debug(' getIndex, status set to: ' + status)
-
-        /** ------- Creating title  ------- */
-        renderProps.props.children.props.routerStore.setCourseTitle(courseTitle.length > 0 ? decodeURIComponent(courseTitle) : '')
       }
     }
     renderProps.props.children.props.routerStore.__SSR__setCookieHeader(req.headers.cookie)

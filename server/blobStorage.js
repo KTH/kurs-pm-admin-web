@@ -22,8 +22,9 @@ module.exports = {
   deleteBlob: deleteBlob
 }
 
-const STORAGE_ACCOUNT_NAME = serverConfig.fileStorage.kursutvecklingStorage.account
-const ACCOUNT_ACCESS_KEY = serverConfig.fileStorage.kursutvecklingStorage.accountKey
+const STORAGE_ACCOUNT_NAME = serverConfig.fileStorage.kursPMStorage.account
+const ACCOUNT_ACCESS_KEY = serverConfig.fileStorage.kursPMStorage.accountKey
+const containerName = serverConfig.fileStorage.kursPMStorage.storageContainer
 
 const ONE_MEGABYTE = 1024 * 1024
 const FOUR_MEGABYTES = 4 * ONE_MEGABYTE
@@ -33,25 +34,17 @@ const credentials = new SharedKeyCredential(STORAGE_ACCOUNT_NAME, ACCOUNT_ACCESS
 const pipeline = StorageURL.newPipeline(credentials)
 const serviceURL = new ServiceURL(`https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net`, pipeline)
 
-async function runBlobStorage (file, id, type, saveCopyOfFile, metadata) {
-  const containerName = 'kursutveckling-blob-container'
+async function runBlobStorage (file, semester, courseCode, rounds, metadata) {
+  // const containerName = 'kursutveckling-blob-container'
   let blobName = ''
   const content = file.data
   const fileType = file.mimetype
   const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName)
   const aborter = Aborter.timeout(30 * ONE_MINUTE)
+  const newId = createID()
+  console.log(file)
 
-  if (type === 'analysis') {
-    const draftFileName = `${type}-${id}.${file.name.split('.')[1]}`
-    const newFileName = `${type}-${id}-${getTodayDate()}.${file.name.split('.')[1]}`
-    if (saveCopyOfFile === 'true') {
-      blobName = newFileName
-    } else {
-      blobName = draftFileName
-    }
-  } else {
-    blobName = `${type}-${id}.${file.name.split('.')[1]}`
-  }
+  blobName = `memo-${courseCode}${semester}-${newId}.pdf`
 
   const uploadResponse = await uploadBlob(aborter, containerURL, blobName, content, fileType, metadata)
   log.debug(' Blobstorage - uploaded file response ', uploadResponse)
@@ -87,7 +80,6 @@ async function uploadBlob (aborter, containerURL, blobName, content, fileType, m
 }
 
 async function updateMetaData (blobName, metadata) {
-  const containerName = 'kursutveckling-blob-container'
   const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName)
   const aborter = Aborter.timeout(30 * ONE_MINUTE)
   const blobURL = BlobURL.fromContainerURL(containerURL, blobName)
@@ -109,7 +101,6 @@ async function updateMetaData (blobName, metadata) {
 }
 
 async function deleteBlob (analysisId) {
-  const containerName = 'kurs-pm-blob-container'
   const aborter = Aborter.timeout(30 * ONE_MINUTE)
   log.debug(`Blobstorage - Delete file: ${analysisId}`)
   try {
@@ -148,6 +139,12 @@ async function deleteBlob (analysisId) {
     log.error('Error in deleting blob ', { error: error })
     return error
   }
+}
+const createID = () => {
+  return 'x4xxxyxxxxxx'.replace(/[xy]/g, function (c) {
+    var r = Math.random() * 16 | 0; var v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
 }
 
 const getTodayDate = (fileDate = true) => {

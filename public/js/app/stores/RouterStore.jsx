@@ -25,23 +25,20 @@ class RouterStore {
   analysisId = ''
   courseData = {}
   semesters = []
-  analysisData = undefined
-  redisKeys = {
-    examiner: [],
-    responsibles: []
-  }
+  newMemoList = []
   language = 1
   status = ''
   usedRounds = []
   hasChangedStatus = false
   courseTitle = ''
   courseCode = ''
-  examCommentEmpty = true
   errorMessage = ''
   service = ''
   member = []
   roundAccess = {}
   user =''
+  activeSemester = ''
+
   
 
   buildApiUrl(path, params) {
@@ -261,26 +258,20 @@ class RouterStore {
   /** ***************************************************************************************************************************************** */
 
   
-  analysisAccess(analysis){
+  analysisAccess(memoList){
     // Loops thrue published and draft analyises for access check
     const memberString = this.member.toString()
     
-    for(let draft=0; draft < analysis.draftAnalysis.length; draft ++){
+    for(let memo=0; memo < memoList.length; memo ++){
       for(let key = 0; key < analysis.draftAnalysis[draft].ugKeys.length; key ++){
-        analysis.draftAnalysis[draft].hasAccess = memberString.indexOf(analysis.draftAnalysis[draft].ugKeys[key]) >= 0 || memberString.indexOf(SUPERUSER_PART) >-1
-        if(analysis.draftAnalysis[draft].hasAccess === true)
+        memoList[memo].hasAccess = memberString.indexOf(memoList[memo].ugKeys[key]) >= 0 || memberString.indexOf(SUPERUSER_PART) >-1
+        if(memoList[memo].hasAccess === true)
           break
       }
     }
 
-    for(let publ=0; publ < analysis.publishedAnalysis.length; publ ++){
-      for( let key = 0; key < analysis.publishedAnalysis[publ].ugKeys.length; key ++){
-        analysis.publishedAnalysis[publ].hasAccess = memberString.indexOf(analysis.publishedAnalysis[publ].ugKeys[key]) >= 0 || memberString.indexOf(SUPERUSER_PART) >-1
-        if(analysis.publishedAnalysis[publ].hasAccess === true)
-          break
-      }
-    }
-    return analysis
+    
+    return memoList
   }
 
 
@@ -305,8 +296,6 @@ class RouterStore {
 
       for(let semester = 0; semester < courseObject.termsWithCourseRounds.length; semester ++){
           this.courseData.semesterObjectList[courseObject.termsWithCourseRounds[semester].term]= {
-          courseSyllabus: courseObject.termsWithCourseRounds[semester].courseSyllabus,
-          examinationRounds: courseObject.termsWithCourseRounds[semester].examinationRounds,
           rounds: courseObject.termsWithCourseRounds[semester].rounds
         }
       }
@@ -327,7 +316,6 @@ class RouterStore {
             language: round.language[language],
             shortName: round.shortName,
             startDate: round.firstTuitionDate,
-            targetGroup: this.getTargetGroup(round),
             ladokUID: round.ladokUID,
             hasAccess: getAccess(this.member, round, this.courseCode, semester.term)
           }
@@ -341,163 +329,30 @@ class RouterStore {
     }
   }
 
-  @action createAnalysisData(semester, rounds) {
-    // Creates a new analysis object with information from selected rounds
-
-    this.getEmployees(this.courseData.courseCode, semester, rounds)
-    return this.getCourseEmployeesPost(this.redisKeys, 'multi', this.language).then(returnList => {
-
-      const {courseSyllabus, examinationRounds } = this.courseData.semesterObjectList[semester]
-      const language = getLanguageToUse( this.roundData[semester], rounds, 'English' ) 
-      const roundLang = language === 'English' || language === 'Engelska' ? 'en' : 'sv'
-      this.analysisId = `${this.courseData.courseCode}${semester.toString().match(/.{1,4}/g)[1] === '1' ? 'VT' : 'HT'}${semester.toString().match(/.{1,4}/g)[0]}_${rounds.sort().join('_')}`
-      this.status = 'new'
-      let newName = `${semester.toString().match(/.{1,4}/g)[1] === '1'
-        ? SEMESTER[roundLang === 'en' ? 0 : 1]['1']
-        : SEMESTER[roundLang === 'en' ? 0 : 1]['2']} ${semester.toString().match(/.{1,4}/g)[0]}`
-
-      newName = this.createAnalysisName(newName, this.roundData[semester], rounds, roundLang)
+  @action createMemoData(semester, rounds) {
+    // Creates a list with memo object with information from selected rounds
+    //const roundLang = language === 'English' || language === 'Engelska' ? 'en' : 'sv'
+    this.status = 'new'
+    let newMemo = {}
+    this.newMemoList = []
+    this.activeSemester = semester
+    for(let round = 0; round<rounds.length; round++ ){
+     
        
-      this.analysisData = {
-        _id: this.analysisId,
-        alterationText: '',
-        analysisFileName: '',
+      newMemo = {
         pmFileName: '',
         changedBy: this.user, 
-        changedDate: '',
-        commentChange: '',
-        commentExam: courseSyllabus.examComments ? courseSyllabus.examComments[roundLang] : '', //todo
         courseCode: this.courseData.courseCode,
-        examinationRounds: this.getExamObject( examinationRounds, this.courseData.gradeScale, roundLang),
-        examiners: '',
-        examinationGrade: '',
         isPublished: false,
-        pdfAnalysisDate: '',
         pdfPMDate: '',
-        programmeCodes: this.getAllTargetGroups(rounds, this.roundData[semester]).join(', '),
         publishedDate: '',
-        registeredStudents: '',
-        responsibles: '',
-        analysisName: newName,
         semester: semester,
-        roundIdList: rounds.toString(),
-        ugKeys: [...this.redisKeys.examiner, ...this.redisKeys.responsibles],
-        ladokUID: '',
-        syllabusStartTerm: courseSyllabus.validFromTerm,
-        changedAfterPublishedDate: '',
-        examinationGradeFromLadok: false,
-        registeredStudentsFromLadok: false
-
+        koppsRroundId: rounds.toString()
+       // ,ugKeys: [...this.redisKeys.examiner, ...this.redisKeys.responsibles]
       }
-
-      this.analysisData.examiners = ''
-      this.analysisData.responsibles = ''
-     
-      this.analysisData.examiners = this.getEmployeesNames(returnList[0]).join(', ')
-      this.analysisData.responsibles = this.getEmployeesNames(returnList[1]).join(', ')
-
-      return this.analysisData
-    })
-  }
-
-
-  createAnalysisName(newName, roundList, selectedRounds, language) {
-    // -- Creates the analysis name based on shortname, semester, start date from selected round(s) --//
-    let addRounds = []
-    let tempName = ''
-    let thisRoundLanguage = ''
-    for (let index = 0; index < roundList.length; index++) {
-      thisRoundLanguage = language === 'en' && roundList[index].language === 'Svenska' ? 'Swedish' : ''
-      thisRoundLanguage = thisRoundLanguage.length > 0 ? thisRoundLanguage : language === 'en' ? 'English' : 'Svenska'
-      tempName = ` ${roundList[index].shortName && roundList[index].shortName.length > 0 ? roundList[index].shortName : newName + '-' + roundList[index].roundId} ( ${language === 'en' ? 'Start date ' : 'Startdatum'} ${getDateFormat(roundList[index].startDate, language)}, ${thisRoundLanguage} ) `
-
-      if(selectedRounds.indexOf(roundList[index].roundId) >= 0){
-        addRounds.push(tempName)
-      }
+      this.newMemoList.push(newMemo)
     }
-    return `${addRounds.join(', ')}`
-  }
-
-  getExmCommentfromCorrectSyllabus(semester, syllabusList) {
-    let matchingIndex = 0
-    if (syllabusList && syllabusList.length > 0) {
-      for (let index = 0; index < syllabusList.length; index++) {
-        if (Number(syllabusList[index].validFromTerm.term) > Number(semester)) {
-          matchingIndex++
-        }
-        else {
-          return syllabusList[matchingIndex].courseSyllabus.examComments ? syllabusList[matchingIndex].courseSyllabus.examComments : ''
-        }
-      }
-    }
-    return 'no comment'
-  }
-
-  getTargetGroup(round) {
-    if (round.connectedProgrammes.length === 0)
-      return []
-    let usageList = []
-    for (let index = 0; index < round.connectedProgrammes.length; index++) {
-      if (usageList.indexOf(round.connectedProgrammes[index].programmeCode) === -1 && round.connectedProgrammes[index].electiveCondition.en === 'Mandatory'){
-        usageList.push(round.connectedProgrammes[index].programmeCode)
-      }
-    }
-    return usageList
-  }
-
-  getAllTargetGroups(selectedRounds, roundList) {
-    let allTargets = []
-    for (let index = 0; index < roundList.length; index++) {
-      if(selectedRounds.indexOf(roundList[index].roundId) >= 0){
-        allTargets = [...allTargets, ...roundList[index].targetGroup ]
-      }
-    }
-    return allTargets
-  }
-
-  getExamObject(examObject, grades, roundLang) {
-      let examString = []
-      const language = roundLang === 'en' ? 0 : 1
-      for (let exam of examObject) {
-        // -- Adding a decimal if it's missing in credits -- /
-        exam.credits = exam.credits !== EMPTY[language] && exam.credits.toString().length === 1 ? exam.credits + '.0' : exam.credits
-
-        examString.push(`${exam.examCode};${exam.title[roundLang]};${language === 0 ? exam.credits : exam.credits.toString().replace('.', ',')};${language === 0 ? 'credits' : 'hp'};${language === 0 ? 'Grading scale' : 'Betygsskala'};${grades[exam.gradeScaleCode]}              
-                         `)
-      }
-    
-    //console.log('!!getExamObject !!!! is ok!!', examString)
-    return examString
-  }
-
-
-
-  getEmployees(courseCode, semester, rounds) {
-    this.redisKeys.examiner = []
-    this.redisKeys.responsibles = []
-    for (let index = 0; index < rounds.length; index++) {
-      this.redisKeys.responsibles.push(`${courseCode}.${semester}.${Number(rounds[index])}.courseresponsible`)
-    }
-    this.redisKeys.examiner.push(`${courseCode}.examiner`)
-  }
-
-  getEmployeesNames(employeeList) {
-    let list = []
-    let toObject
-    let fullName = ''
-    for (let index = 0; index < employeeList.length; index++) {
-      if (employeeList[index] !== null) {
-        toObject = JSON.parse(employeeList[index]) 
-        for (let index2 = 0; index2 < toObject.length; index2++) {
-          if(toObject[index2].givenName){
-            fullName = `${toObject[index2].givenName} ${toObject[index2].lastName}`
-            if(list.indexOf(fullName) < 0 )
-              list.push(fullName)
-          }
-        }
-      }
-    }
-    return list
+    return this.newMemoList
   }
 
   getMemberOf(memberOf, id, ldapUsername, superUser){
@@ -515,26 +370,8 @@ class RouterStore {
     this.language = lang === 'en' ? 0 : 1
   }
 
-  setService(service = 'admin'){
-    this.service = service
-  }
-  /** ***************************************************************************************************************************************** */
-  /*                                            UG REDIS - examiners, teachers and responsibles                                                */
-  /** ***************************************************************************************************************************************** */
-  @action getCourseEmployeesPost(key, type = 'multi', lang = 'sv') {
-    return axios.post(this.buildApiUrl(this.paths.redis.ugCache.uri, { key: key, type: type }), this._getOptions(JSON.stringify(this.redisKeys))).then(result => {
-      //console.log('result.body', result.data)
-
-      return result.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message, err.response.data)
-      }
-      throw err
-    })
-  }
-
-  /** ***********************************************************************************************************************/
+ 
+ 
 
   @action getLdapUserByUsername(params) {
     return axios.get(this.buildApiUrl(this.paths.api.searchLdapUser.uri, params), this._getOptions()).then((res) => {

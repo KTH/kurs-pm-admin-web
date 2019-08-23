@@ -29,14 +29,7 @@ class MemoMenu extends Component {
             semester: this.props.activeSemester && this.props.activeSemester.length > 0  ? this.props.activeSemester   : this.props.semesterList[0],
             rounds: this.props.tempData && !this.props.saved ? this.props.tempData.roundIdList.split(',') : [],
             usedRounds: this.props.routerStore.usedRounds.usedRounds ? this.props.routerStore.usedRounds.usedRounds  : [],
-            draftAnalysis: this.props.routerStore.usedRounds.draftAnalysis ? this.props.routerStore.usedRounds.draftAnalysis : [],
-            publishedAnalysis: this.props.routerStore.usedRounds.publishedAnalysis ? this.props.routerStore.usedRounds.publishedAnalysis : [],
-            selectedRadio: {
-                draft: '',
-                published:'',
-            },
             lastSelected: this.props.tempData ? 'new' : '',
-            canOnlyPreview: '',
             temporaryData: this.props.tempData,
             newSemester: false
         }
@@ -45,8 +38,6 @@ class MemoMenu extends Component {
         this.handleSelectedSemester = this.handleSelectedSemester.bind(this)
         this.goToEditMode = this.goToEditMode.bind(this)
         this.handleRoundCheckbox = this.handleRoundCheckbox.bind(this)
-        this.handleSelectedDraft = this.handleSelectedDraft.bind(this)
-        this.handleSelectedPublished = this.handleSelectedPublished.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
         this.handleDelete = this.handleDelete.bind(this)
         this.handlePreview = this.handlePreview.bind(this)
@@ -65,17 +56,12 @@ class MemoMenu extends Component {
 
     handleSelectedSemester(event) {
         event.preventDefault()
-        let radios = this.state.selectedRadio
-        radios.published = ''
-        radios.draft = ''
         this.getUsedRounds(event.target.id)
         this.setState({
             semester: event.target.id,
             collapseOpen: true,
             firstVisit: false,
             rounds:[],
-            lastSelected:'',
-            selectedRadio: radios,
             newSemester: true
         })
     }
@@ -85,14 +71,11 @@ class MemoMenu extends Component {
     //********************************************************************************** */
     handleRoundCheckbox(event) {
         let prevState = this.state
-        prevState.canOnlyPreview = false
         if ( this.state.alert.length > 0 )
             prevState.alert = ''
 
         if ( event.target.checked ){
-            prevState.selectedRadio.draft = []
             prevState.rounds.push(event.target.id)
-            prevState.lastSelected = 'new'
             prevState.temporaryData = undefined
             this.setState(prevState)
         }
@@ -102,94 +85,29 @@ class MemoMenu extends Component {
             this.setState(prevState)
         }
     }
-
-    handleSelectedDraft(event) {
-        let prevState = this.state
-        prevState.rounds =[]
-        if(event.target.id.indexOf('_preview') >0 ){
-            prevState.selectedRadio.draft = event.target.id.split('_preview')[0]
-            prevState.canOnlyPreview = true
-            this.setState(prevState)
-        }else{
-            prevState.selectedRadio.draft = event.target.id
-            prevState.lastSelected = 'draft'
-            prevState.alert = ''
-            prevState.canOnlyPreview = false
-            prevState.temporaryData = undefined
-            this.setState(prevState)
-        }
-    }
-
-    handleSelectedPublished(event) {
-        let prevState = this.state
-        if(event.target.id.indexOf('_preview') >0 ){
-            prevState.selectedRadio.published = event.target.id.split('_preview')[0]
-            prevState.canOnlyPreview = true
-            this.setState(prevState)
-        }else{
-            prevState.selectedRadio.published = event.target.id
-            prevState.lastSelected = 'published'
-            prevState.alert = ''
-            prevState.temporaryData = undefined
-            this.setState(prevState)
-        }
-    }
-
    
     //************************ SUBMIT BUTTONS **************************** */
     //******************************************************************** */
 
     goToEditMode(event) {
         event.preventDefault()
-        if (this.state.rounds.length > 0 || this.state.selectedRadio.published.length > 0 || this.state.selectedRadio.draft.length > 0 )
-            if(this.state.lastSelected === 'new')
-                this.props.editMode(this.state.semester, this.state.rounds, null, this.state.lastSelected, this.state.temporaryData)
-            else
-                this.props.editMode(this.state.semester, null, this.state.selectedRadio[this.state.lastSelected],  this.state.lastSelected, this.state.temporaryData)
-        else
+        if (this.state.rounds.length > 0 ){
+            this.props.editMode(this.state.semester, this.state.rounds, null, this.state.lastSelected, this.state.temporaryData)
+        }
+        else{
             this.setState({
                 alert: i18n.messages[this.props.routerStore.language].messages.alert_no_rounds_selected
             })
+        }
     }
 
     handleCancel(event) {
         event.preventDefault()
-        window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.courseCode}?serv=kutv&event=cancel`
+        //window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.courseCode}?serv=kutv&event=cancel`
       }
 
     handleDelete ( id, fromModal = false ){
-        if( !fromModal ){
-            if (this.state.selectedRadio.draft.length > 0){
-                let modalOpen = this.state.modalOpen
-                modalOpen.delete = ! modalOpen.delete === true
-                this.setState({
-                    modalOpen: modalOpen
-                })
-            }
-            else{
-                this.setState({
-                    alert: i18n.messages[this.props.routerStore.language].messages.alert_no_rounds_selected
-                })
-            }
-        }
-        else{
-            this.props.routerStore.deleteRoundAnalysis(id).then(result =>{
-                this.props.routerStore.deleteFileInStorage(id).then( result => {
-                const analysisName = getValueFromObjectList(this.state.draftAnalysis, id, 'analysisId', 'analysisName')
-                window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.courseCode}?serv=kutv&event=delete&id=${this.state.selectedRadio.draft}&term=${this.state.semester}&name=${analysisName}`
-                console.log(result)
-                this.getUsedRounds(this.state.semester)
 
-                let { modalOpen, selectedRadio} = this.state
-                selectedRadio.draft = ''
-                modalOpen.delete = ! modalOpen.delete === true
-                this.setState({
-                    modalOpen,
-                    selectedRadio
-                })
-            })
-            })
-        }
     }
 
    handlePreview(event){
@@ -215,21 +133,9 @@ class MemoMenu extends Component {
         const prevState = this.state
         return this.props.routerStore.getUsedRounds(routerStore.courseData.courseCode, semester)
             .then(result => {
-                if( analysisId && analysisId.length > 0){
-                    if(routerStore.status === 'draft'){
-                        prevState.selectedRadio.draft = analysisId
-                        prevState.lastSelected = 'draft'
-                    } else {
-                        prevState.selectedRadio.published = analysisId
-                        prevState.lastSelected = 'published'
-                    }
-                }
                 thisInstance.setState({
                     semester: semester,
                     usedRounds: routerStore.usedRounds.usedRounds,
-                    draftAnalysis: routerStore.usedRounds.draftAnalysis,
-                    publishedAnalysis: routerStore.usedRounds.publishedAnalysis,
-                    selectedRadio: prevState.selectedRadio,
                     lastSelected: prevState.lastSelected,
                     alert: ''
                 })
@@ -238,9 +144,7 @@ class MemoMenu extends Component {
 
     showEditButton(){
         return(
-            this.props.routerStore.status === 'published'
-                ? this.state.publishedAnalysis.length > 0
-                : this.state.draftAnalysis.length > 0 || this.props.roundList[this.state.semester].length > this.state.usedRounds.length
+                this.props.roundList[this.state.semester].length > this.state.usedRounds.length
         )
     }
     
@@ -269,23 +173,10 @@ class MemoMenu extends Component {
         if (routerStore.usedRounds.length === 0 || routerStore.hasChangedStatus){
             this.getUsedRounds(this.state.semester)
         } else {
-            if( analysisId && analysisId.length > 0 && !this.state.newSemester){
-                if(routerStore.status === 'draft' && routerStore.analysisData && routerStore.analysisData.isPublished !== true){
-                    prevState.selectedRadio.draft = analysisId
-                    prevState.lastSelected = 'draft'
-                } else {
-
-                    prevState.selectedRadio.published = analysisId
-                    prevState.lastSelected = 'published'
-                }
-            }
             if (this.props.progress === 'new_back'){
                 this.setState({
                     semester: this.state.semester,
                     usedRounds: routerStore.usedRounds.usedRounds,
-                    draftAnalysis: routerStore.usedRounds.draftAnalysis,
-                    publishedAnalysis: routerStore.usedRounds.publishedAnalysis,
-                    selectedRadio: prevState.selectedRadio,
                     lastSelected: prevState.lastSelected,
                     alert: ''
                 })
@@ -296,7 +187,7 @@ class MemoMenu extends Component {
     render() {
         const { status, semesterList, roundList, routerStore } = this.props
         const translate = i18n.messages[routerStore.language].messages
-        const showAllEmptyNew = status !== 'published' && this.state.draftAnalysis.length === 0 && roundList[this.state.semester].length === this.state.usedRounds.length
+        const showAllEmptyNew = roundList[this.state.semester].length === this.state.usedRounds.length
         const showAllEmptyPublished = status === 'published' && this.state.publishedAnalysis.length === 0 
 
         if (routerStore.browserConfig.env === 'dev'){
@@ -361,39 +252,10 @@ class MemoMenu extends Component {
                                     <h3>{translate.header_analysis_menu}</h3>
                                     <InfoButton addClass = 'padding-top-30' id = 'info_choose_course_offering' textObj = {translate.info_choose_course_offering}/>
                                 </div>
-                   
-                                {status === 'new' || status === 'draft' 
-                                    ? <div className= 'selectBlock'>
-                                        {/************************************************************************************* */}
-                                        {/*                              DRAFT ANALYSIS                                          */}
-                                        {/************************************************************************************* */}
-                                       {/* {this.state.draftAnalysis.length > 0
-                                        ?<FormGroup id='drafts'>
-                                            <p>{translate.intro_draft}</p>
-                                            <ul className='no-padding-left'>
-                                            {this.state.draftAnalysis.map(analysis =>
-                                                <li className = 'select-list' key={analysis.analysisId}>
-                                                    < Label key={"Label" + analysis.analysisId} for={analysis.analysisId} >
-                                                        <Input type="radio"
-                                                            id={`${!analysis.hasAccess ? analysis.analysisId +'_preview' : analysis.analysisId }`}
-                                                            key={analysis.analysisId}
-                                                            value={analysis.analysisId}
-                                                            onChange={this.handleSelectedDraft}
-                                                            checked={this.state.selectedRadio.draft === analysis.analysisId}
-                                                            //disabled ={!analysis.hasAccess}
-                                                        />
-                                                        {analysis.analysisName}  <span className='no-access'>  {analysis.hasAccess ? '' : translate.not_authorized_course_offering }</span>
-                                                    </Label>
-                                                    <br />
-                                                </li>
-                                            )}
-                                            </ul>
-                                        </FormGroup>
-                                        : ''
-                                    }*/}
-                                    
-                           
-                                    
+                
+                                     <div className= 'selectBlock'>
+                                        
+                                
                                     {/************************************************************************************* */}
                                     {/*                               NEW ANALYSIS                                          */}
                                     {/************************************************************************************* */}
@@ -434,8 +296,6 @@ class MemoMenu extends Component {
                                         }
                                    
                                 </div>
-                                :'' 
-                                }
                             </Form>
                             }
                     </Row>
@@ -445,17 +305,14 @@ class MemoMenu extends Component {
                 {/************************************************************************************* */}
                 <Row className="button-container text-center">
                     <Col sm="12" lg="4">
-                        { this.state.selectedRadio.draft.length > 0 && !this.state.canOnlyPreview
+                        { /*this.state.selectedRadio.draft.length > 0 && !this.state.canOnlyPreview
                             ? <span>
                                 <Button color='danger' id='delete' key='delete' onClick={this.toggleModal} style={{marginRight: '5px'}}>
                                     {translate.btn_delete}
                                 </Button>
-                                <Button color='secondary' id='copy' key='copy' onClick={this.toggleModal} >
-                                    {translate.btn_copy}
-                                </Button>
-                            </span>
+                                </span>
                             : ''
-                        }
+                        */}
                     </Col>
                     <Col sm="12" lg="4">
                         <Button color='secondary' id='cancel' key='cancel' onClick={this.handleCancel} >
@@ -475,12 +332,7 @@ class MemoMenu extends Component {
                 {/************************************************************************************* */}
                 {/*                               MODALS FOR DELETE AND COPY                            */}
                 {/************************************************************************************* */}  
-                <InfoModal type = 'delete' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.delete} id={this.state.selectedRadio.draft} handleConfirm={this.handleDelete} infoText={translate.info_delete}/>
-                <InfoModal type = 'copy' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.copy} 
-                id={'copy'} 
-                url={`${routerStore.browserConfig.hostUrl}${routerStore.browserConfig.proxyPrefixPath.uri}/preview/${this.state.selectedRadio.draft}?title=${encodeURI(routerStore.courseTitle.name+'_'+routerStore.courseTitle.credits)}`} 
-                infoText={translate.info_copy_link}
-                copyHeader = {translate.header_copy_link}/>
+               {/* <InfoModal type = 'delete' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.delete} id={this.state.selectedRadio.draft} handleConfirm={this.handleDelete} infoText={translate.info_delete}/>*/}
             </div>
         )
     }

@@ -21,9 +21,9 @@ class AdminPage extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      saved: this.props.routerStore.analysisData !== undefined && this.props.routerStore.analysisData.changedDate.length > 2,
-      values: this.props.routerStore.analysisData,
-      isPublished: this.props.routerStore.analysisData ? this.props.routerStore.analysisData.isPublished : this.props.routerStore.status === 'published',
+      saved: false, //TO DELETE
+      values: this.props.routerStore.newMemoList[0],
+      isPublished: false, //TO DELETE
       progress: this.props.routerStore.status === 'new' ? 'new' : 'edit',
       isPreviewMode: this.props.routerStore.status === 'preview',
       activeSemester: '',
@@ -36,19 +36,15 @@ class AdminPage extends Component {
       alertSuccess: '',
       alertError: '',
       madatoryMessage: '',
-      analysisFile: this.props.routerStore.analysisData ? this.props.routerStore.analysisData.analysisFileName : '',
-      pmFile: this.props.routerStore.analysisData ? this.props.routerStore.analysisData.pmFileName : '',
+      memoFile: '',
       hasNewUploadedFilePM: false,
-      hasNewUploadedFileAnalysis: false,
       notValid: [],
       fileProgress: {
-        pm: 0,
-        analysis: 0
+        pm: 0
       }
     }
     this.handlePreview = this.handlePreview.bind(this)
     this.editMode = this.editMode.bind(this)
-    this.handleSave = this.handleSave.bind(this)
     this.handlePublish = this.handlePublish.bind(this)
     this.handleBack = this.handleBack.bind(this)
     this.handleCancel = this.handleCancel.bind(this)
@@ -71,7 +67,7 @@ class AdminPage extends Component {
     if(e.target.files[0].type === 'application/pdf'){
      response = await this.sendRequest(id, file, e)
     } else {
-      const notValid = id === 'analysis' ? ['analysisFile'] : ['pmFile']
+      const notValid = ['memoFile']
       this.setState({
         notValid: notValid,
         alertError: i18n.messages[this.props.routerStore.language].messages.alert_not_pdf
@@ -95,39 +91,25 @@ class AdminPage extends Component {
       req.onreadystatechange = function() {
         let values = thisInstance.state.values
         if (this.readyState == 4 && this.status == 200) {
-          
-          if(id === 'analysis'){
-            values.pdfAnalysisDate = getTodayDate()
-            fileProgress.analysis = 0
-            thisInstance.setState({
-              analysisFile: this.responseText, 
-              alertSuccess: i18n.messages[thisInstance.props.routerStore.language].messages.alert_uploaded_file,
-              values: values,
-              hasNewUploadedFileAnalysis: true,
-              notValid: [],
-              alertError: ''
-            })
-            } else {
-              values.pdfPMDate = getTodayDate()
               fileProgress.pm = 0
               thisInstance.setState({
-                pmFile: this.responseText,  
+                memoFile: this.responseText,
+                pdfPMDate: getTodayDate(),  
                 alertSuccess: i18n.messages[thisInstance.props.routerStore.language].messages.alert_uploaded_file,
                 values: values,
                 notValid: [],
                 alertError: ''
               })
-            }
         }
       }
 
       let formData = new FormData()
-      const data = this.getMetadata(this.state.isPublished ? 'published' : this.state.saved ? 'draft' : 'new')
+      const data = this.getMetadata(this.state.isPublished ? 'published' :  'draft' )
       formData.append("file", e.target.files[0], e.target.files[0].name)
       formData.append('courseCode', data.courseCode)
-      formData.append('analysis', data.analysis)
+      formData.append('analysis', 'TODO')
       formData.append('status', data.status)
-      req.open("POST", `${this.props.routerStore.browserConfig.hostUrl}${this.props.routerStore.paths.storage.saveFile.uri.split(':')[0]}${this.props.routerStore.analysisData._id}/${id}/${this.state.isPublished}`);
+      req.open("POST", `${this.props.routerStore.browserConfig.hostUrl}${this.props.routerStore.paths.storage.saveFile.uri.split(':')[0]}${this.state.activeSemester}/${this.props.routerStore.courseCode}/${this.state.rounds}`);
       req.send(formData)
     })
   }
@@ -135,7 +117,7 @@ class AdminPage extends Component {
   getMetadata(status){
     return {
       courseCode: this.state.values.courseCode,
-      analysis: this.state.values._id,
+      pm: this.state.values._id,
       status
     }
   }
@@ -143,7 +125,7 @@ class AdminPage extends Component {
   handleRemoveFile(event){
     event.target.id === 'remove_analysis'
     ? this.setState({analysisFile: '', hasNewUploadedFileAnalysis: true})
-    : this.setState({pmFile: '', hasNewUploadedFilePM: true})
+    : this.setState({memoFile: '', hasNewUploadedFilePM: true})
   }
   
 //***************************** BUTTON CLICK HANDLERS ****************************** */
@@ -180,7 +162,7 @@ class AdminPage extends Component {
             thisAdminPage.setState({
               isPreviewMode: false,
               progress: 'back_new',
-              activeSemester: routerStore.analysisData.semester,
+              activeSemester: routerStore.activeSemester,
               analysisFile:'',
               alert: ''
             })
@@ -189,7 +171,7 @@ class AdminPage extends Component {
       this.setState({
         isPreviewMode: false,
         progress: 'back_new',
-        activeSemester: routerStore.analysisData.semester,
+        activeSemester: routerStore.activeSemester,
         alert: ''
       })
     }
@@ -203,73 +185,22 @@ class AdminPage extends Component {
   }
 
   handleCancel(event) {
-    window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.analysisData.courseCode}?serv=kutv&event=cancel`
+    //window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.analysisData.courseCode}?serv=kutv&event=cancel`
   }
   
-  handleSave(event) {
-    event.preventDefault()
-    const postObject = this.state.values
-    const thisInstance = this
-    const { routerStore } = this.props
-  
-    if(this.state.analysisFile !== postObject.analysisFileName){
-      postObject.analysisFileName = this.state.analysisFile
-    }
-
-    if(this.state.pmFile !== postObject.pmFileName){
-      postObject.pmFileName = this.state.pmFile
-      //postObject.pdfPmDate = getTodayDate()
-    }
-
-    if( !this.state.saved && this.state.analysisFile.length > 0 ){
-      routerStore.updateFileInStorage(this.state.analysisFile, this.getMetadata('draft'))
-    }
-
-    return routerStore.postRoundAnalysisData(postObject, postObject.changedDate.length === 0 )
-      .then((data) => {
-        if(this.state.isPreviewMode){
-          window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore.analysisData.courseCode}?serv=kutv&event=save&id=${routerStore.analysisId}&term=${routerStore.analysisData.semester}&name=${routerStore.analysisData.analysisName}`)// term=, name=
-        }
-        else{
-          thisInstance.setState({
-            saved: true,
-            progress: 'edit',
-            alertSuccess: i18n.messages[routerStore.language].messages.alert_saved_draft,
-            hasNewUploadedFileAnalysis: false,
-            hasNewUploadedFilePM: false,
-            values: data
-          })
-          thisInstance.props.history.push(thisInstance.props.routerStore.browserConfig.proxyPrefixPath.uri + '/' + thisInstance.props.routerStore.analysisId)
-        }  
-      })
-  }
-
+ 
   handlePublish(event, fromModal = false) {
     if(!fromModal){    
       event.preventDefault()
     }
     const { routerStore } = this.props
     const thisInstance = this
-    let postObject = this.state.values
     let modal = this.state.modalOpen
-    
-    if( this.state.hasNewUploadedFileAnalysis ){
-      postObject.pdfAnalysisDate = getTodayDate()
-    }
-
-    if(this.state.pmFile !== postObject.pmFileName){
-      postObject.pmFileName = this.state.pmFile
-    }
-
-    if(postObject.isPublished){
-      postObject.changedAfterPublishedDate = getTodayDate()
-    }else{
-      routerStore.updateFileInStorage(this.state.analysisFile, this.getMetadata('published'))
+    routerStore.updateFileInStorage(this.state.memoFile, this.getMetadata('published'))
       postObject.publishedDate = getTodayDate()
       postObject.isPublished = true
-    }
     
-    postObject.analysisFileName = this.state.analysisFile
+    
     return this.props.routerStore.postRoundAnalysisData(postObject, this.props.routerStore.status === 'new' )
       .then((response) => {
         //console.log('handlePublish!!!!!', response)
@@ -286,7 +217,7 @@ class AdminPage extends Component {
             modalOpen: modal,
             values: response
           })
-          window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore.analysisData.courseCode}?serv=kutv&event=pub&id=${routerStore.analysisId}&term=${routerStore.analysisData.semester}&name=${routerStore.analysisData.analysisName}`)
+          //window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore.analysisData.courseCode}?serv=kutv&event=pub&id=${routerStore.analysisId}&term=${routerStore.analysisData.semester}&name=${routerStore.analysisData.analysisName}`)
         }
       })  
   }
@@ -295,39 +226,19 @@ class AdminPage extends Component {
   //************************ OTHER **************************** */
   //*************************************************************/
 
-  editMode(semester, rounds, analysisId, status, tempData) { 
+  editMode(semester, rounds,  status, tempData) { 
     const thisAdminPage = this
-    
-    if (status === 'new') {
-      return this.props.routerStore.createAnalysisData(semester, rounds).then( data => {
-        const valuesObject = this.handleTemporaryData(thisAdminPage.props.routerStore.analysisData, tempData)
+    const newMemoList = this.props.routerStore.createMemoData(semester, rounds)
+        //const valuesObject = this.handleTemporaryData(thisAdminPage.props.routerStore.analysisData, tempData)
         thisAdminPage.setState({
           progress: "edit",
           isPreviewMode: false,
           isPublished: false,
-          values: valuesObject.values,
+          values: newMemoList,
           activeSemester: semester,
-          analysisFile: valuesObject.files.analysisFile,
-          pmFile:  valuesObject.files.pmFile,
+          memoFile:  '',
           alert: ''
         })
-    })
-    } else {
-      this.props.history.push(this.props.routerStore.browserConfig.proxyPrefixPath.uri + '/' + analysisId)
-      return thisAdminPage.props.routerStore.getRoundAnalysis(analysisId).then(analysis => {
-        const valuesObject = this.handleTemporaryData(thisAdminPage.props.routerStore.analysisData, tempData)
-        thisAdminPage.setState({
-          progress: 'edit',
-          isPreviewMode: false,
-          isPublished: thisAdminPage.props.routerStore.analysisData.isPublished,
-          values: valuesObject.values,
-          analysisFile: valuesObject.files.analysisFile,
-          pmFile:  valuesObject.files.pmFile,
-          saved: true,
-          alert: ''
-        })
-      })
-    }
   }
 
   toggleModal(event){
@@ -339,51 +250,32 @@ class AdminPage extends Component {
   }
 
   handleInputChange(event) {
-    let values = this.state.values
-    values[event.target.id] = event.target.value
     this.setState({
-      values: values,
+      pdfPMDate: event.target.value,
       //saved: false,
       notValid: [],
       alertError:''
     })
   }
+  
 
   validateData(values){
     let invalidList = []
-    const toValidate = ['registeredStudents', 'examinationGrade', 'examiners', 'responsibles']
-    for (let key of toValidate) {
-      if( values[key].length === 0){
-        invalidList.push(key)
-      }
-    }
-
-    if(this.state.analysisFile.length === 0){
-      invalidList.push('analysisFile')
+    if(this.state.memoFile.length === 0){
+      invalidList.push('memoFile')
     } else {
-      if(!isValidDate(values.pdfAnalysisDate)){
-        invalidList.push('pdfAnalysisDate')
-      }
-    }
-
-    if(this.state.pmFile.length > 0){
       if(!isValidDate(values.pdfPMDate)){
         invalidList.push('pdfPMDate')
       }
     }
-
-    if(this.state.isPublished && values.commentChange.length === 0){
-      invalidList.push('commentChange')
-    }
-    
     return invalidList
   }
 
   getTempData(){
     if( this.state.progress === 'back_new' ){
       const { alterationText, examinationGrade, registeredStudents, roundIdList } = this.state.values
-      const { pmFile, analysisFile } = this.state
-      return { alterationText, examinationGrade, registeredStudents, roundIdList,  pmFile, analysisFile }
+      const { memoFile, analysisFile } = this.state
+      return { alterationText, examinationGrade, registeredStudents, roundIdList,  memoFile, analysisFile }
     }
     return null
   }
@@ -392,20 +284,15 @@ class AdminPage extends Component {
     let returnObject = {
       values: valueObject,
       files: {
-        pmFile: '',
+        memoFile: '',
         analysisFile: ''
       }
     }
     if(tempData){
-      returnObject.values.alterationText = tempData.alterationText
-      returnObject.values.registeredStudents = tempData.registeredStudents
-      returnObject.values.examinationGrade = tempData.examinationGrade
-      returnObject.files.analysisFile = tempData.analysisFile
-      returnObject.files.pmFile = tempData.pmFile
+      returnObject.files.memoFile = tempData.memoFile
     }else{
       if(valueObject){
-        returnObject.files.analysisFile =  valueObject.analysisFileName,
-        returnObject.files.pmFile = valueObject.pmFileName 
+        returnObject.files.memoFile = this.state.memoFile 
       }
     }
     return returnObject
@@ -429,7 +316,7 @@ class AdminPage extends Component {
       console.log("routerStore - AdminPage", routerStore)
       console.log("this.state - AdminPage", this.state)
     }
-    if (routerStore.analysisData === undefined || this.state.progress === 'back_new')
+    if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
         <div ref={this.divTop}>
           { routerStore.errorMessage.length === 0
@@ -454,7 +341,7 @@ class AdminPage extends Component {
                   roundList= { routerStore.roundData }
                   progress= { this.state.progress }
                   activeSemester= { this.state.activeSemester } 
-                  firstVisit = { routerStore.analysisData === undefined }
+                  firstVisit = { routerStore.newMemoList.length === 0 }
                   status = { routerStore.status }
                   tempData = {/*this.state.saved ? {} : */ this.getTempData()}
                   saved = { this.state.values && this.state.values.changedDate.length > 0}
@@ -494,7 +381,7 @@ class AdminPage extends Component {
             ? <Preview 
               values={ this.state.values } 
               analysisFile= { this.state.analysisFile }
-              pmFile = { this.state.pmFile }
+              memoFile = { this.state.memoFile }
             />
             : ""
           }
@@ -514,8 +401,8 @@ class AdminPage extends Component {
                 {/* ---- Semester and name of analysis ---- */}
                 <h2>{translate.header_edit_content}</h2>
                 <p> <b>{translate.header_semester} </b>{
-                  `${translate.course_short_semester[this.state.values.semester.toString().match(/.{1,4}/g)[1]]} 
-                                    ${this.state.values.semester.toString().match(/.{1,4}/g)[0]}`
+                  `${translate.course_short_semester[this.state.activeSemester.toString().match(/.{1,4}/g)[1]]} 
+                                    ${this.state.activeSemester.toString().match(/.{1,4}/g)[0]}`
                   }
                  <b> {translate.header_course_offering}</b> {this.state.values.analysisName}</p>
 
@@ -552,16 +439,16 @@ class AdminPage extends Component {
                       handleUpload = {this.hanleUploadFile} 
                       progress={fileProgress.pm} 
                       path={routerStore.browserConfig.proxyPrefixPath.uri}
-                      file = {this.state.pmFile}
+                      file = {this.state.memoFile}
                       notValid = {this.state.notValid}
                       handleRemoveFile ={this.handleRemoveFile}
-                      type = 'pmFile'
+                      type = 'memoFile'
                       />
-                       { this.state.pmFile.length > 0 
+                       { this.state.memoFile.length > 0 
                         ? <span>
                          <FormLabel translate = {translate} header = {'header_upload_file_pm_date'} id = {'info_upload_course_memo_date'} />
                          <Input id='pdfPMDate' key='pdfPMDate' type='date' 
-                           value={this.state.values.pdfPMDate} 
+                           value={this.state.pdfPMDate} 
                            onChange={this.handleInputChange} 
                            className = {this.state.notValid.indexOf('pdfPMDate') > -1 ? 'not-valid' : ''}
                            style = {{ maxWidth: '180px'}}
