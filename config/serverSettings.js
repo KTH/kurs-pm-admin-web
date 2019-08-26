@@ -15,7 +15,7 @@ const { safeGet } = require('safe-utils')
 const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
-const devkursPmApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000')
+const devmemoApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000')
 const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/')
 const devSessionKey = devDefaults('node-web.sid') // TODO ??
 const devSessionUseRedis = devDefaults(true)
@@ -62,7 +62,7 @@ module.exports = {
 
   // API keys
   apiKey: {
-    kursPmApi: getEnv('PM_API_KEY', devDefaults('9876'))
+    memoApi: getEnv('PM_API_KEY', devDefaults('9876'))
   },
 
   // Authentication
@@ -76,7 +76,7 @@ module.exports = {
 
   // Service API's
   nodeApi: {
-    kursPmApi: unpackNodeApiConfig('PM_API_URI', devkursPmApi)
+    memoApi: unpackNodeApiConfig('PM_API_URI', devmemoApi)
   },
 
   // Cortina

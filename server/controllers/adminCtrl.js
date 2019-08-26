@@ -14,7 +14,7 @@ const serverConfig = require('../configuration').server
 
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
-const kursPmApi = require('../apiCalls/kursPmApi')
+const memoApi = require('../apiCalls/memoApi')
 const koppsCourseData = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 
@@ -23,7 +23,7 @@ let { staticFactory } = require('../../dist/app.js')
 module.exports = {
   getIndex: getIndex,
   getRoundAnalysis: co.wrap(_getRoundAnalysis),
-  postRoundAnalysis: co.wrap(_postRoundAnalysis),
+  postMemoData: co.wrap(_postMemoData),
   deleteRoundAnalysis: co.wrap(_deleteRoundAnalysis),
   getUsedRounds: co.wrap(_getUsedRounds),
   getKoppsCourseData: co.wrap(_getKoppsCourseData),
@@ -34,20 +34,12 @@ module.exports = {
 
 // ------- ANALYSES FROM KURSUTVECKLING-API: POST, GET, DELETE, GET USED ROUNDS ------- /
 
-function * _postRoundAnalysis (req, res, next) {
-  const roundAnalysisId = req.params.id
-  const isNewAnalysis = req.params.status
-  const language = req.params.language || 'sv'
+function * _postMemoData (req, res, next) {
   const sendObject = JSON.parse(req.body.params)
-  log.debug('_postRoundAnalysis id:' + req.params.id)
+  log.debug('_postMemoData :' + req.body.params)
   try {
     let apiResponse = {}
-    if (isNewAnalysis === 'true') {
-      apiResponse = yield kursutvecklingAPI.setRoundAnalysisData(roundAnalysisId, sendObject, language)
-    } else {
-      apiResponse = yield kursutvecklingAPI.updateRoundAnalysisData(roundAnalysisId, sendObject, language)
-    }
-
+    apiResponse = yield memoApi.setMemoData('default', sendObject)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from setRoundAnalysis ', { error: err })
@@ -60,7 +52,7 @@ function * _getRoundAnalysis (req, res, next) {
   const language = req.params.language || 'sv'
   log.info('_getRoundAnalysis id:' + req.params.id)
   try {
-    const apiResponse = yield kursutvecklingAPI.getRoundAnalysisData(roundAnalysisId, language)
+    const apiResponse = yield memoAPI.getRoundAnalysisData(roundAnalysisId, language)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from getRoundAnalysis ', { error: err })
@@ -72,7 +64,7 @@ function * _deleteRoundAnalysis (req, res, next) {
   const roundAnalysisId = req.params.id
   log.info('_deleteRoundAnalysis with id:' + req.params.id)
   try {
-    const apiResponse = yield kursutvecklingAPI.deleteRoundAnalysisData(roundAnalysisId)
+    const apiResponse = yield memoAPI.deleteRoundAnalysisData(roundAnalysisId)
     return httpResponse.json(res, apiResponse)
   } catch (err) {
     log.error('Exception from _deleteRoundAnalysis ', { error: err })
@@ -85,7 +77,7 @@ function * _getUsedRounds (req, res, next) {
   const semester = req.params.semester
   log.debug('_getUsedRounds with course code: ' + courseCode + 'and semester: ' + semester)
   try {
-    const apiResponse = yield kursPmApi.getUsedRounds(courseCode, semester)
+    const apiResponse = yield memoApi.getUsedRounds(courseCode, semester)
     log.debug('_getUsedRounds response: ', apiResponse.body)
     return httpResponse.json(res, apiResponse.body)
   } catch (error) {
@@ -145,11 +137,11 @@ function * _deleteFileInStorage (res, req, next) {
 }
 
 async function getIndex (req, res, next) {
-  console.log(api.kursPmApi)
+  console.log(api.memoApi)
 
   /** ------- CHECK OF CONNECTION TO API AND UG_REDIS ------- */
-  if (api.kursPmApi.connected === false) {
-    log.error('No connection to kurs-pm-api', api.kursPmApi)
+  if (api.memoApi.connected === false) {
+    log.error('No connection to kurs-pm-api', api.memoApi)
     const error = new Error('API - ERR_CONNECTION_REFUSED')
     error.status = 500
     return next(error)

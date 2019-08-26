@@ -121,11 +121,11 @@ class RouterStore {
   }
 
   /** ***************************************************************************************************************************************** */
-  /*                                               ANALYSIS ACTIONS (kursutveckling - API)                                                      */
+  /*                                               ANALYSIS ACTIONS (memo - API)                                                      */
   /** ***************************************************************************************************************************************** */
  
   @action getRoundAnalysis(id, lang = 'sv') {
-    return axios.get(this.buildApiUrl(this.paths.api.kursutvecklingGetById.uri,
+    return axios.get(this.buildApiUrl(this.paths.api.memoGetById.uri,
       { id: id }),
       this._getOptions()
     ).then(result => {
@@ -146,20 +146,24 @@ class RouterStore {
     })
   }
 
-  @action postRoundAnalysisData(postObject, status) { 
-    return axios.post(this.buildApiUrl(this.paths.api.kursutvecklingPost.uri,
-      { id: postObject._id, status: status/*, lang: lang*/ }),
+  @action postMemoData(postObject, fileName, uploadDate) { 
+
+    for(let index=0; index < postObject.length; index ++){
+      postObject[index].courseMemoFileName = fileName
+      postObject[index].pdfMemoUploadDate = uploadDate
+    }
+
+
+    return axios.post(this.buildApiUrl(this.paths.api.memoPost.uri,
+      {id: 'default' }),
       this._getOptions(JSON.stringify(postObject))
     ).then(apiResponse => {
       if (apiResponse.statusCode >= 400) {
         this.errorMessage = result.statusText
         return "ERROR-" + apiResponse.statusCode
       }
-      if (this.status === 'new')
-        this.hasChangedStatus = true
+      
 
-      this.status = apiResponse.data.isPublished ? 'published' : 'draft'
-      this.analysisId = apiResponse.data._id
       return apiResponse.data
     }).catch(err => {
       if (err.response) {
@@ -171,8 +175,8 @@ class RouterStore {
     })
   }
 
-  @action putRoundAnalysisData(postObject, status) {
-    return axios.post(this.buildApiUrl(this.paths.api.kursutvecklingPost.uri,
+  @action putMemoData(postObject, status) {
+    return axios.post(this.buildApiUrl(this.paths.api.memoPost.uri,
       { id: postObject._id, status: status/*, lang: lang*/ }),
       this._getOptions(JSON.stringify(postObject))
     ).then(apiResponse => {
@@ -199,7 +203,7 @@ class RouterStore {
   }
 
   @action deleteRoundAnalysis(id, lang = 'sv') {
-    return axios.delete(this.buildApiUrl(this.paths.api.kursutvecklingDelete.uri,
+    return axios.delete(this.buildApiUrl(this.paths.api.memoDelete.uri,
       { id: id }),
       this._getOptions()
     ).then(result => {
@@ -214,7 +218,7 @@ class RouterStore {
 
   @action getUsedRounds(courseCode, semester) {
     this.courseCode = courseCode
-    return axios.get(this.buildApiUrl(this.paths.api.kursutvecklingGetUsedRounds.uri,
+    return axios.get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri,
       { courseCode: courseCode, semester: semester }),
       this._getOptions()
     ).then(result => {
@@ -261,9 +265,10 @@ class RouterStore {
   analysisAccess(memoList){
     // Loops thrue published and draft analyises for access check
     const memberString = this.member.toString()
+    console.log(memoList)
     
     for(let memo=0; memo < memoList.length; memo ++){
-      for(let key = 0; key < analysis.draftAnalysis[draft].ugKeys.length; key ++){
+      for(let key = 0; key < alysis.draftAannalysis[draft].ugKeys.length; key ++){
         memoList[memo].hasAccess = memberString.indexOf(memoList[memo].ugKeys[key]) >= 0 || memberString.indexOf(SUPERUSER_PART) >-1
         if(memoList[memo].hasAccess === true)
           break
@@ -336,18 +341,18 @@ class RouterStore {
     let newMemo = {}
     this.newMemoList = []
     this.activeSemester = semester
+    let id = ''
     for(let round = 0; round<rounds.length; round++ ){
-     
-       
+      id= `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
+       //if()
       newMemo = {
-        pmFileName: '',
+        _id: `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
+        courseMemoFileName: '',
         changedBy: this.user, 
         courseCode: this.courseData.courseCode,
-        isPublished: false,
-        pdfPMDate: '',
-        publishedDate: '',
+        pdfMemoUploadDate: '',
         semester: semester,
-        koppsRroundId: rounds.toString()
+        koppsRoundId: rounds[round]
        // ,ugKeys: [...this.redisKeys.examiner, ...this.redisKeys.responsibles]
       }
       this.newMemoList.push(newMemo)
@@ -386,7 +391,7 @@ class RouterStore {
 
   @action getBreadcrumbs() {
     return {
-      url: '/kursinfoadmin/kursutveckling/',
+      url: '/kursinfoadmin/memo/',
       label: 'TODO'
     }
   }

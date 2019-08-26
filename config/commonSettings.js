@@ -14,7 +14,7 @@ const devPort = 3000
 const devUrl = 'http://localhost:' + devPort
 const devSsl = false
 const devPrefixPath = devDefaults('/kursinfoadmin/pm')
-const devStorageUri = devDefaults('https://kursinfostoragestage.blob.core.windows.net/kursutveckling-blob-container/')
+const devStorageUri = devDefaults('https://kursinfostoragestage.blob.core.windows.net/memo-blob-container/')
 
 module.exports = {
   hostUrl: getEnv('SERVER_HOST_URL', devUrl),

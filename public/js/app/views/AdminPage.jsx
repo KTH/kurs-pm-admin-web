@@ -22,7 +22,7 @@ class AdminPage extends Component {
     super(props)
     this.state = {
       saved: false, //TO DELETE
-      values: this.props.routerStore.newMemoList[0],
+      values: this.props.routerStore.newMemoList,
       isPublished: false, //TO DELETE
       progress: this.props.routerStore.status === 'new' ? 'new' : 'edit',
       isPreviewMode: this.props.routerStore.status === 'preview',
@@ -37,11 +37,13 @@ class AdminPage extends Component {
       alertError: '',
       madatoryMessage: '',
       memoFile: '',
+      pdfMemoDate: '',
       hasNewUploadedFilePM: false,
       notValid: [],
       fileProgress: {
         pm: 0
-      }
+      },
+      roundIdList:''
     }
     this.handlePreview = this.handlePreview.bind(this)
     this.editMode = this.editMode.bind(this)
@@ -94,7 +96,7 @@ class AdminPage extends Component {
               fileProgress.pm = 0
               thisInstance.setState({
                 memoFile: this.responseText,
-                pdfPMDate: getTodayDate(),  
+                pdfMemoDate: getTodayDate(),  
                 alertSuccess: i18n.messages[thisInstance.props.routerStore.language].messages.alert_uploaded_file,
                 values: values,
                 notValid: [],
@@ -194,14 +196,11 @@ class AdminPage extends Component {
       event.preventDefault()
     }
     const { routerStore } = this.props
-    const thisInstance = this
+    const thisInstance= this
     let modal = this.state.modalOpen
     routerStore.updateFileInStorage(this.state.memoFile, this.getMetadata('published'))
-      postObject.publishedDate = getTodayDate()
-      postObject.isPublished = true
     
-    
-    return this.props.routerStore.postRoundAnalysisData(postObject, this.props.routerStore.status === 'new' )
+    return this.props.routerStore.postMemoData(routerStore.newMemoList, this.state.memoFile, this.state.pdfMemoDate )
       .then((response) => {
         //console.log('handlePublish!!!!!', response)
         modal.publish = false
@@ -237,7 +236,8 @@ class AdminPage extends Component {
           values: newMemoList,
           activeSemester: semester,
           memoFile:  '',
-          alert: ''
+          alert: '',
+          roundIdList: rounds
         })
   }
 
@@ -251,7 +251,7 @@ class AdminPage extends Component {
 
   handleInputChange(event) {
     this.setState({
-      pdfPMDate: event.target.value,
+      pdfMemoDate: event.target.value,
       //saved: false,
       notValid: [],
       alertError:''
@@ -264,8 +264,8 @@ class AdminPage extends Component {
     if(this.state.memoFile.length === 0){
       invalidList.push('memoFile')
     } else {
-      if(!isValidDate(values.pdfPMDate)){
-        invalidList.push('pdfPMDate')
+      if(!isValidDate(this.state.pdfMemoDate)){
+        invalidList.push('pdfMemoDate')
       }
     }
     return invalidList
@@ -273,8 +273,8 @@ class AdminPage extends Component {
 
   getTempData(){
     if( this.state.progress === 'back_new' ){
-      const { alterationText, examinationGrade, registeredStudents, roundIdList } = this.state.values
-      const { memoFile, analysisFile } = this.state
+      const { alterationText, examinationGrade, registeredStudents} = this.state.values
+      const { memoFile, analysisFile, roundIdList} = this.state
       return { alterationText, examinationGrade, registeredStudents, roundIdList,  memoFile, analysisFile }
     }
     return null
@@ -344,7 +344,7 @@ class AdminPage extends Component {
                   firstVisit = { routerStore.newMemoList.length === 0 }
                   status = { routerStore.status }
                   tempData = {/*this.state.saved ? {} : */ this.getTempData()}
-                  saved = { this.state.values && this.state.values.changedDate.length > 0}
+                  saved = {false}
                   analysisId = {this.state.saved && this.state.values ? this.state.values._id : ''}
                 />
               }
@@ -379,8 +379,7 @@ class AdminPage extends Component {
           {this.state.values && this.state.isPreviewMode
           
             ? <Preview 
-              values={ this.state.values } 
-              analysisFile= { this.state.analysisFile }
+              roundList={ this.state.roundIdList } 
               memoFile = { this.state.memoFile }
             />
             : ""
@@ -391,7 +390,7 @@ class AdminPage extends Component {
             {/*                                 EDIT FORM                                               */}
             {/************************************************************************************* */}
               
-            {this.state.values 
+            {this.state.values && !this.state.isPreviewMode
               ? <Form className='admin-form'>
                  {/* ----- Intro text for Edit ------- */}
                   <div>
@@ -447,10 +446,10 @@ class AdminPage extends Component {
                        { this.state.memoFile.length > 0 
                         ? <span>
                          <FormLabel translate = {translate} header = {'header_upload_file_pm_date'} id = {'info_upload_course_memo_date'} />
-                         <Input id='pdfPMDate' key='pdfPMDate' type='date' 
-                           value={this.state.pdfPMDate} 
+                         <Input id='pdfMemoDate' key='pdfMemoDate' type='date' 
+                           value={this.state.pdfMemoDate} 
                            onChange={this.handleInputChange} 
-                           className = {this.state.notValid.indexOf('pdfPMDate') > -1 ? 'not-valid' : ''}
+                           className = {this.state.notValid.indexOf('pdfMemoDate') > -1 ? 'not-valid' : ''}
                            style = {{ maxWidth: '180px'}}
                            />
                            </span>

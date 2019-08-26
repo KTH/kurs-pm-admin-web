@@ -45,7 +45,6 @@ function appFactory() {
     <Provider routerStore={routerStore}>
       <Switch>
         <Route path='/kursinfoadmin/pm' component={AdminPage} asyncBefore={AdminPage.fetchData} />
-        <Route path='/kursinfoadmin/kursutveckling/preview' component={AdminPage} />
       </Switch>
     </Provider>
 

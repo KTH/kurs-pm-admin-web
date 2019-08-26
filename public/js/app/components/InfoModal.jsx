@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap'
 
 //Custom components
-import CopyText from './CopyText'
+
 
 class InfoModal extends Component {
   constructor (props) {
@@ -33,10 +33,9 @@ class InfoModal extends Component {
           <Modal isOpen = {isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
             <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
             <ModalBody>
-              {type=== 'copy'
-                ? <CopyText textToCopy={url} header = {copyHeader} />
-                : <p dangerouslySetInnerHTML={{ __html:infoText.body}}/>
-              }
+              
+              <p dangerouslySetInnerHTML={{ __html:infoText.body}}/>
+              
             </ModalBody>
             <ModalFooter>
               <Button id={type} color='secondary' onClick={toggle}>{infoText.btnCancel}</Button>

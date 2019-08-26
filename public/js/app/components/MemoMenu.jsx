@@ -26,9 +26,9 @@ class MemoMenu extends Component {
                 info: false,
                 copy: false
             },
-            semester: this.props.activeSemester && this.props.activeSemester.length > 0  ? this.props.activeSemester   : this.props.semesterList[0],
-            rounds: this.props.tempData && !this.props.saved ? this.props.tempData.roundIdList.split(',') : [],
-            usedRounds: this.props.routerStore.usedRounds.usedRounds ? this.props.routerStore.usedRounds.usedRounds  : [],
+            semester: this.props.activeSemester && this.props.activeSemester.length > 0  ? this.props.activeSemester   : '' ,//this.props.semesterList[0],
+            rounds: this.props.tempData ? this.props.tempData.roundIdList : [],
+            usedRounds: this.props.routerStore.usedRounds.usedRoundsIdList ? this.props.routerStore.usedRounds.usedRoundsIdList  : [],
             lastSelected: this.props.tempData ? 'new' : '',
             temporaryData: this.props.tempData,
             newSemester: false
@@ -135,17 +135,11 @@ class MemoMenu extends Component {
             .then(result => {
                 thisInstance.setState({
                     semester: semester,
-                    usedRounds: routerStore.usedRounds.usedRounds,
+                    usedRounds: routerStore.usedRounds.usedRoundsIdList,
                     lastSelected: prevState.lastSelected,
                     alert: ''
                 })
             })
-    }
-
-    showEditButton(){
-        return(
-                this.props.roundList[this.state.semester].length > this.state.usedRounds.length
-        )
     }
     
     componentDidMount() {
@@ -170,13 +164,13 @@ class MemoMenu extends Component {
         //const prevSelectedId = analysisId
         const prevState = this.state
        
-        if (routerStore.usedRounds.length === 0 || routerStore.hasChangedStatus){
+        if (routerStore.usedRounds.usedRoundsIdList  || routerStore.hasChangedStatus){
             this.getUsedRounds(this.state.semester)
         } else {
             if (this.props.progress === 'new_back'){
                 this.setState({
                     semester: this.state.semester,
-                    usedRounds: routerStore.usedRounds.usedRounds,
+                    usedRounds: routerStore.usedRounds.usedRoundsIdList,
                     lastSelected: prevState.lastSelected,
                     alert: ''
                 })
@@ -187,8 +181,8 @@ class MemoMenu extends Component {
     render() {
         const { status, semesterList, roundList, routerStore } = this.props
         const translate = i18n.messages[routerStore.language].messages
-        const showAllEmptyNew = roundList[this.state.semester].length === this.state.usedRounds.length
-        const showAllEmptyPublished = status === 'published' && this.state.publishedAnalysis.length === 0 
+        const showAllEmptyNew = false//roundList[this.state.semester].length === this.state.usedRounds.length
+        //const showAllEmptyPublished = status === 'published' && this.state.publishedAnalysis.length === 0 
 
         if (routerStore.browserConfig.env === 'dev'){
             console.log("this.props - AnalysisMenu" , this.props)
@@ -243,11 +237,14 @@ class MemoMenu extends Component {
                 {/************************************************************************************* */}
                 <Collapse isOpen={this.state.collapseOpen}>
                     <Row id='analysisMenuContainer'>
-                        { showAllEmptyNew || showAllEmptyPublished
+                        { showAllEmptyNew 
                             ? <Alert color='info' className = 'margin-bottom-40'>
                                 <p>{showAllEmptyNew ? translate.alert_no_rounds : translate.alert_no_published }</p>
                             </Alert>
-                            :<Form> 
+                            :''
+                        }
+                        {this.state.semester.length > 0
+                            ?<Form> 
                                 <div className='inline-flex'>
                                     <h3>{translate.header_analysis_menu}</h3>
                                     <InfoButton addClass = 'padding-top-30' id = 'info_choose_course_offering' textObj = {translate.info_choose_course_offering}/>
@@ -259,13 +256,12 @@ class MemoMenu extends Component {
                                     {/************************************************************************************* */}
                                     {/*                               NEW ANALYSIS                                          */}
                                     {/************************************************************************************* */}
-                                        {roundList[this.state.semester].length > this.state.usedRounds.length
+                                        {roundList[this.state.semester].length >0
                                             ? <FormGroup id='rounds'>
                                                 <p>{translate.intro_new}</p>
                                                 <ul className='no-padding-left'> 
                                                     {roundList[this.state.semester].map(round =>
-                                                        this.state.usedRounds.indexOf(round.roundId) < 0
-                                                            ? <li className = 'select-list' key={round.roundId}>
+                                                             <li className = 'select-list' key={round.roundId}>
                                                                 <Label key={"Label" + round.roundId}
                                                                     for={round.roundId}
                                                                 >
@@ -284,11 +280,11 @@ class MemoMenu extends Component {
                                                                     } 
                                                                     ( {translate.label_start_date} {getDateFormat(round.startDate, round.language)}, {round.language} )
                                                                     <span className='no-access'>   {round.hasAccess ? '' : translate.not_authorized_publish_new}</span>
+                                                                   <span className='no-access'>   {this.state.usedRounds.length > 0 && this.state.usedRounds.indexOf(round.roundId) > -1 ? 'translate.has_file': '' }</span>
 
                                                                 </Label>
                                                                 <br />
                                                             </li>
-                                                        : ''
                                                     )}
                                                 </ul>
                                             </FormGroup>
@@ -297,7 +293,9 @@ class MemoMenu extends Component {
                                    
                                 </div>
                             </Form>
-                            }
+                            :''
+                        }
+                            
                     </Row>
                 </Collapse>
                 {/************************************************************************************* */}
@@ -320,7 +318,7 @@ class MemoMenu extends Component {
                         </Button>
                     </Col>
                     <Col sm="12" lg="4">
-                        { !this.state.firstVisit && this.showEditButton() && !this.state.canOnlyPreview
+                        { !this.state.firstVisit && !this.state.canOnlyPreview
                                 ? <Button color='success' id='new' key='new' onClick={this.goToEditMode} disabled ={this.state.firstVisit}>
                                     <div className="iconContainer arrow-forward" id='new' />  
                                     {translate.btn_add_analysis}
