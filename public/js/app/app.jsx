@@ -2,7 +2,6 @@
 //import 'react-app-polyfill/ie11'
 //import 'react-app-polyfill/stable'
 
-
 import React from 'react'
 import  ReactDOM from 'react-dom'
 import { Component } from 'react'
@@ -15,7 +14,6 @@ import { IMobxStore } from './interfaces/utils'
 import { StaticRouter } from 'react-router'
 import RouterStore from './stores/RouterStore'
 import AdminPage from './views/AdminPage'
-import  '../../css/kursutveckling-web.scss'
 import  '../../css/kursutveckling-admin.scss'
 
 

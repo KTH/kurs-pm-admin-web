@@ -24,12 +24,12 @@ class MemoMenu extends Component {
             modalOpen: {
                 delete: false,
                 info: false,
-                copy: false
+                cancel: false
             },
             semester: this.props.activeSemester && this.props.activeSemester.length > 0  ? this.props.activeSemester   : '' ,//this.props.semesterList[0],
             rounds: this.props.tempData ? this.props.tempData.roundIdList : [],
             usedRounds: this.props.routerStore.usedRounds.usedRoundsIdList ? this.props.routerStore.usedRounds.usedRoundsIdList  : [],
-            lastSelected: this.props.tempData ? 'new' : '',
+           // lastSelected: this.props.tempData ? 'new' : '',
             temporaryData: this.props.tempData,
             newSemester: false
         }
@@ -39,8 +39,6 @@ class MemoMenu extends Component {
         this.goToEditMode = this.goToEditMode.bind(this)
         this.handleRoundCheckbox = this.handleRoundCheckbox.bind(this)
         this.handleCancel = this.handleCancel.bind(this)
-        this.handleDelete = this.handleDelete.bind(this)
-        this.handlePreview = this.handlePreview.bind(this)
         this.toggleModal = this.toggleModal.bind(this)
     }
 
@@ -76,12 +74,10 @@ class MemoMenu extends Component {
 
         if ( event.target.checked ){
             prevState.rounds.push(event.target.id)
-            prevState.temporaryData = undefined
             this.setState(prevState)
         }
         else{
             prevState.rounds.splice(this.state.rounds.indexOf(event.target.id), 1)
-            prevState.temporaryData = undefined
             this.setState(prevState)
         }
     }
@@ -92,7 +88,7 @@ class MemoMenu extends Component {
     goToEditMode(event) {
         event.preventDefault()
         if (this.state.rounds.length > 0 ){
-            this.props.editMode(this.state.semester, this.state.rounds, null, this.state.lastSelected, this.state.temporaryData)
+            this.props.editMode(this.state.semester, this.state.rounds,  this.state.temporaryData)
         }
         else{
             this.setState({
@@ -101,21 +97,15 @@ class MemoMenu extends Component {
         }
     }
 
-    handleCancel(event) {
-        event.preventDefault()
-        //window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.courseCode}?serv=kutv&event=cancel`
-      }
-
-    handleDelete ( id, fromModal = false ){
-
+    handleCancel() {
+        if(this.state.temporaryData!==null && this.state.temporaryData.memoFile.length > 0){
+            this.props.handleRemoveFile(this.state.temporaryData.memoFile)
+        }
+        let modal = this.state.modalOpen
+        modal.cancel = false
+        this.setState({ modalOpen: modal })
+        //window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
     }
-
-   handlePreview(event){
-       event.preventDefault()
-       const {routerStore} = this.props
-       const analysisId = this.state.selectedRadio.draft.length > 0 ? this.state.selectedRadio.draft : this.state.selectedRadio.published
-       window.open(`${routerStore.browserConfig.hostUrl}${routerStore.browserConfig.proxyPrefixPath.uri}/preview/${analysisId}?title=${encodeURI(routerStore.courseTitle.name+'_'+routerStore.courseTitle.credits)}&back=true`)
-   }
 
     toggleModal(event){
         let modalOpen = this.state.modalOpen
@@ -129,7 +119,7 @@ class MemoMenu extends Component {
 
     getUsedRounds(semester) {
         const thisInstance = this
-        const {routerStore , analysisId } = this.props
+        const {routerStore } = this.props
         const prevState = this.state
         return this.props.routerStore.getUsedRounds(routerStore.courseData.courseCode, semester)
             .then(result => {
@@ -141,27 +131,9 @@ class MemoMenu extends Component {
                 })
             })
     }
-    
-    componentDidMount() {
-
-        /*  this._isMounted = true;
-         window.onpopstate = ()=> {
-           if(this._isMounted) {
-             console.log('this.super.state', this.super)
-            const { hash } = location;
-             if( this.state.value!==0)
-               this.setState({value: 0})
-             if(hash.indexOf('users')>-1 && this.state.value!==1)
-               this.setState({value: 1})
-             if(hash.indexOf('data')>-1 && this.state.value!==2)
-               this.setState({value: 2})*/
-          // }
-        // }
-       }
 
     componentWillMount() {
-        const {routerStore , analysisId } = this.props
-        //const prevSelectedId = analysisId
+        const {routerStore } = this.props
         const prevState = this.state
        
         if (routerStore.usedRounds.usedRoundsIdList  || routerStore.hasChangedStatus){
@@ -182,15 +154,14 @@ class MemoMenu extends Component {
         const { status, semesterList, roundList, routerStore } = this.props
         const translate = i18n.messages[routerStore.language].messages
         const showAllEmptyNew = false//roundList[this.state.semester].length === this.state.usedRounds.length
-        //const showAllEmptyPublished = status === 'published' && this.state.publishedAnalysis.length === 0 
 
         if (routerStore.browserConfig.env === 'dev'){
-            console.log("this.props - AnalysisMenu" , this.props)
-            console.log("this.state - AnalysisMenu", this.state)
+            console.log("this.props - MemoMenu" , this.props)
+            console.log("this.state - MemoMenu", this.state)
         }
         return (
             <div id="YearAndRounds">
-                 <p>{translate.intro_analysis_menu}</p>
+                 <p>{translate.intro_memo_menu}</p>
            
                 {/************************************************************************************* */}
                 {/*                               SEMESTER DROPDOWN                          */}
@@ -233,10 +204,10 @@ class MemoMenu extends Component {
                 }
                 
                 {/************************************************************************************* */}
-                {/*                        SELECT BUTTONS FOR ANALYSIS OR ROUNDS                        */}
+                {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
                 {/************************************************************************************* */}
                 <Collapse isOpen={this.state.collapseOpen}>
-                    <Row id='analysisMenuContainer'>
+                    <Row id='memoMenuContainer'>
                         { showAllEmptyNew 
                             ? <Alert color='info' className = 'margin-bottom-40'>
                                 <p>{showAllEmptyNew ? translate.alert_no_rounds : translate.alert_no_published }</p>
@@ -246,7 +217,7 @@ class MemoMenu extends Component {
                         {this.state.semester.length > 0
                             ?<Form> 
                                 <div className='inline-flex'>
-                                    <h3>{translate.header_analysis_menu}</h3>
+                                    <h3>{translate.header_memo_menu}</h3>
                                     <InfoButton addClass = 'padding-top-30' id = 'info_choose_course_offering' textObj = {translate.info_choose_course_offering}/>
                                 </div>
                 
@@ -254,7 +225,7 @@ class MemoMenu extends Component {
                                         
                                 
                                     {/************************************************************************************* */}
-                                    {/*                               NEW ANALYSIS                                          */}
+                                    {/*                           ROUND LIST FOR SELECTED SEMESTER                          */}
                                     {/************************************************************************************* */}
                                         {roundList[this.state.semester].length >0
                                             ? <FormGroup id='rounds'>
@@ -299,7 +270,7 @@ class MemoMenu extends Component {
                     </Row>
                 </Collapse>
                 {/************************************************************************************* */}
-                {/*                             BUTTONS FOR ANALYSIS MENU                               */}
+                {/*                              BUTTONS FOR MEMO MENU                                  */}
                 {/************************************************************************************* */}
                 <Row className="button-container text-center">
                     <Col sm="12" lg="4">
@@ -313,7 +284,7 @@ class MemoMenu extends Component {
                         */}
                     </Col>
                     <Col sm="12" lg="4">
-                        <Button color='secondary' id='cancel' key='cancel' onClick={this.handleCancel} >
+                        <Button color='secondary' id='cancel' key='cancel' onClick={this.toggleModal} >
                             {translate.btn_cancel}
                         </Button>
                     </Col>
@@ -321,15 +292,16 @@ class MemoMenu extends Component {
                         { !this.state.firstVisit && !this.state.canOnlyPreview
                                 ? <Button color='success' id='new' key='new' onClick={this.goToEditMode} disabled ={this.state.firstVisit}>
                                     <div className="iconContainer arrow-forward" id='new' />  
-                                    {translate.btn_add_analysis}
+                                    {translate.btn_add_memo}
                             </Button>
                             : ''
                         }
                     </Col>
                 </Row>
                 {/************************************************************************************* */}
-                {/*                               MODALS FOR DELETE AND COPY                            */}
+                {/*                               MODALS FOR CANCEL                                     */}
                 {/************************************************************************************* */}  
+                <InfoModal type = 'cancel' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.cancel} id={'cancel'} handleConfirm={this.handleCancel} infoText={translate.info_cancel}/>
                {/* <InfoModal type = 'delete' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.delete} id={this.state.selectedRadio.draft} handleConfirm={this.handleDelete} infoText={translate.info_delete}/>*/}
             </div>
         )

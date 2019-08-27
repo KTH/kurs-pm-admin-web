@@ -51,11 +51,11 @@ module.exports = {
 
     header_select_semester: 'Välj termin',
     select_semester: 'Välj termin',
-    header_analysis_menu: 'Välj kursomgång',
+    header_memo_menu: 'Välj kursomgång',
     label_start_date: 'Startdatum',
 
     /* **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
-    intro_analysis_menu: 'Börja med att välja termin och kursomgång för den kursanalys som ska publiceras (steg 1 av 3). I nästa steg (2 av 3) kommer kursdata för kursen att hämtas automatiskt från Ladok och Kopps för den termin och kursomgång som valts. Det finns sedan möjlighet att redigera viss kursdata samt ladda upp kursanalysen. I sista steget (3 av 3) ges möjlighet att först granska och sedan publicera tabellen med kursanalys och all kursdata på sidan Kursens utveckling och historik.',
+    intro_memo_menu: 'Börja med att välja termin och kursomgång för den kursanalys som ska publiceras (steg 1 av 3). I nästa steg (2 av 3) kommer kursdata för kursen att hämtas automatiskt från Ladok och Kopps för den termin och kursomgång som valts. Det finns sedan möjlighet att redigera viss kursdata samt ladda upp kursanalysen. I sista steget (3 av 3) ges möjlighet att först granska och sedan publicera tabellen med kursanalys och all kursdata på sidan Kursens utveckling och historik.',
     intro_edit: 'I detta steg (2 av 3) ska kursanalys och kurs-PM laddas upp, förändringar för vald kursomgång summeras samt kursdata kontrolleras och vid behov justeras. I nästa steg granskas all kursdata innan publicering.',
     intro_preview: 'I detta steg (3 av 3) visas hur kursanalys och kursdata kommer att se ut på sidan Kursens utveckling och historik. Här finns möjlighet att gå tillbaka för att redigera ytterligare, spara som utkast eller publicera direkt.',
 
@@ -74,7 +74,7 @@ module.exports = {
 
     /** ************ BUTTONS ****************** */
     btn_preview: 'Granska',
-    btn_add_analysis: ' Redigera, ladda upp',
+    btn_add_memo: ' Redigera, ladda upp',
     btn_cancel: 'Avbryt',
     btn_save: 'Spara utkast',
     btn_publish: 'Publicera',
@@ -234,25 +234,6 @@ module.exports = {
       header: 'Antal förstagångsregistrerade studenter',
       body: 'Antal förstagångsregistrerade på de kurstillfällen som ingår i kursomgången. Studenter som antagits men som inte registrerats ska inte räknas in. Inte heller registrerade studenter som omregistrerats från ett annat kurstillfälle på samma kurs ska räknas in.',
       btnCancel: 'Close'
-    },
-
-    info_published: {
-	  header: 'Kursanalys och kursdata har publicerats',
-      /** semester: 'Termin:', /** Följt av kursomgångens starttermin */
-	  /** course_round: 'Kursomgång:', /** Följt av kursomgångens namn */
-	  body: 'Se resultat på sidan:' /** Följt av länk till sidan Kursens utveckling och historik */
-    },
-    info_draft_saved: {
-	  header: 'Utkast för kursanalys och kursdata har sparats',
-      /** semester: 'Termin:', /** Följt av kursomgångens starttermin */
-	  /** course_round: 'Kursomgång:', /** Följt av kursomgångens namn */
-	  body: 'Kopiera länk till utkast eller publicera från sidan:' /** Följt av länk till steg 1, Välj kursomgång */
-    },
-    info_draft_deleted: {
-	  header: 'Utkast för kursanalys och kursdata har raderats'
-      /** semester: 'Termin:', /** Följt av kursomgångens starttermin */
-	  /** course_round: 'Kursomgång:', /** Följt av kursomgångens namn */
-	  /** Länk till steg 1, Välj kursomgång */
     },
 
     // PREVIEW PAGE

@@ -22,12 +22,8 @@ class AdminPage extends Component {
     super(props)
     this.state = {
       saved: false, //TO DELETE
-      values: this.props.routerStore.newMemoList,
-      isPublished: false, //TO DELETE
       progress: this.props.routerStore.status === 'new' ? 'new' : 'edit',
       isPreviewMode: this.props.routerStore.status === 'preview',
-      activeSemester: '',
-      changedStatus: false,
       modalOpen:{
         publish: false,
         cancel: false
@@ -91,14 +87,12 @@ class AdminPage extends Component {
        })
 
       req.onreadystatechange = function() {
-        let values = thisInstance.state.values
         if (this.readyState == 4 && this.status == 200) {
               fileProgress.pm = 0
               thisInstance.setState({
                 memoFile: this.responseText,
                 pdfMemoDate: getTodayDate(),  
                 alertSuccess: i18n.messages[thisInstance.props.routerStore.language].messages.alert_uploaded_file,
-                values: values,
                 notValid: [],
                 alertError: ''
               })
@@ -106,28 +100,32 @@ class AdminPage extends Component {
       }
 
       let formData = new FormData()
-      const data = this.getMetadata(this.state.isPublished ? 'published' :  'draft' )
+      const data = this.getMetadata('published')
       formData.append("file", e.target.files[0], e.target.files[0].name)
       formData.append('courseCode', data.courseCode)
-      formData.append('analysis', 'TODO')
+      formData.append('memo', data.pm)
       formData.append('status', data.status)
-      req.open("POST", `${this.props.routerStore.browserConfig.hostUrl}${this.props.routerStore.paths.storage.saveFile.uri.split(':')[0]}${this.state.activeSemester}/${this.props.routerStore.courseCode}/${this.state.rounds}`);
+      formData.append('koppsRoundIds', data.koppsRoundIds)
+      req.open("POST", `${this.props.routerStore.browserConfig.hostUrl}${this.props.routerStore.paths.storage.saveFile.uri.split(':')[0]}${this.props.routerStore.activeSemester}/${this.props.routerStore.courseCode}/${this.state.rounds}`);
       req.send(formData)
     })
   }
 
   getMetadata(status){
     return {
-      courseCode: this.state.values.courseCode,
-      pm: this.state.values._id,
-      status
+      courseCode: this.props.routerStore.courseCode,
+      pm: this.state.memoFile,
+      status,
+      koppsRoundIds: this.state.roundIdList.toString()
     }
   }
 
-  handleRemoveFile(event){
-    event.target.id === 'remove_analysis'
-    ? this.setState({analysisFile: '', hasNewUploadedFileAnalysis: true})
-    : this.setState({memoFile: '', hasNewUploadedFilePM: true})
+  handleRemoveFile(fileName=''){
+    if(fileName.length > 0 || this.state.memoFile.length > 0){
+      this.props.routerStore.deleteFileInStorage(this.state.memoFile).then( result =>{
+        this.setState({memoFile: '', hasNewUploadedFilePM: false})
+      })
+    }
   }
   
 //***************************** BUTTON CLICK HANDLERS ****************************** */
@@ -135,7 +133,7 @@ class AdminPage extends Component {
 
   handlePreview(event) { 
     event.preventDefault()
-    let invalidList = this.validateData(this.state.values)
+    let invalidList = this.validateData()
     if(invalidList.length > 0){
       this.setState({
         notValid: invalidList,
@@ -164,8 +162,6 @@ class AdminPage extends Component {
             thisAdminPage.setState({
               isPreviewMode: false,
               progress: 'back_new',
-              activeSemester: routerStore.activeSemester,
-              analysisFile:'',
               alert: ''
             })
           })
@@ -173,7 +169,6 @@ class AdminPage extends Component {
       this.setState({
         isPreviewMode: false,
         progress: 'back_new',
-        activeSemester: routerStore.activeSemester,
         alert: ''
       })
     }
@@ -186,8 +181,18 @@ class AdminPage extends Component {
     }
   }
 
-  handleCancel(event) {
-    //window.location=`${SERVICE_URL[this.props.routerStore.service]}${this.props.routerStore.analysisData.courseCode}?serv=kutv&event=cancel`
+  handleCancel(event) { 
+  
+    if(this.state.memoFile.length > 0){
+      this.handleRemoveFile()
+    }
+
+    let modal = this.state.modalOpen
+    modal.cancel = false
+    this.setState({ modalOpen: modal })
+      //window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
+    
+
   }
   
  
@@ -202,7 +207,6 @@ class AdminPage extends Component {
     
     return this.props.routerStore.postMemoData(routerStore.newMemoList, this.state.memoFile, this.state.pdfMemoDate )
       .then((response) => {
-        //console.log('handlePublish!!!!!', response)
         modal.publish = false
         if(response === undefined || response.message){
           this.setState({
@@ -212,11 +216,9 @@ class AdminPage extends Component {
         }else{
           thisInstance.setState({
             saved: true,
-            isPublished: true,
-            modalOpen: modal,
-            values: response
+            modalOpen: modal
           })
-          //window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore.analysisData.courseCode}?serv=kutv&event=pub&id=${routerStore.analysisId}&term=${routerStore.analysisData.semester}&name=${routerStore.analysisData.analysisName}`)
+          //window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore..courseCode}?serv=kutv&event=pub&term=${routerStore..semester}&name=${routerStore..memoName}`) TODO
         }
       })  
   }
@@ -225,17 +227,14 @@ class AdminPage extends Component {
   //************************ OTHER **************************** */
   //*************************************************************/
 
-  editMode(semester, rounds,  status, tempData) { 
+  editMode(semester, rounds, tempData) { 
     const thisAdminPage = this
     const newMemoList = this.props.routerStore.createMemoData(semester, rounds)
-        //const valuesObject = this.handleTemporaryData(thisAdminPage.props.routerStore.analysisData, tempData)
         thisAdminPage.setState({
           progress: "edit",
           isPreviewMode: false,
-          isPublished: false,
-          values: newMemoList,
-          activeSemester: semester,
-          memoFile:  '',
+          memoFile:  tempData !== null ? tempData.memoFile : '',
+          pdfMemoDate: tempData !== null ? tempData.pdfMemoDate : '',
           alert: '',
           roundIdList: rounds
         })
@@ -259,7 +258,7 @@ class AdminPage extends Component {
   }
   
 
-  validateData(values){
+  validateData(){
     let invalidList = []
     if(this.state.memoFile.length === 0){
       invalidList.push('memoFile')
@@ -273,19 +272,16 @@ class AdminPage extends Component {
 
   getTempData(){
     if( this.state.progress === 'back_new' ){
-      const { alterationText, examinationGrade, registeredStudents} = this.state.values
-      const { memoFile, analysisFile, roundIdList} = this.state
-      return { alterationText, examinationGrade, registeredStudents, roundIdList,  memoFile, analysisFile }
+      const { memoFile, roundIdList, pdfMemoDate} = this.state
+      return {roundIdList,  memoFile, pdfMemoDate}
     }
     return null
   }
 
-  handleTemporaryData(valueObject, tempData){
+  handleTemporaryData(tempData){
     let returnObject = {
-      values: valueObject,
       files: {
         memoFile: '',
-        analysisFile: ''
       }
     }
     if(tempData){
@@ -309,7 +305,7 @@ class AdminPage extends Component {
 
   render() {
     const { routerStore } = this.props
-    const { isPublished, fileProgress } = this.state
+    const { fileProgress } = this.state
     const translate = i18n.messages[routerStore.language].messages
  
     if (routerStore.browserConfig.env === 'dev'){
@@ -331,7 +327,7 @@ class AdminPage extends Component {
                 />
          
               {/************************************************************************************* */}
-              {/*                               PAGE1: ANALYSIS MENU                             */}
+              {/*                               PAGE1: MEMO MENU                             */}
               {/************************************************************************************* */}
               {routerStore.semesters.length === 0
                 ?<Alert color='info' className='margin-bottom-40'> {translate.alert_no_rounds} </Alert>
@@ -340,12 +336,12 @@ class AdminPage extends Component {
                   semesterList= { routerStore.semesters }
                   roundList= { routerStore.roundData }
                   progress= { this.state.progress }
-                  activeSemester= { this.state.activeSemester } 
+                  activeSemester= { routerStore.activeSemester } 
                   firstVisit = { routerStore.newMemoList.length === 0 }
                   status = { routerStore.status }
                   tempData = {/*this.state.saved ? {} : */ this.getTempData()}
                   saved = {false}
-                  analysisId = {this.state.saved && this.state.values ? this.state.values._id : ''}
+                  handleRemoveFile = {this.handleRemoveFile}
                 />
               }
             </div>
@@ -376,7 +372,7 @@ class AdminPage extends Component {
           {/************************************************************************************* */}
           {/*                                   PREVIEW                                           */}
           {/************************************************************************************* */}
-          {this.state.values && this.state.isPreviewMode
+          {routerStore.newMemoList.length > 0  && this.state.isPreviewMode
           
             ? <Preview 
               roundList={ this.state.roundIdList } 
@@ -390,20 +386,20 @@ class AdminPage extends Component {
             {/*                                 EDIT FORM                                               */}
             {/************************************************************************************* */}
               
-            {this.state.values && !this.state.isPreviewMode
+            {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode //TODO
               ? <Form className='admin-form'>
                  {/* ----- Intro text for Edit ------- */}
                   <div>
                     <p>{translate.intro_edit}</p>
                   </div>
 
-                {/* ---- Semester and name of analysis ---- */}
+                {/* ---- Semester and name of memo ---- */}
                 <h2>{translate.header_edit_content}</h2>
                 <p> <b>{translate.header_semester} </b>{
-                  `${translate.course_short_semester[this.state.activeSemester.toString().match(/.{1,4}/g)[1]]} 
-                                    ${this.state.activeSemester.toString().match(/.{1,4}/g)[0]}`
+                  `${translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]} 
+                                    ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`
                   }
-                 <b> {translate.header_course_offering}</b> {this.state.values.analysisName}</p>
+                </p>
 
                 <p>{translate.header_mandatory_fields}</p>
               
@@ -513,8 +509,8 @@ class AdminPage extends Component {
           {/************************************************************************************* */}
           {/*                               MODALS FOR PUBLISH AND CANCEL                         */}
           {/************************************************************************************* */}  
-          <InfoModal type = 'publish' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.publish} id={this.props.routerStore.analysisId} handleConfirm={this.handlePublish} infoText={translate.info_publish}/>
-          <InfoModal type = 'cancel' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.cancel} id={this.props.routerStore.analysisId} handleConfirm={this.handleCancel} infoText={translate.info_cancel}/>
+          <InfoModal type = 'publish' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.publish} id={'publish'} handleConfirm={this.handlePublish} infoText={translate.info_publish}/>
+          <InfoModal type = 'cancel' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.cancel} id={'cancel'} handleConfirm={this.handleCancel} infoText={translate.info_cancel}/>
           </div>
          }
         </div>

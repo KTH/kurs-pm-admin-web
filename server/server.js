@@ -215,19 +215,15 @@ server.use('/', systemRoute.getRouter())
 
 // App routes
 const appRoute = AppRouter()
-appRoute.get('system.index', config.proxyPrefixPath.uri + '/:id', serverLogin, requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser'), Admin.getIndex)
-appRoute.get('system.index', config.proxyPrefixPath.uri + '/:preview/:id', serverLogin, requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'), Admin.getIndex)
+appRoute.get('system.index', config.proxyPrefixPath.uri + '/:id', serverLogin, requireRole('isCourseResponsible', 'isExaminator' /* ,'isSuperUser' */), Admin.getIndex)
 appRoute.get('system.gateway', config.proxyPrefixPath.uri + '/gateway', getServerGatewayLogin('/'), requireRole('isAdmin'), Admin.getIndex)
 
-appRoute.get('api.memoGetById', config.proxyPrefixPath.uri + '/apicall/getMemoDataById/:id', Admin.getRoundAnalysis)
 appRoute.all('api.memoPost', config.proxyPrefixPath.uri + '/apicall/postMemoData/:id', Admin.postMemoData)
-// appRoute.post('api.memoPost', config.proxyPrefixPath.uri + '/apicall/postRoundAnalysisById/:id/:status', Admin.postRoundAnalysis)
-appRoute.delete('api.memoDelete', config.proxyPrefixPath.uri + '/apicall/deleteMemoDataById/:id', Admin.deleteRoundAnalysis)
 appRoute.get('api.memoGetUsedRounds', config.proxyPrefixPath.uri + '/apicall/memoGetUsedRounds/:courseCode/:semester', Admin.getUsedRounds)
 appRoute.get('api.koppsCourseData', config.proxyPrefixPath.uri + '/api/memo-admin/getKoppsCourseDataByCourse/:courseCode/:language', Admin.getKoppsCourseData)
 appRoute.post('storage.saveFile', config.proxyPrefixPath.uri + '/storage/saveFile/:semester/:courseCode/:rounds', Admin.saveFileToStorage)
 appRoute.post('storage.updateFile', config.proxyPrefixPath.uri + '/storage/updateFile/:fileName/', Admin.updateFileInStorage)
-appRoute.post('storage.deleteFile', config.proxyPrefixPath.uri + '/storage/deleteFile/:id', Admin.deleteFileInStorage)
+appRoute.post('storage.deleteFile', config.proxyPrefixPath.uri + '/storage/deleteFile/:fileName', Admin.deleteFileInStorage)
 server.use('/', appRoute.getRouter())
 
 // Not found etc

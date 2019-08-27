@@ -2,7 +2,6 @@
 
 const co = require('co')
 const log = require('kth-node-log')
-const redis = require('kth-node-redis')
 const language = require('kth-node-web-common/lib/language')
 const { toJS } = require('mobx')
 const httpResponse = require('kth-node-response')
@@ -22,9 +21,7 @@ let { staticFactory } = require('../../dist/app.js')
 
 module.exports = {
   getIndex: getIndex,
-  getRoundAnalysis: co.wrap(_getRoundAnalysis),
   postMemoData: co.wrap(_postMemoData),
-  deleteRoundAnalysis: co.wrap(_deleteRoundAnalysis),
   getUsedRounds: co.wrap(_getUsedRounds),
   getKoppsCourseData: co.wrap(_getKoppsCourseData),
   saveFileToStorage: co.wrap(_saveFileToStorage),
@@ -32,7 +29,7 @@ module.exports = {
   deleteFileInStorage: co.wrap(_deleteFileInStorage)
 }
 
-// ------- ANALYSES FROM KURSUTVECKLING-API: POST, GET, DELETE, GET USED ROUNDS ------- /
+// ------- MEMO FROM PM-API: POST, GET USED ROUNDS ------- /
 
 function * _postMemoData (req, res, next) {
   const sendObject = JSON.parse(req.body.params)
@@ -42,32 +39,7 @@ function * _postMemoData (req, res, next) {
     apiResponse = yield memoApi.setMemoData('default', sendObject)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
-    log.error('Exception from setRoundAnalysis ', { error: err })
-    next(err)
-  }
-}
-
-function * _getRoundAnalysis (req, res, next) {
-  const roundAnalysisId = req.params.id || ''
-  const language = req.params.language || 'sv'
-  log.info('_getRoundAnalysis id:' + req.params.id)
-  try {
-    const apiResponse = yield memoAPI.getRoundAnalysisData(roundAnalysisId, language)
-    return httpResponse.json(res, apiResponse.body)
-  } catch (err) {
-    log.error('Exception from getRoundAnalysis ', { error: err })
-    next(err)
-  }
-}
-
-function * _deleteRoundAnalysis (req, res, next) {
-  const roundAnalysisId = req.params.id
-  log.info('_deleteRoundAnalysis with id:' + req.params.id)
-  try {
-    const apiResponse = yield memoAPI.deleteRoundAnalysisData(roundAnalysisId)
-    return httpResponse.json(res, apiResponse)
-  } catch (err) {
-    log.error('Exception from _deleteRoundAnalysis ', { error: err })
+    log.error('Exception from _postMemoData ', { error: err })
     next(err)
   }
 }
@@ -125,10 +97,10 @@ function * _updateFileInStorage (req, res, next) {
 }
 
 function * _deleteFileInStorage (res, req, next) {
-  log.debug('_deleteFileInStorage, id:' + req.req.params.id)
+  log.debug('_deleteFileInStorage, fileName:' + req.req.params.fileName)
   try {
-    const response = yield deleteBlob(req.req.params.id)
-    log.debug('_deleteFileInStorage, id:', response)
+    const response = yield deleteBlob(req.req.params.fileName)
+    log.debug('_deleteFileInStorage, fileName:', response)
     return httpResponse.json(res.res)
   } catch (error) {
     log.error('Exception from _deleteFileInStorage ', { error: error })
@@ -155,7 +127,6 @@ async function getIndex (req, res, next) {
 
   let lang = language.getLanguage(res) || 'sv'
   const ldapUser = req.session.authUser ? req.session.authUser.username : 'null'
-  let status = req.query.status
 
   try {
     const renderProps = staticFactory()

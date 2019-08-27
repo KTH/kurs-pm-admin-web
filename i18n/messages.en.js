@@ -15,7 +15,7 @@ module.exports = {
      * Message keys
      */
     service_name: 'kurs ',
-    title: 'Course analysis administration',
+    title: 'Course memo administration',
 
     lang_block_id: '1.272446',
     locale_text: 'Course information in English',
@@ -39,11 +39,11 @@ module.exports = {
     header_choose_course_offering: 'Choose course offering',
 
     select_semester: 'Choose semester',
-    header_analysis_menu: 'Choose course offering',
+    header_memo_menu: 'Choose course offering',
     label_start_date: 'Start date',
 
     //* **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
-    intro_analysis_menu: 'Choose a semester and a course offering for the course analysis to be published (step 1 of 3). In the next step (2 of 3), course data will be fetched automatically for the selected semester and course offering. It is there possible to edit some of the course data and upload a course analysis document. Preview the table with the course data and course analysis that are about to be published in the last step (3 of 3). The course data with the course analysis will then be published on the page Course development and history.',
+    intro_memo_menu: 'Choose a semester and a course offering for the course analysis to be published (step 1 of 3). In the next step (2 of 3), course data will be fetched automatically for the selected semester and course offering. It is there possible to edit some of the course data and upload a course analysis document. Preview the table with the course data and course analysis that are about to be published in the last step (3 of 3). The course data with the course analysis will then be published on the page Course development and history.',
     intro_edit: 'In this step (2 of 3) course analysis and course memo shall be uploaded, changes to the chosen course offering is summarized and some of the course data are reviewed and adjusted.',
     intro_preview: 'In this step (3 of 3) a preview of the course analysis with course data is presented as it will be published on the page Course development and history. It is possible to go back to make adjustments, to save a draft or publish the information.',
 
@@ -62,7 +62,7 @@ module.exports = {
 
     /** ************ BUTTONS ****************** */
     btn_preview: 'Preview ',
-    btn_add_analysis: 'Edit, upload',
+    btn_add_memo: 'Edit, upload',
     btn_cancel: 'Cancel',
     btn_save: 'Save draft',
     btn_publish: 'Publish',

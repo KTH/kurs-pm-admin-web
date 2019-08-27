@@ -100,14 +100,13 @@ async function updateMetaData (blobName, metadata) {
   }
 }
 
-async function deleteBlob (analysisId) {
+async function deleteBlob (fileName) {
   const aborter = Aborter.timeout(30 * ONE_MINUTE)
-  log.debug(`Blobstorage - Delete file: ${analysisId}`)
+  log.debug(`Blobstorage - Delete file: ${fileName}`)
   try {
     const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName)
     let response
     let marker
-    let blobName = ''
     let blobURL
     let blockBlobURL
     let responseDelete = []
@@ -116,30 +115,22 @@ async function deleteBlob (analysisId) {
       response = await containerURL.listBlobFlatSegment(aborter)
       marker = response.marker
       for (let blob of response.segment.blobItems) {
-        if (blob.name.indexOf(analysisId) > -1) {
+        if (blob.name === fileName) {
           blobURL = await BlobURL.fromContainerURL(containerURL, blob.name)
           blockBlobURL = await BlockBlobURL.fromBlobURL(blobURL)
-          responseDelete.push(await blockBlobURL.delete(aborter))
-          if (responseDelete.length === 2) {
-            break
-          }
+          responseDelete = await blockBlobURL.delete(aborter)
+          break
         }
       }
     } while (marker)
-    log.debug(responseDelete.length + ' file(s) deleted from blobstorage with analysisId: ' + analysisId, responseDelete)
-    /* if (blobName.length > 0) {
-      const blobURL = BlobURL.fromContainerURL(containerURL, blobName)
-      const blockBlobURL = BlockBlobURL.fromBlobURL(blobURL)
-
-      const response = await blockBlobURL.delete(aborter)
-
-    } */
+    log.debug(responseDelete.length + ' file(s) deleted from blobstorage with file name: ' + fileName, responseDelete)
     return responseDelete
   } catch (error) {
     log.error('Error in deleting blob ', { error: error })
     return error
   }
 }
+
 const createID = () => {
   return 'x4xxxyxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0; var v = c === 'x' ? r : (r & 0x3 | 0x8)

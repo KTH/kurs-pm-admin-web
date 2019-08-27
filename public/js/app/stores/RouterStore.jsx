@@ -1,8 +1,8 @@
 'use strict'
 import { observable, action } from 'mobx'
 import axios from 'axios'
-import { EMPTY, SEMESTER, SUPERUSER_PART } from '../util/constants'
-import { getDateFormat, getLanguageToUse, getAccess } from '../util/helpers'
+import { SUPERUSER_PART } from '../util/constants'
+import { getAccess } from '../util/helpers'
 
 const paramRegex = /\/(:[^\/\s]*)/g
 
@@ -22,7 +22,6 @@ function _webUsesSSL(url) {
 class RouterStore {
 
   roundData = {}
-  analysisId = ''
   courseData = {}
   semesters = []
   newMemoList = []
@@ -77,18 +76,6 @@ class RouterStore {
   }
 
   /** ***************************************************************************************************************************************** */
-  /*                                                       COLLECTED ROUND INFORMATION                                                        */
-  /** ***************************************************************************************************************************************** */
-  @action setCourseTitle(title){
-    this.courseTitle = title.length === 0 
-    ? '' 
-    : {
-      name: title.split('_')[0],
-      credits: title.split('_')[1]
-    }
-  }
-
-  /** ***************************************************************************************************************************************** */
   /*                                                       FILE STORAGE ACTIONS                                                      */
   /** ***************************************************************************************************************************************** */
   @action updateFileInStorage(fileName, metadata) { 
@@ -108,9 +95,9 @@ class RouterStore {
     })
   }
 
-  @action deleteFileInStorage(id){
+  @action deleteFileInStorage(fileName){
     return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri,
-      { id: id }),
+      { fileName: fileName }),
       this._getOptions()
     ).then(apiResponse => {
       if (apiResponse.statusCode >= 400) {
@@ -121,49 +108,23 @@ class RouterStore {
   }
 
   /** ***************************************************************************************************************************************** */
-  /*                                               ANALYSIS ACTIONS (memo - API)                                                      */
+  /*                                               MEMO ACTIONS (PM - API)                                                      */
   /** ***************************************************************************************************************************************** */
  
-  @action getRoundAnalysis(id, lang = 'sv') {
-    return axios.get(this.buildApiUrl(this.paths.api.memoGetById.uri,
-      { id: id }),
-      this._getOptions()
-    ).then(result => {
-      //console.log("!!!!getRoundAnalysis", result.data)
-      if (result.statusCode >= 400) {
-        this.errorMessage = result.statusText
-        return "ERROR-" + result.statusCode
-      }
-      this.status = result.data.isPublished ? 'published' : 'draft'
-      this.courseCode = result.data.courseCode
-      this.analysisId = result.data._id
-      return this.analysisData = result.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
-  }
-
   @action postMemoData(postObject, fileName, uploadDate) { 
 
     for(let index=0; index < postObject.length; index ++){
       postObject[index].courseMemoFileName = fileName
       postObject[index].pdfMemoUploadDate = uploadDate
     }
-
-
     return axios.post(this.buildApiUrl(this.paths.api.memoPost.uri,
-      {id: 'default' }),
+      {id: 'default' }), //TODO !!
       this._getOptions(JSON.stringify(postObject))
     ).then(apiResponse => {
       if (apiResponse.statusCode >= 400) {
         this.errorMessage = result.statusText
         return "ERROR-" + apiResponse.statusCode
       }
-      
-
       return apiResponse.data
     }).catch(err => {
       if (err.response) {
@@ -180,7 +141,6 @@ class RouterStore {
       { id: postObject._id, status: status/*, lang: lang*/ }),
       this._getOptions(JSON.stringify(postObject))
     ).then(apiResponse => {
-      //console.log('putRoundAnalysisData', apiResponse)
       if (apiResponse.statusCode >= 400) {
         this.errorMessage = result.statusText
         return "ERROR-" + apiResponse.statusCode
@@ -189,9 +149,6 @@ class RouterStore {
       if(this.errorMessage !== undefined){
       if (this.status === 'draft' && apiResponse.data.isPublished)
         this.hasChangedStatus = true
-
-      this.status = apiResponse.data.isPublished ? 'published' : 'draft'
-      this.analysisId = apiResponse.data._id
       }
       return apiResponse.data
     }).catch(err => {
@@ -202,19 +159,6 @@ class RouterStore {
     })
   }
 
-  @action deleteRoundAnalysis(id, lang = 'sv') {
-    return axios.delete(this.buildApiUrl(this.paths.api.memoDelete.uri,
-      { id: id }),
-      this._getOptions()
-    ).then(result => {
-      return result.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
-  }
 
   @action getUsedRounds(courseCode, semester) {
     this.courseCode = courseCode
@@ -225,7 +169,7 @@ class RouterStore {
       if (result.status >= 400) {
         return "ERROR-" + result.status
       }
-      return this.usedRounds =  this.analysisAccess(result.data)
+      return this.usedRounds =  result.data
     }).catch(err => {
       if (err.response) {
         throw new Error(err.message)
@@ -260,26 +204,6 @@ class RouterStore {
  /** ***************************************************************************************************************************************** */
   /*                                                     HANDLE DATA FROM API                                                                  */
   /** ***************************************************************************************************************************************** */
-
-  
-  analysisAccess(memoList){
-    // Loops thrue published and draft analyises for access check
-    const memberString = this.member.toString()
-    console.log(memoList)
-    
-    for(let memo=0; memo < memoList.length; memo ++){
-      for(let key = 0; key < alysis.draftAannalysis[draft].ugKeys.length; key ++){
-        memoList[memo].hasAccess = memberString.indexOf(memoList[memo].ugKeys[key]) >= 0 || memberString.indexOf(SUPERUSER_PART) >-1
-        if(memoList[memo].hasAccess === true)
-          break
-      }
-    }
-
-    
-    return memoList
-  }
-
-
 
   @action handleCourseData(courseObject, courseCode, ldapUsername, language) {
     // Building up courseTitle, courseData, semesters and roundData
@@ -342,6 +266,7 @@ class RouterStore {
     this.newMemoList = []
     this.activeSemester = semester
     let id = ''
+
     for(let round = 0; round<rounds.length; round++ ){
       id= `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
        //if()
@@ -353,7 +278,6 @@ class RouterStore {
         pdfMemoUploadDate: '',
         semester: semester,
         koppsRoundId: rounds[round]
-       // ,ugKeys: [...this.redisKeys.examiner, ...this.redisKeys.responsibles]
       }
       this.newMemoList.push(newMemo)
     }
@@ -375,7 +299,6 @@ class RouterStore {
     this.language = lang === 'en' ? 0 : 1
   }
 
- 
  
 
   @action getLdapUserByUsername(params) {
