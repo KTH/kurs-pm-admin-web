@@ -62,7 +62,7 @@ module.exports = {
 
   // API keys
   apiKey: {
-    memoApi: getEnv('PM_API_KEY', devDefaults('9876'))
+    memoApi: getEnv('KURS_PM_API_KEY', devDefaults('9876'))
   },
 
   // Authentication
@@ -76,7 +76,7 @@ module.exports = {
 
   // Service API's
   nodeApi: {
-    memoApi: unpackNodeApiConfig('PM_API_URI', devmemoApi)
+    memoApi: unpackNodeApiConfig('KURS_PM_API_URI', devmemoApi)
   },
 
   // Cortina
