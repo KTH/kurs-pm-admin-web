@@ -52,7 +52,7 @@ class AdminPage extends Component {
     this.getTempData = this.getTempData.bind(this)
     this.getMetadata = this.getMetadata.bind(this)
     //this.divTop = React.createRef() 
-    this.hanleUploadFile = this.hanleUploadFile.bind(this)
+    this.handleUploadFile = this.handleUploadFile.bind(this)
     this.handleRemoveFile = this.handleRemoveFile.bind(this)
     this.validateData = this.validateData.bind(this)
   }
@@ -61,7 +61,7 @@ class AdminPage extends Component {
 //*********************************  FILE UPLOAD  ********************************* */
 //********************************************************************************** */
 
-  async hanleUploadFile(id, file, e){
+  async handleUploadFile(id, file, e){
     console.log('file', file)
     if(e.target.files[0].type === 'application/pdf'){
      response = await this.sendRequest(id, file, e)
@@ -447,7 +447,7 @@ class AdminPage extends Component {
                     {/** ------- PM-FILE UPLOAD --------- */}
                     <FormLabel translate = {translate} header = {'header_upload_file_pm'} id = {'info_upload_course_memo'} />
                     <UpLoad id="pm" key="pm" 
-                      handleUpload = {this.hanleUploadFile} 
+                      handleUpload = {this.handleUploadFile} 
                       progress={fileProgress.pm} 
                       path={routerStore.browserConfig.proxyPrefixPath.uri}
                       file = {this.state.memoFile}
