@@ -57,8 +57,8 @@ module.exports = {
     intro_preview: 'I detta steg (3 av 3) visas hur kurs-pm kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-pm.',
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
-    has_published_memo: '(finns publicerat kurs-pm)', /** FÄRSK SEMLA */
-    not_authorized_publish_new: 'Du är inte kursansvarig för detta kurstillfälle och kan därför inte välja det.',
+    has_published_memo: ' Finns publicerat kurs-pm', /** FÄRSK SEMLA */
+    not_authorized_publish_new: ' Du är inte kursansvarig för detta kurstillfälle och kan därför inte välja det.',
 
     /** ************ BUTTONS ****************** */
     btn_add_memo: 'Ladda upp',

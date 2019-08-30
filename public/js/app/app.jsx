@@ -14,7 +14,7 @@ import { IMobxStore } from './interfaces/utils'
 import { StaticRouter } from 'react-router'
 import RouterStore from './stores/RouterStore'
 import AdminPage from './views/AdminPage'
-import  '../../css/kursutveckling-admin.scss'
+import  '../../css/memo-admin.scss'
 
 
 function staticFactory () {

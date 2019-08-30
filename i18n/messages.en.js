@@ -51,8 +51,8 @@ module.exports = {
     intro_preview: 'In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
 
     intro_new: 'Select one or more administrative course instances that is incouded in the course offering:',
-    has_published_memo: '(has a published course memo)', /** FÄRSK SEMLA */
-    not_authorized_publish_new: 'You are not course responsible for this instance and cannot select it.',
+    has_published_memo: ' Has a published course memo', /** FÄRSK SEMLA */
+    not_authorized_publish_new: ' You are not course responsible for this instance and cannot select it.',
 
     /** ************ BUTTONS ****************** */
     btn_add_memo: 'Upload',
@@ -108,10 +108,7 @@ module.exports = {
       header: 'Upload course memo',
       body: 'Upload the latest version of the course memo for the course offering.'
     },
-    info_upload_course_memo_date: {
-      header: '????',
-      body: '????'
-    },
+
     // PREVIEW PAGE
     header_course_round: 'Kursomgång'
   }

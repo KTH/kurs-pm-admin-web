@@ -29,7 +29,6 @@ class MemoMenu extends Component {
             semester: this.props.activeSemester && this.props.activeSemester.length > 0  ? this.props.activeSemester   : '' ,//this.props.semesterList[0],
             rounds: this.props.tempData ? this.props.tempData.roundIdList : [],
             usedRounds: this.props.routerStore.usedRounds.usedRoundsIdList ? this.props.routerStore.usedRounds.usedRoundsIdList  : [],
-           // lastSelected: this.props.tempData ? 'new' : '',
             temporaryData: this.props.tempData,
             newSemester: false
         }
@@ -104,7 +103,7 @@ class MemoMenu extends Component {
         let modal = this.state.modalOpen
         modal.cancel = false
         this.setState({ modalOpen: modal })
-        //window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
+        window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
     }
 
     toggleModal(event){
@@ -202,6 +201,10 @@ class MemoMenu extends Component {
                     ? <Alert color='danger' className = 'margin-bottom-40'> {this.state.alert}</Alert>
                     : ''
                 }
+                 {routerStore.usedRounds.usedRoundsIdList && routerStore.usedRounds.usedRoundsIdList.length > 0
+                    ? <Alert color='info' className = 'margin-bottom-40'> {translate.alert_have_published_memo}</Alert>
+                    : ''
+                }
                 
                 {/************************************************************************************* */}
                 {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
@@ -250,8 +253,14 @@ class MemoMenu extends Component {
                                                                         ${this.state.semester.toString().match(/.{1,4}/g)[0]}-${round.roundId} `
                                                                     } 
                                                                     ( {translate.label_start_date} {getDateFormat(round.startDate, round.language)}, {round.language} )
-                                                                    <span className='no-access'>   {round.hasAccess ? '' : translate.not_authorized_publish_new}</span>
-                                                                   <span className='no-access'>   {this.state.usedRounds.length > 0 && this.state.usedRounds.indexOf(round.roundId) > -1 ? 'translate.has_file': '' }</span>
+                                                                    <span className='no-access'>   
+                                                                        {!round.hasAccess 
+                                                                            ? translate.not_authorized_publish_new
+                                                                            : this.state.usedRounds.length > 0 && this.state.usedRounds.indexOf(round.roundId) > -1 
+                                                                                ? translate.has_published_memo 
+                                                                                : '' 
+                                                                        }
+                                                                   </span>
 
                                                                 </Label>
                                                                 <br />

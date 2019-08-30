@@ -191,7 +191,7 @@ class AdminPage extends Component {
     let modal = this.state.modalOpen
     modal.cancel = false
     this.setState({ modalOpen: modal })
-      //window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
+    window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
     
 
   }
@@ -219,7 +219,7 @@ class AdminPage extends Component {
             saved: true,
             modalOpen: modal
           })
-          //window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL[routerStore.service]}${routerStore..courseCode}?serv=kutv&event=pub&term=${routerStore..semester}&name=${routerStore..memoName}`) TODO
+          window.location= encodeURI(`${routerStore.browserConfig.hostUrl}${SERVICE_URL['admin']}${routerStore.courseCode}?serv=pm&event=pub&term=${routerStore.activeSemester}`) 
         }
       })  
   }
@@ -263,10 +263,6 @@ class AdminPage extends Component {
     let invalidList = []
     if(this.state.memoFile.length === 0){
       invalidList.push('memoFile')
-    } else {
-      if(!isValidDate(this.state.pdfMemoDate)){
-        invalidList.push('pdfMemoDate')
-      }
     }
     return invalidList
   }
@@ -406,7 +402,7 @@ class AdminPage extends Component {
            ? <div>
              {<h4>{translate.header_preview}</h4>}
              <a className='pdf-link' href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`} target='_blank'>
-             {translate.link_pm} {getDateFormat(this.state.pdfMemoDate, routerStore.language)}</a>
+             {translate.link_pm}: {getDateFormat(this.state.pdfMemoDate, routerStore.language)}</a>
             </div>
            :''
           }
@@ -455,19 +451,6 @@ class AdminPage extends Component {
                       handleRemoveFile ={this.handleRemoveFile}
                       type = 'memoFile'
                       />
-
-                       { this.state.memoFile.length > 0 
-                        ? <span>
-                         <FormLabel translate = {translate} header = {'header_upload_file_date'} id = {'info_upload_course_memo_date'} />
-                         <Input id='pdfMemoDate' key='pdfMemoDate' type='date' 
-                           value={this.state.pdfMemoDate} 
-                           onChange={this.handleInputChange} 
-                           className = {this.state.notValid.indexOf('pdfMemoDate') > -1 ? 'not-valid' : ''}
-                           style = {{ maxWidth: '180px'}}
-                           />
-                           </span>
-                        : ''
-                      }
                       <br/>
                       <br/>
                   </Col>
