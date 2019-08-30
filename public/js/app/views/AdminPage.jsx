@@ -9,10 +9,11 @@ import Preview from '../components/Preview'
 import InfoModal from '../components/InfoModal' 
 import InfoButton from '../components/InfoButton'
 import UpLoad from '../components/UpLoad'
+import RoundLabel from '../components/RoundLabel'
 
 //Helpers 
 import { SERVICE_URL } from '../util/constants'
-import { getTodayDate, isValidDate } from '../util/helpers'
+import { getTodayDate, isValidDate, getDateFormat} from '../util/helpers'
 import i18n from '../../../../i18n/index'
 
 
@@ -368,17 +369,46 @@ class AdminPage extends Component {
               header = {translate.header_main[routerStore.status]}
               showProgressBar = {routerStore.status !== 'preview'}
             />
+
+             {/* ----- Intro text for Edit ------- */}
+             <div>
+                <p>{
+                  this.state.isPreviewMode
+                  ? translate.intro_preview
+                  : translate.intro_edit
+                  }</p>
+            </div>
+            {/* ---- Selected semester---- */}
+            <h2>{translate.header_edit_content}</h2>
+                <p> <b>{translate.header_semester} </b>{
+                  `${translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]} 
+                                    ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`
+                  }
+                </p>
+
+                {/* ---- Name of selected memo(s) ---- */}
+                <p><b>{translate.header_course_offering}</b></p>
+                {routerStore.roundData[routerStore.activeSemester].map( round =>
+                  this.state.roundIdList.indexOf(round.roundId) > -1
+                    ?<RoundLabel key = {'round' + round.roundId}
+                      language = {routerStore.language}
+                      round = {round}
+                      semester = {routerStore.activeSemester}
+                    />
+                    :
+                    ''
+                  )}
          
           {/************************************************************************************* */}
           {/*                                   PREVIEW                                           */}
           {/************************************************************************************* */}
           {routerStore.newMemoList.length > 0  && this.state.isPreviewMode
-          
-            ? <Preview 
-              roundList={ this.state.roundIdList } 
-              memoFile = { this.state.memoFile }
-            />
-            : ""
+           ? <div>
+             {<h4>{translate.header_preview}</h4>}
+             <a className='pdf-link' href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`} target='_blank'>
+             {translate.link_pm} {getDateFormat(this.state.pdfMemoDate, routerStore.language)}</a>
+            </div>
+           :''
           }
           <Row key='form' id='form-container' >
           <Col sm="12" lg="12">
@@ -388,21 +418,7 @@ class AdminPage extends Component {
               
             {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode //TODO
               ? <Form className='admin-form'>
-                 {/* ----- Intro text for Edit ------- */}
-                  <div>
-                    <p>{translate.intro_edit}</p>
-                  </div>
-
-                {/* ---- Semester and name of memo ---- */}
-                <h2>{translate.header_edit_content}</h2>
-                <p> <b>{translate.header_semester} </b>{
-                  `${translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]} 
-                                    ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`
-                  }
-                </p>
-
-                <p>{translate.header_mandatory_fields}</p>
-              
+                
                 {/* ----- ALERTS ----- */}
                 {this.state.alert.length > 0 
                   ? <Row>
@@ -439,9 +455,10 @@ class AdminPage extends Component {
                       handleRemoveFile ={this.handleRemoveFile}
                       type = 'memoFile'
                       />
+
                        { this.state.memoFile.length > 0 
                         ? <span>
-                         <FormLabel translate = {translate} header = {'header_upload_file_pm_date'} id = {'info_upload_course_memo_date'} />
+                         <FormLabel translate = {translate} header = {'header_upload_file_date'} id = {'info_upload_course_memo_date'} />
                          <Input id='pdfMemoDate' key='pdfMemoDate' type='date' 
                            value={this.state.pdfMemoDate} 
                            onChange={this.handleInputChange} 
@@ -455,7 +472,6 @@ class AdminPage extends Component {
                       <br/>
                   </Col>
 
-                  {/* ------ FORM - THIRD COLUMN -------- */}
                   <Col sm='4' className='col-form'>
   
                  </Col>
