@@ -29,9 +29,7 @@ module.exports = {
       2: 'Autumn '
     },
 
-    header_main: {
-      new: 'Publish course memo'
-    },
+    header_main: 'Publish course memo',
 
     /** **** PROGRESS BAR  */
     header_progress_select: '1. Choose course offering',
@@ -78,7 +76,7 @@ module.exports = {
     alert_uploaded_file: 'Selected file has been uploaded and been given a new file name',
     alert_not_pdf: 'The specified file could not be uploaded. The file format must be PDF.',
     alert_have_published_memo: 'Any previously published course memo (see course offering below) will be replaced by the new course memo to be uploaded.', /** FÄRSK SEMLA */
-
+    alert_empty_fields: 'NO FILE!!!!',
     /** ************ MODALS ************** */
     info_publish: {
       header: 'To be aware of before publishing!',

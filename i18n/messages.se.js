@@ -36,9 +36,7 @@ module.exports = {
       2: 'HT '
     },
 
-    header_main: {
-      new: 'Publicera kurs-pm'
-    },
+    header_main: 'Publicera kurs-pm',
     //* **** PROGRESS BAR  */
     header_progress_select: '1. Välj kursomgång',
     header_progress_edit_upload: '2. Ladda upp kurs-pm',
@@ -85,7 +83,7 @@ module.exports = {
     alert_uploaded_file: 'Vald fil har laddatas upp och fått nytt namn',
     alert_not_pdf: 'Du måste ladda upp en fil med format PDF (se markering i rött nedan) för att kunna gå vidare till Granska och publicera.',
     alert_have_published_memo: 'Observera att kurs-pm som finns publicerat (se kursomgång nedan) kommer att ersättas av kurs-pm som du laddar upp här.', /** FÄRSK SEMLA */
-
+    alert_empty_fields: 'NO FILE!!!!',
     /** ************ MODALS ************** */
     info_publish: {
       header: 'Att tänka på innan du publicerar!',

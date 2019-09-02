@@ -319,7 +319,7 @@ class AdminPage extends Component {
                 language={routerStore.language} 
                 courseCode={routerStore.courseCode} 
                 progress = {1}
-                header = {translate.header_main[routerStore.status]}
+                header = {translate.header_main}
                 showProgressBar = {true}
                 />
          
@@ -362,7 +362,7 @@ class AdminPage extends Component {
               language={routerStore.language} 
               courseCode={routerStore.courseCode} 
               progress = {this.state.progress === 'edit' ? 2 : 3}
-              header = {translate.header_main[routerStore.status]}
+              header = {translate.header_main}
               showProgressBar = {routerStore.status !== 'preview'}
             />
 
