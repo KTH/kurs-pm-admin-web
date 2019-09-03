@@ -5,7 +5,6 @@ import { Row, Col, Button, Form, Label, Input, Alert } from 'reactstrap'
 //Components
 import Title from '../components/Title'
 import MemoMenu from '../components/MemoMenu'
-import Preview from '../components/Preview'
 import InfoModal from '../components/InfoModal' 
 import InfoButton from '../components/InfoButton'
 import UpLoad from '../components/UpLoad'
@@ -40,7 +39,8 @@ class AdminPage extends Component {
       fileProgress: {
         pm: 0
       },
-      roundIdList:''
+      roundIdList:'',
+      usedRoundSelected: 0
     }
     this.handlePreview = this.handlePreview.bind(this)
     this.editMode = this.editMode.bind(this)
@@ -192,8 +192,6 @@ class AdminPage extends Component {
     modal.cancel = false
     this.setState({ modalOpen: modal })
     window.location=`${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
-    
-
   }
   
  
@@ -228,7 +226,7 @@ class AdminPage extends Component {
   //************************ OTHER **************************** */
   //*************************************************************/
 
-  editMode(semester, rounds, tempData) { 
+  editMode(semester, rounds, tempData, usedRoundSelected) { 
     const thisAdminPage = this
     const newMemoList = this.props.routerStore.createMemoData(semester, rounds)
         thisAdminPage.setState({
@@ -237,7 +235,8 @@ class AdminPage extends Component {
           memoFile:  tempData !== null ? tempData.memoFile : '',
           pdfMemoDate: tempData !== null ? tempData.pdfMemoDate : '',
           alert: '',
-          roundIdList: rounds
+          roundIdList: rounds,
+          usedRoundSelected
         })
   }
 
@@ -269,8 +268,8 @@ class AdminPage extends Component {
 
   getTempData(){
     if( this.state.progress === 'back_new' ){
-      const { memoFile, roundIdList, pdfMemoDate} = this.state
-      return {roundIdList,  memoFile, pdfMemoDate}
+      const { memoFile, roundIdList, pdfMemoDate, usedRoundSelected} = this.state
+      return {roundIdList,  memoFile, pdfMemoDate, usedRoundSelected}
     }
     return null
   }
@@ -366,7 +365,7 @@ class AdminPage extends Component {
               showProgressBar = {routerStore.status !== 'preview'}
             />
 
-             {/* ----- Intro text for Edit ------- */}
+             {/* ----- Intro text for Edit  or Preview ------- */}
              <div>
                 <p>{
                   this.state.isPreviewMode
@@ -374,6 +373,11 @@ class AdminPage extends Component {
                   : translate.intro_edit
                   }</p>
             </div>
+      
+            { this.state.usedRoundSelected > 0
+                    ? <Alert color='info' className = 'margin-bottom-40'> {translate.alert_have_published_memo}</Alert>
+                    : ''
+                }
             {/* ---- Selected semester---- */}
             <h2>{translate.header_edit_content}</h2>
                 <p> <b>{translate.header_semester} </b>{
@@ -390,6 +394,8 @@ class AdminPage extends Component {
                       language = {routerStore.language}
                       round = {round}
                       semester = {routerStore.activeSemester}
+                      usedRounds ={routerStore.usedRounds.usedRoundsIdList}
+                      showAssesInfo = {false}
                     />
                     :
                     ''
@@ -416,10 +422,7 @@ class AdminPage extends Component {
               ? <Form className='admin-form'>
                 
                 {/* ----- ALERTS ----- */}
-                {routerStore.usedRounds.usedRoundsIdList && routerStore.usedRounds.usedRoundsIdList.length > 0
-                    ? <Alert color='info' className = 'margin-bottom-40'> {translate.alert_have_published_memo}</Alert>
-                    : ''
-                }
+                
                 {this.state.alert.length > 0 
                   ? <Row>
                     <Alert color= 'info' className='margin-bottom-40'>{this.state.alert} </Alert>

@@ -20,7 +20,6 @@ const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/
 const devSessionKey = devDefaults('node-web.sid') // TODO ??
 const devSessionUseRedis = devDefaults(true)
 const devRedis = devDefaults('redis://localhost:6379/')
-const devRedisUG = devDefaults('team-studam-ref-redis-193.redis.cache.windows.net:6380,password=9g1815SJ915fjWl1bqJ2wtn+TSX1i5vAL0z38eSLg7M=,ssl=True,abortConnect=False')
 const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use env_vars
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')

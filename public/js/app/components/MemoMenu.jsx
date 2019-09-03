@@ -7,6 +7,7 @@ import { Alert, Form, Dropdown, FormGroup, Label,
 //Custom components
 import InfoModal from './InfoModal'
 import InfoButton from './InfoButton'
+import RoundLabel from '../components/RoundLabel'
 
 import i18n from '../../../../i18n/index'
 import { EMPTY, SERVICE_URL } from '../util/constants'
@@ -30,7 +31,8 @@ class MemoMenu extends Component {
             rounds: this.props.tempData ? this.props.tempData.roundIdList : [],
             usedRounds: this.props.routerStore.usedRounds.usedRoundsIdList ? this.props.routerStore.usedRounds.usedRoundsIdList  : [],
             temporaryData: this.props.tempData,
-            newSemester: false
+            newSemester: false,
+            usedRoundSelected: this.props.tempData ? this.props.tempData.usedRoundSelected : 0
         }
 
         this.toggleDropdown = this.toggleDropdown.bind(this)
@@ -67,16 +69,22 @@ class MemoMenu extends Component {
     //************************ CHECKBOXES AND RADIO BUTTONS **************************** */
     //********************************************************************************** */
     handleRoundCheckbox(event) {
+        event.persist()
         let prevState = this.state
-        if ( this.state.alert.length > 0 )
+        
+       
+        if ( this.state.alert.length > 0 ){
             prevState.alert = ''
+        }
 
         if ( event.target.checked ){
             prevState.rounds.push(event.target.id)
+            event.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected++ : prevState.usedRoundSelected
             this.setState(prevState)
         }
         else{
             prevState.rounds.splice(this.state.rounds.indexOf(event.target.id), 1)
+            event.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected-- : prevState.usedRoundSelected
             this.setState(prevState)
         }
     }
@@ -86,8 +94,9 @@ class MemoMenu extends Component {
 
     goToEditMode(event) {
         event.preventDefault()
+        const {rounds, semester, temporaryData, usedRoundSelected} = this.state
         if (this.state.rounds.length > 0 ){
-            this.props.editMode(this.state.semester, this.state.rounds,  this.state.temporaryData)
+            this.props.editMode(semester, rounds, temporaryData, usedRoundSelected)
         }
         else{
             this.setState({
@@ -239,21 +248,16 @@ class MemoMenu extends Component {
                                                                         checked = {this.state.rounds.indexOf(round.roundId) > -1 }
                                                                         name={round.roundId}
                                                                         disabled = {!round.hasAccess}
+                                                                        data-hasfile ={ this.state.usedRounds.length > 0 && this.state.usedRounds.indexOf(round.roundId) > -1 }
                                                                     />
-                                                                    {round.shortName 
-                                                                        ? round.shortName + ' '
-                                                                        : `${translate.course_short_semester[this.state.semester.toString().match(/.{1,4}/g)[1]]} 
-                                                                        ${this.state.semester.toString().match(/.{1,4}/g)[0]}-${round.roundId} `
-                                                                    } 
-                                                                    ( {translate.label_start_date} {getDateFormat(round.startDate, round.language)}, {round.language} )
-                                                                    <span className='no-access'>   
-                                                                        {!round.hasAccess 
-                                                                            ? translate.not_authorized_publish_new
-                                                                            : this.state.usedRounds.length > 0 && this.state.usedRounds.indexOf(round.roundId) > -1 
-                                                                                ? translate.has_published_memo 
-                                                                                : '' 
-                                                                        }
-                                                                   </span>
+                                                                    <RoundLabel key = {'round' + round.roundId}
+                                                                        language = {routerStore.language}
+                                                                        round = {round}
+                                                                        semester = {routerStore.activeSemester}
+                                                                        usedRounds ={this.state.usedRounds ? this.state.usedRounds :[]}
+                                                                        showAssesInfo = {true}
+                                                                    />
+                                                                    
 
                                                                 </Label>
                                                                 <br />
