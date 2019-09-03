@@ -152,8 +152,7 @@ class MemoMenu extends Component {
     render() {
         const { status, semesterList, roundList, routerStore } = this.props
         const translate = i18n.messages[routerStore.language].messages
-        const showAllEmptyNew = false//roundList[this.state.semester].length === this.state.usedRounds.length
-
+    
         if (routerStore.browserConfig.env === 'dev'){
             console.log("this.props - MemoMenu" , this.props)
             console.log("this.state - MemoMenu", this.state)
@@ -211,12 +210,6 @@ class MemoMenu extends Component {
                 {/************************************************************************************* */}
                 <Collapse isOpen={this.state.collapseOpen}>
                     <Row id='memoMenuContainer'>
-                        { showAllEmptyNew 
-                            ? <Alert color='info' className = 'margin-bottom-40'>
-                                <p>{showAllEmptyNew ? translate.alert_no_rounds : translate.alert_no_published }</p>
-                            </Alert>
-                            :''
-                        }
                         {this.state.semester.length > 0
                             ?<Form> 
                                 <div className='inline-flex'>

@@ -412,10 +412,14 @@ class AdminPage extends Component {
             {/*                                 EDIT FORM                                               */}
             {/************************************************************************************* */}
               
-            {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode //TODO
+            {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode 
               ? <Form className='admin-form'>
                 
                 {/* ----- ALERTS ----- */}
+                {routerStore.usedRounds.usedRoundsIdList && routerStore.usedRounds.usedRoundsIdList.length > 0
+                    ? <Alert color='info' className = 'margin-bottom-40'> {translate.alert_have_published_memo}</Alert>
+                    : ''
+                }
                 {this.state.alert.length > 0 
                   ? <Row>
                     <Alert color= 'info' className='margin-bottom-40'>{this.state.alert} </Alert>

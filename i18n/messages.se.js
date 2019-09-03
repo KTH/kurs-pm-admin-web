@@ -83,7 +83,7 @@ module.exports = {
     alert_uploaded_file: 'Vald fil har laddatas upp och fått nytt namn',
     alert_not_pdf: 'Du måste ladda upp en fil med format PDF (se markering i rött nedan) för att kunna gå vidare till Granska och publicera.',
     alert_have_published_memo: 'Observera att kurs-pm som finns publicerat (se kursomgång nedan) kommer att ersättas av kurs-pm som du laddar upp här.', /** FÄRSK SEMLA */
-    alert_empty_fields: 'NO FILE!!!!',
+    alert_empty_fields: 'Du behöver fylla i obligatoriska fält för att gå vidare till Granska och publicera.',
     /** ************ MODALS ************** */
     info_publish: {
       header: 'Att tänka på innan du publicerar!',

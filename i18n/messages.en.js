@@ -48,7 +48,7 @@ module.exports = {
     intro_edit: 'In this step (2 of 3) course memo shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.',
     intro_preview: 'In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
 
-    intro_new: 'Select one or more administrative course instances that is incouded in the course offering:',
+    intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo: ' Has a published course memo', /** FÄRSK SEMLA */
     not_authorized_publish_new: ' You are not course responsible for this instance and cannot select it.',
 
@@ -76,7 +76,7 @@ module.exports = {
     alert_uploaded_file: 'Selected file has been uploaded and been given a new file name',
     alert_not_pdf: 'The specified file could not be uploaded. The file format must be PDF.',
     alert_have_published_memo: 'Any previously published course memo (see course offering below) will be replaced by the new course memo to be uploaded.', /** FÄRSK SEMLA */
-    alert_empty_fields: 'NO FILE!!!!',
+    alert_empty_fields: 'All mandatory fields must contain information before proceeding to Preview and publish.',
     /** ************ MODALS ************** */
     info_publish: {
       header: 'To be aware of before publishing!',
