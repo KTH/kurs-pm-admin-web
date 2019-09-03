@@ -253,7 +253,7 @@ class MemoMenu extends Component {
                                                                     <RoundLabel key = {'round' + round.roundId}
                                                                         language = {routerStore.language}
                                                                         round = {round}
-                                                                        semester = {routerStore.activeSemester}
+                                                                        semester = {this.state.semester}
                                                                         usedRounds ={this.state.usedRounds ? this.state.usedRounds :[]}
                                                                         showAssesInfo = {true}
                                                                     />
