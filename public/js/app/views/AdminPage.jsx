@@ -347,7 +347,7 @@ class AdminPage extends Component {
       )
     else
       return (
-        <div key='kursutveckling-form-container' className='container' id='kursutveckling-form-container' ref={(ref) => this._div = ref} >
+        <div key='kurs-pm-form-container' className='container' id='kurs-pm-form-container' ref={(ref) => this._div = ref} >
         {/************************************************************************************* */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
         {/************************************************************************************* */}
@@ -382,7 +382,7 @@ class AdminPage extends Component {
             <h2>{translate.header_edit_content}</h2>
                 <p> <b>{translate.header_semester} </b>{
                   `${translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]} 
-                                    ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`
+                  ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`
                   }
                 </p>
 

@@ -5,6 +5,7 @@ import { getDateFormat} from '../util/helpers'
 
 const RoundLabel = ({round, semester, usedRounds, showAssesInfo, language}) =>{ 
     const translate = i18n.messages[language].messages
+
     let roundName =  round.shortName 
     ? round.shortName + ' '
     : `${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]} 

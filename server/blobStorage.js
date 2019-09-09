@@ -35,14 +35,12 @@ const pipeline = StorageURL.newPipeline(credentials)
 const serviceURL = new ServiceURL(`https://${STORAGE_ACCOUNT_NAME}.blob.core.windows.net`, pipeline)
 
 async function runBlobStorage (file, semester, courseCode, rounds, metadata) {
-  // const containerName = 'kursutveckling-blob-container'
   let blobName = ''
   const content = file.data
   const fileType = file.mimetype
   const containerURL = ContainerURL.fromServiceURL(serviceURL, containerName)
   const aborter = Aborter.timeout(30 * ONE_MINUTE)
   const newId = createID()
-  console.log(file)
 
   blobName = `memo-${courseCode}${semester}-${newId}.pdf`
 
@@ -63,7 +61,7 @@ async function uploadBlob (aborter, containerURL, blobName, content, fileType, m
       content,
       content.length
     )
-    log.debug(`Blobstorage - Upload block blob ${blobName} `)
+    log.debug(`Blobstorage - Upload blob ${blobName} `)
 
     await blockBlobURL.setHTTPHeaders(aborter, { blobContentType: fileType })
     metadata['date'] = getTodayDate(false)
@@ -71,7 +69,7 @@ async function uploadBlob (aborter, containerURL, blobName, content, fileType, m
       aborter,
       metadata
     )
-    // console.log('blockBlobURL', blockBlobURL)
+    log.debug(`Blobstorage - Blob has been uplaoded:  ${blobName} `)
     return uploadBlobResponse
   } catch (error) {
     log.error('Error when uploading file in blobStorage: ' + blobName, { error: error })
@@ -111,6 +109,7 @@ async function deleteBlob (fileName) {
     let blockBlobURL
     let responseDelete = []
 
+    /* --- looping through blobs in container to get the correct blob to delete -- */
     do {
       response = await containerURL.listBlobFlatSegment(aborter)
       marker = response.marker
@@ -131,6 +130,7 @@ async function deleteBlob (fileName) {
   }
 }
 
+/* --- creates an unique id for uploaded file */
 const createID = () => {
   return 'x4xxxyxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0; var v = c === 'x' ? r : (r & 0x3 | 0x8)

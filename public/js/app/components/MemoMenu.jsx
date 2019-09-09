@@ -10,8 +10,8 @@ import InfoButton from './InfoButton'
 import RoundLabel from '../components/RoundLabel'
 
 import i18n from '../../../../i18n/index'
-import { EMPTY, SERVICE_URL } from '../util/constants'
-import { getDateFormat, getValueFromObjectList } from '../util/helpers'
+import { SERVICE_URL } from '../util/constants'
+
 
 @inject(['routerStore']) @observer
 class MemoMenu extends Component {
@@ -171,7 +171,7 @@ class MemoMenu extends Component {
                  <p>{translate.intro_memo_menu}</p>
            
                 {/************************************************************************************* */}
-                {/*                               SEMESTER DROPDOWN                          */}
+                {/*                                  SEMESTER DROPDOWN                                  */}
                 {/************************************************************************************* */}
                 <Dropdown
                     isOpen={this.state.dropdownOpen}
@@ -227,8 +227,7 @@ class MemoMenu extends Component {
                                 </div>
                 
                                      <div className= 'selectBlock'>
-                                        
-                                
+            
                                     {/************************************************************************************* */}
                                     {/*                           ROUND LIST FOR SELECTED SEMESTER                          */}
                                     {/************************************************************************************* */}
@@ -280,7 +279,7 @@ class MemoMenu extends Component {
                 {/************************************************************************************* */}
                 <Row className="button-container text-center">
                     <Col sm="12" lg="4">
-                        { /*this.state.selectedRadio.draft.length > 0 && !this.state.canOnlyPreview
+                        { /*this.state.selectedRadio.draft.length > 0
                             ? <span>
                                 <Button color='danger' id='delete' key='delete' onClick={this.toggleModal} style={{marginRight: '5px'}}>
                                     {translate.btn_delete}

@@ -25,15 +25,14 @@ class InfoModal extends Component {
 
       return (
         <div>
-          {
-            type === 'info'
-            ? <Button id={type} type="button"  onClick={toggle} className='btn-info-modal btn btn-secondary info-inline'/>
+          { type === 'info'
+            ? <Button id={type} type="button" onClick={toggle} className='btn-info-modal btn btn-secondary info-inline'/>
             : ''
           }
           <Modal isOpen = {isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
             <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
             <ModalBody>
-              
+        
               <p dangerouslySetInnerHTML={{ __html:infoText.body}}/>
               
             </ModalBody>
@@ -46,7 +45,7 @@ class InfoModal extends Component {
               }
             </ModalFooter>
           </Modal>
-          </div>
+        </div>
       )
     }
   }

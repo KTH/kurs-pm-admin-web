@@ -26,9 +26,10 @@ class UpLoad extends React.Component {
   }
 
   render() {
+    //* --- Shows uploded file if file exists otherwise upload button --- */
     const {id, path, progress, file, notValid, type} = this.props
     return (
-      <div className={notValid.indexOf(type) > -1 ? 'not-valid' : ''}>
+      <div className={ notValid.indexOf(type) > -1 ? 'not-valid' : ''}>
        { file && file.length > 0
         ? <span>
           <br/>

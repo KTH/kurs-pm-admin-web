@@ -111,7 +111,7 @@ function * _deleteFileInStorage (res, req, next) {
 async function getIndex (req, res, next) {
   console.log(api.memoApi)
 
-  /** ------- CHECK OF CONNECTION TO API AND UG_REDIS ------- */
+  /** ------- CHECK OF CONNECTION TO API ------- */
   if (api.memoApi.connected === false) {
     log.error('No connection to kurs-pm-api', api.memoApi)
     const error = new Error('API - ERR_CONNECTION_REFUSED')
