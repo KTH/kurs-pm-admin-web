@@ -212,7 +212,7 @@ class RouterStore {
       return undefined
     }
     try {
-      console.log('courseObject', courseObject)
+      // console.log('courseObject', courseObject)
       this.courseData = {
         courseCode,
         gradeScale: courseObject.formattedGradeScales,
