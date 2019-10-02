@@ -109,7 +109,7 @@ function * _deleteFileInStorage (res, req, next) {
 }
 
 async function getIndex (req, res, next) {
-  console.log(api.memoApi)
+  // console.log(api.memoApi)
 
   /** ------- CHECK OF CONNECTION TO API ------- */
   if (api.memoApi.connected === false) {
