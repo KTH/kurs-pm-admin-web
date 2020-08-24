@@ -6,11 +6,10 @@ module.exports = {
   getMemoData: _getMemoData,
   setMemoData: _setMemoData,
   updateMemoData: _putMemoData,
-  deleteMemoData: _deleteMemoData,
   getUsedRounds: _getUsedRounds
 }
 
-async function _getMemoData (id) {
+async function _getMemoData(id) {
   const paths = api.memoApi.paths
   // console.log('_getRoundData', paths)
   const client = api.memoApi.client
@@ -18,7 +17,7 @@ async function _getMemoData (id) {
   return client.getAsync({ uri: uri })
 }
 
-async function _setMemoData (id, sendObject) {
+async function _setMemoData(id, sendObject) {
   const paths = api.memoApi.paths
   // console.log('_setRoundData', sendObject)
   const client = api.memoApi.client
@@ -26,7 +25,7 @@ async function _setMemoData (id, sendObject) {
   return client.postAsync({ uri: uri, body: sendObject })
 }
 
-async function _putMemoData (id, sendObject) {
+async function _putMemoData(id, sendObject) {
   const paths = api.memoApi.paths
   // console.log('_putRoundData', paths)
   const client = api.memoApi.client
@@ -34,18 +33,14 @@ async function _putMemoData (id, sendObject) {
   return client.putAsync({ uri: uri, body: sendObject })
 }
 
-async function _deleteMemoData (id) {
-  const paths = api.memoApi.paths
-  const client = api.memoApi.client
-  const uri = client.resolve(paths.deleteCourseRoundMemoDataById.uri, { id: id })
-  return client.delAsync({ uri: uri })
-}
-
-async function _getUsedRounds (courseCode, semester) {
+async function _getUsedRounds(courseCode, semester) {
   try {
     const paths = api.memoApi.paths
     const client = api.memoApi.client
-    const uri = client.resolve(paths.getUsedRounds.uri, { courseCode: courseCode, semester: semester })
+    const uri = client.resolve(paths.getUsedRounds.uri, {
+      courseCode: courseCode,
+      semester: semester
+    })
     return await client.getAsync({ uri: uri })
   } catch (error) {
     return error

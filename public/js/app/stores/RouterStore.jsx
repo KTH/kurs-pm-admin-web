@@ -9,9 +9,10 @@ const paramRegex = /\/(:[^\/\s]*)/g
 function _paramReplace(path, params) {
   let tmpPath = path
   const tmpArray = tmpPath.match(paramRegex)
-  tmpArray && tmpArray.forEach(element => {
-    tmpPath = tmpPath.replace(element, '/' + params[element.slice(2)])
-  })
+  tmpArray &&
+    tmpArray.forEach((element) => {
+      tmpPath = tmpPath.replace(element, '/' + params[element.slice(2)])
+    })
   return tmpPath
 }
 
@@ -20,7 +21,6 @@ function _webUsesSSL(url) {
 }
 
 class RouterStore {
-
   roundData = {}
   courseData = {}
   semesters = []
@@ -35,10 +35,8 @@ class RouterStore {
   service = ''
   member = []
   roundAccess = {}
-  user =''
+  user = ''
   activeSemester = ''
-
-  
 
   buildApiUrl(path, params) {
     let host
@@ -54,7 +52,7 @@ class RouterStore {
     return [host, newPath].join('')
   }
 
-  _getOptions(params) { 
+  _getOptions(params) {
     // Pass Cookie header on SSR-calls
     let options
     if (typeof window === 'undefined') {
@@ -62,7 +60,7 @@ class RouterStore {
         headers: {
           Cookie: this.cookieHeader,
           Accept: 'application/json',
-          'X-Forwarded-Proto': (_webUsesSSL(this.apiHost) ? 'https' : 'http')
+          'X-Forwarded-Proto': _webUsesSSL(this.apiHost) ? 'https' : 'http'
         },
         timeout: 10000,
         params: params
@@ -78,136 +76,160 @@ class RouterStore {
   /** ***************************************************************************************************************************************** */
   /*                                                       FILE STORAGE ACTIONS                                                      */
   /** ***************************************************************************************************************************************** */
-  @action updateFileInStorage(fileName, metadata) { 
-    return axios.post(this.buildApiUrl(this.paths.storage.updateFile.uri,
-      { fileName: fileName}),
-      this._getOptions({ metadata })
-    ).then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        return "ERROR-" + apiResponse.statusCode
-      }
-      return apiResponse.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
+  @action updateFileInStorage(fileName, metadata) {
+    return axios
+      .post(
+        this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName: fileName }),
+        this._getOptions({ metadata })
+      )
+      .then((apiResponse) => {
+        if (apiResponse.statusCode >= 400) {
+          return 'ERROR-' + apiResponse.statusCode
+        }
+        return apiResponse.data
+      })
+      .catch((err) => {
+        if (err.response) {
+          throw new Error(err.message)
+        }
+        throw err
+      })
   }
 
-  @action deleteFileInStorage(fileName){
-    return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri,
-      { fileName: fileName }),
-      this._getOptions()
-    ).then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        return "ERROR-" + apiResponse.statusCode
-      }
-      return apiResponse.data
-    })
+  @action deleteFileInStorage(fileName) {
+    return axios
+      .post(
+        this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName: fileName }),
+        this._getOptions()
+      )
+      .then((apiResponse) => {
+        if (apiResponse.statusCode >= 400) {
+          return 'ERROR-' + apiResponse.statusCode
+        }
+        return apiResponse.data
+      })
   }
 
   /** ***************************************************************************************************************************************** */
   /*                                               MEMO ACTIONS (PM - API)                                                      */
   /** ***************************************************************************************************************************************** */
- 
-  @action postMemoData(postObject, fileName, uploadDate) { 
 
-    for(let index=0; index < postObject.length; index ++){
+  @action postMemoData(postObject, fileName, uploadDate) {
+    for (let index = 0; index < postObject.length; index++) {
       postObject[index].courseMemoFileName = fileName
       postObject[index].pdfMemoUploadDate = uploadDate
     }
-    return axios.post(this.buildApiUrl(this.paths.api.memoPost.uri,
-      {id: 'default' }), //TODO !!
-      this._getOptions(JSON.stringify(postObject))
-    ).then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        this.errorMessage = result.statusText
-        return "ERROR-" + apiResponse.statusCode
-      }
-      return apiResponse.data
-    }).catch(err => {
-      if (err.response) {
-        this.errorMessage = err.message
-        return err.message
-        //throw new Error(err.message)
-      }
-      throw err
-    })
+    return axios
+      .post(
+        this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), //TODO !!
+        this._getOptions(JSON.stringify(postObject))
+      )
+      .then((apiResponse) => {
+        if (apiResponse.statusCode >= 400) {
+          this.errorMessage = result.statusText
+          return 'ERROR-' + apiResponse.statusCode
+        }
+        return apiResponse.data
+      })
+      .catch((err) => {
+        if (err.response) {
+          this.errorMessage = err.message
+          return err.message
+          //throw new Error(err.message)
+        }
+        throw err
+      })
   }
 
   @action putMemoData(postObject, status) {
-    return axios.post(this.buildApiUrl(this.paths.api.memoPost.uri,
-      { id: postObject._id, status: status/*, lang: lang*/ }),
-      this._getOptions(JSON.stringify(postObject))
-    ).then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        this.errorMessage = result.statusText
-        return "ERROR-" + apiResponse.statusCode
-      }
-      this.errorMessage = apiResponse.data.message
-      if(this.errorMessage !== undefined){
-      if (this.status === 'draft' && apiResponse.data.isPublished)
-        this.hasChangedStatus = true
-      }
-      return apiResponse.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
+    return axios
+      .post(
+        this.buildApiUrl(this.paths.api.memoPost.uri, {
+          id: postObject._id,
+          status: status /*, lang: lang*/
+        }),
+        this._getOptions(JSON.stringify(postObject))
+      )
+      .then((apiResponse) => {
+        if (apiResponse.statusCode >= 400) {
+          this.errorMessage = result.statusText
+          return 'ERROR-' + apiResponse.statusCode
+        }
+        this.errorMessage = apiResponse.data.message
+        if (this.errorMessage !== undefined) {
+          if (this.status === 'draft' && apiResponse.data.isPublished) this.hasChangedStatus = true
+        }
+        return apiResponse.data
+      })
+      .catch((err) => {
+        if (err.response) {
+          throw new Error(err.message)
+        }
+        throw err
+      })
   }
 
-
   @action getUsedRounds(courseCode, semester) {
+    console.log('ffffffffffffff----------------------->')
     this.courseCode = courseCode
-    return axios.get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri,
-      { courseCode: courseCode, semester: semester }),
-      this._getOptions()
-    ).then(result => {
-      if (result.status >= 400) {
-        return "ERROR-" + result.status
-      }
-      return this.usedRounds =  result.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
+    return axios
+      .get(
+        this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, {
+          courseCode: courseCode,
+          semester: semester
+        }),
+        this._getOptions()
+      )
+      .then((result) => {
+        if (result.status >= 400) {
+          return 'ERROR-' + result.status
+        }
+        return (this.usedRounds = result.data)
+      })
+      .catch((err) => {
+        if (err.response) {
+          throw new Error(err.message)
+        }
+        throw err
+      })
   }
   /** ***************************************************************************************************************************************** */
   /*                                             GET COURSE INFORMATION ACTION (KOPPS - API)                                                    */
   /** ***************************************************************************************************************************************** */
   @action getCourseInformation(courseCode, ldapUsername, lang = 'sv') {
     this.courseCode = courseCode
-    return axios.get(this.buildApiUrl(this.paths.api.koppsCourseData.uri,
-      { courseCode: courseCode, language: lang }),
-      this._getOptions()
-    ).then((result) => {
-      //log.info('getCourseInformation: ' + result)
-      if (result.status >= 400) {
-        this.errorMessage = result.statusText
-        return "ERROR-" + result.status
-      }
-      this.handleCourseData(result.data, courseCode, ldapUsername, lang)
-      return result.body
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
+    return axios
+      .get(
+        this.buildApiUrl(this.paths.api.koppsCourseData.uri, {
+          courseCode: courseCode,
+          language: lang
+        }),
+        this._getOptions()
+      )
+      .then((result) => {
+        //log.info('getCourseInformation: ' + result)
+        if (result.status >= 400) {
+          this.errorMessage = result.statusText
+          return 'ERROR-' + result.status
+        }
+        this.handleCourseData(result.data, courseCode, ldapUsername, lang)
+        return result.body
+      })
+      .catch((err) => {
+        if (err.response) {
+          throw new Error(err.message)
+        }
+        throw err
+      })
   }
 
- /** ***************************************************************************************************************************************** */
+  /** ***************************************************************************************************************************************** */
   /*                                                     HANDLE DATA FROM API                                                                  */
   /** ***************************************************************************************************************************************** */
 
   @action handleCourseData(courseObject, courseCode, ldapUsername, language) {
     // Building up courseTitle, courseData, semesters and roundData
-    if(courseObject === undefined){
+    if (courseObject === undefined) {
       this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
       return undefined
     }
@@ -220,34 +242,36 @@ class RouterStore {
       }
       this.courseTitle = {
         name: courseObject.course.title[this.language === 0 ? 'en' : 'sv'],
-        credits: courseObject.course.credits.toString().indexOf('.') < 0 ? courseObject.course.credits + '.0' : courseObject.course.credits
+        credits:
+          courseObject.course.credits.toString().indexOf('.') < 0
+            ? courseObject.course.credits + '.0'
+            : courseObject.course.credits
       }
 
-      for(let semester = 0; semester < courseObject.termsWithCourseRounds.length; semester ++){
-          this.courseData.semesterObjectList[courseObject.termsWithCourseRounds[semester].term]= {
+      for (let semester = 0; semester < courseObject.termsWithCourseRounds.length; semester++) {
+        this.courseData.semesterObjectList[courseObject.termsWithCourseRounds[semester].term] = {
           rounds: courseObject.termsWithCourseRounds[semester].rounds
         }
       }
 
       const thisStore = this
       courseObject.termsWithCourseRounds.map((semester, index) => {
-        if (thisStore.semesters.indexOf(semester.term) < 0)
-          thisStore.semesters.push(semester.term)
+        if (thisStore.semesters.indexOf(semester.term) < 0) thisStore.semesters.push(semester.term)
 
-        if (!thisStore.roundData.hasOwnProperty(semester.term)){
+        if (!thisStore.roundData.hasOwnProperty(semester.term)) {
           thisStore.roundData[semester.term] = []
           thisStore.roundAccess[semester.term] = {}
         }
-      
-        thisStore.roundData[semester.term] = semester.rounds.map((round, index) => { 
-          return round.ladokRoundId = {
+
+        thisStore.roundData[semester.term] = semester.rounds.map((round, index) => {
+          return (round.ladokRoundId = {
             roundId: round.ladokRoundId,
             language: round.language[language],
             shortName: round.shortName,
             startDate: round.firstTuitionDate,
             ladokUID: round.ladokUID,
             hasAccess: getAccess(this.member, round, this.courseCode, semester.term)
-          }
+          })
         })
       })
     } catch (err) {
@@ -267,49 +291,53 @@ class RouterStore {
     this.activeSemester = semester
     let id = ''
 
-    for(let round = 0; round<rounds.length; round++ ){
-      id= `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
-       //if()
-      newMemo = {
-        _id: `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
-        courseMemoFileName: '',
-        changedBy: this.user, 
-        courseCode: this.courseData.courseCode,
-        pdfMemoUploadDate: '',
-        semester: semester,
-        koppsRoundId: rounds[round]
-      }
+    for (let round = 0; round < rounds.length; round++) {
+      ;(id = `${this.courseData.courseCode}_${semester}_${rounds[round]}`),
+        //if()
+        (newMemo = {
+          _id: `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
+          courseMemoFileName: '',
+          changedBy: this.user,
+          courseCode: this.courseData.courseCode,
+          pdfMemoUploadDate: '',
+          semester: semester,
+          koppsRoundId: rounds[round]
+        })
       this.newMemoList.push(newMemo)
     }
     return this.newMemoList
   }
 
-  getMemberOf(memberOf, id, ldapUsername, superUser){
+  getMemberOf(memberOf, id, ldapUsername, superUser) {
     if (id.length > 7) {
       let splitId = id.split('_')
-      this.courseCode = splitId[0].length > 12 ? id.slice(0, 7).toUpperCase() : id.slice(0, 6).toUpperCase()
+      this.courseCode =
+        splitId[0].length > 12 ? id.slice(0, 7).toUpperCase() : id.slice(0, 6).toUpperCase()
     } else {
       this.courseCode = id.toUpperCase()
     }
-    this.member = memberOf.filter((member) => member.indexOf(this.courseCode) > -1 || member.indexOf(superUser) > -1)
+    this.member = memberOf.filter(
+      (member) => member.indexOf(this.courseCode) > -1 || member.indexOf(superUser) > -1
+    )
     this.user = ldapUsername
   }
 
-  setLanguage(lang = 'sv'){
+  setLanguage(lang = 'sv') {
     this.language = lang === 'en' ? 0 : 1
   }
 
- 
-
   @action getLdapUserByUsername(params) {
-    return axios.get(this.buildApiUrl(this.paths.api.searchLdapUser.uri, params), this._getOptions()).then((res) => {
-      return res.data
-    }).catch(err => {
-      if (err.response) {
-        throw new Error(err.message, err.response.data)
-      }
-      throw err
-    })
+    return axios
+      .get(this.buildApiUrl(this.paths.api.searchLdapUser.uri, params), this._getOptions())
+      .then((res) => {
+        return res.data
+      })
+      .catch((err) => {
+        if (err.response) {
+          throw new Error(err.message, err.response.data)
+        }
+        throw err
+      })
   }
 
   @action getBreadcrumbs() {
@@ -337,9 +365,21 @@ class RouterStore {
   }
 
   @action getBrowserInfo() {
-    var navAttrs = ['appCodeName', 'appName', 'appMinorVersion', 'cpuClass',
-      'platform', 'opsProfile', 'userProfile', 'systemLanguage',
-      'userLanguage', 'appVersion', 'userAgent', 'onLine', 'cookieEnabled']
+    var navAttrs = [
+      'appCodeName',
+      'appName',
+      'appMinorVersion',
+      'cpuClass',
+      'platform',
+      'opsProfile',
+      'userProfile',
+      'systemLanguage',
+      'userLanguage',
+      'appVersion',
+      'userAgent',
+      'onLine',
+      'cookieEnabled'
+    ]
     var docAttrs = ['referrer', 'title', 'URL']
     var value = { document: {}, navigator: {} }
 
@@ -360,7 +400,11 @@ class RouterStore {
   initializeStore(storeName) {
     const store = this
 
-    if (typeof window !== 'undefined' && window.__initialState__ && window.__initialState__[storeName]) {
+    if (
+      typeof window !== 'undefined' &&
+      window.__initialState__ &&
+      window.__initialState__[storeName]
+    ) {
       const tmp = JSON.parse(decodeURIComponent(window.__initialState__[storeName]))
       for (let key in tmp) {
         store[key] = tmp[key]
