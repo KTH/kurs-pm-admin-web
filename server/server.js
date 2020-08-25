@@ -101,12 +101,12 @@ server.use(
   express.static('./node_modules/kth-style/dist')
 )
 
-// server.use(config.proxyPrefixPath.uri + '/static/js/app.js', express.static('./dist/js/app.js'))
+server.use(config.proxyPrefixPath.uri + '/static/app.js', express.static('./dist/app.js'))
 // Map static content like images, css and js.
 server.use(config.proxyPrefixPath.uri + '/static', express.static('./dist'))
 // Return 404 if static file isn't found so we don't go through the rest of the pipeline
-server.use(config.proxyPrefixPath.uri + '/static', function (req, res, next) {
-  var error = new Error('File not found: ' + req.originalUrl)
+server.use(config.proxyPrefixPath.uri + '/static', (req, res, next) => {
+  const error = new Error('File not found: ' + req.originalUrl)
   error.statusCode = 404
   next(error)
 })

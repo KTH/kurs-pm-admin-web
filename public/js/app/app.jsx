@@ -1,11 +1,7 @@
 'use strict'
-//import 'react-app-polyfill/ie11'
-//import 'react-app-polyfill/stable'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Component } from 'react'
-import { Provider, inject } from 'mobx-react'
+import { Provider } from 'mobx-react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
 import { StaticRouter } from 'react-router'

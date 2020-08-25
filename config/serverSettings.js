@@ -7,7 +7,14 @@
  * *************************************************
  *
  */
-const { getEnv, devDefaults, unpackLDAPConfig, unpackKOPPSConfig, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
+const {
+  getEnv,
+  devDefaults,
+  unpackLDAPConfig,
+  unpackKOPPSConfig,
+  unpackRedisConfig,
+  unpackNodeApiConfig
+} = require('kth-node-configuration')
 const { typeConversion } = require('kth-node-configuration/lib/utils')
 const { safeGet } = require('safe-utils')
 
@@ -15,16 +22,20 @@ const { safeGet } = require('safe-utils')
 const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
-const devmemoApi = devDefaults('http://localhost:3001/api/kurs-pm?defaultTimeout=10000')
-const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/')
-const devSessionKey = devDefaults('node-web.sid') // TODO ??
+const devmemoApi = devDefaults('http://localhost:3003/api/kurs-pm?defaultTimeout=10000')
+const devKoppsApi = devDefaults(
+  'https://api-r.referens.sys.kth.se/api/kopps/v2/?defaultTimeout=10000'
+)
+const devSessionKey = devDefaults('kurs-pm-admin-web.sid')
 const devSessionUseRedis = devDefaults(true)
 const devRedis = devDefaults('redis://localhost:6379/')
 const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use env_vars
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')
 const devStorageAccountName = devDefaults('kursinfostoragestage')
-const devStorageKey = devDefaults('ybZZ0R0y1/AFPj9o6kAEiPuCgmYSaD9AgbPccC4c9b1dj7J2+NXcMzXUowfLQULB3qsDBX0abpS9oi/p+mskyw==')
+const devStorageKey = devDefaults(
+  'ybZZ0R0y1/oa2aAFPj9o6kAEiPuCgmYSaD9AgbPccC4c9b1dj7J2+NXcMzXUowfLQULB3qsDBX0abpS9oi/p+mskyw=='
+)
 const devStorageContainer = devDefaults('memo-blob-container')
 // END DEFAULT SETTINGS
 
@@ -38,12 +49,12 @@ const ldapOptions = {
   testSearch: true, // TODO: Should this be an ENV setting?
   timeout: typeConversion(getEnv('LDAP_TIMEOUT', null)),
   reconnectTime: typeConversion(getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
-  reconnectOnIdle: (!!getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
+  reconnectOnIdle: !!getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null),
   connecttimeout: typeConversion(getEnv('LDAP_CONNECT_TIMEOUT', null)),
   searchtimeout: typeConversion(getEnv('LDAP_SEARCH_TIMEOUT', null))
 }
 
-Object.keys(ldapOptions).forEach(key => {
+Object.keys(ldapOptions).forEach((key) => {
   if (ldapOptions[key] === null) {
     delete ldapOptions[key]
   }
@@ -98,6 +109,13 @@ module.exports = {
   cache: {
     cortinaBlock: {
       redis: unpackRedisConfig('REDIS_URI', devRedis)
+    },
+    koppsApi: {
+      redis: unpackRedisConfig('REDIS_URI', devRedis),
+      expireTime: getEnv('KOPPS_API_CACHE_EXPIRE_TIME', 60 * 60) // 60 minuteS
+    },
+    ugRedis: {
+      redis: unpackRedisConfig('UG_REDIS_URI', devRedis)
     }
   },
 
@@ -128,5 +146,4 @@ module.exports = {
       //, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
     }
   }
-
 }

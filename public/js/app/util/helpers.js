@@ -1,4 +1,5 @@
 'use strict'
+
 import { SUPERUSER_PART } from './constants'
 
 const getDateFormat = (date, language) => {
