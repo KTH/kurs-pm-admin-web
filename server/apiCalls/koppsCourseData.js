@@ -2,6 +2,7 @@
 
 const config = require('../configuration').server
 const BasicAPI = require('kth-node-api-call').BasicAPI
+const redis = require('kth-node-redis')
 
 const koppsApi = new BasicAPI({
   hostname: config.koppsApi.host,
@@ -16,7 +17,7 @@ module.exports = {
   getKoppsCourseData: getKoppsCourseData
 }
 
-async function getKoppsCourseData (courseCode, lang = 'sv') {
+async function getKoppsCourseData(courseCode, lang = 'sv') {
   try {
     return await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
   } catch (err) {
