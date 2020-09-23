@@ -110,10 +110,6 @@ module.exports = {
     cortinaBlock: {
       redis: unpackRedisConfig('REDIS_URI', devRedis)
     }
-    // koppsApi: {
-    //   redis: unpackRedisConfig('REDIS_URI', devRedis),
-    //   expireTime: getEnv('KOPPS_API_CACHE_EXPIRE_TIME', 60 * 60) // 60 minuteS
-    // }
   },
 
   // Session

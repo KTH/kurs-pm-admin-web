@@ -2,7 +2,6 @@
 
 const config = require('../configuration').server
 const BasicAPI = require('kth-node-api-call').BasicAPI
-const redis = require('kth-node-redis')
 
 const koppsApi = new BasicAPI({
   hostname: config.koppsApi.host,

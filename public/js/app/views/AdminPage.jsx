@@ -48,6 +48,7 @@ class AdminPage extends Component {
         thisInstance.setState({ alertSuccess: '' })
       }, 5000)
     }
+    console.log('--------> UPDATED: ', thisInstance.state)
   }
 
   //*********************************  FILE UPLOAD  ********************************* */
@@ -241,6 +242,7 @@ class AdminPage extends Component {
   }
 
   toggleModal = (event) => {
+    console.log('olalalalalal')
     let modalOpen = this.state.modalOpen
     modalOpen[event.target.id] = !modalOpen[event.target.id]
     this.setState({
@@ -272,6 +274,7 @@ class AdminPage extends Component {
     if (routerStore.browserConfig.env === 'dev') {
       // console.log("routerStore - AdminPage", routerStore)
       // console.log("this.state - AdminPage", this.state)
+      console.log('--------AdminPage', routerStore.usedRounds.usedRoundsIdList)
     }
     if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
@@ -544,7 +547,7 @@ class AdminPage extends Component {
               {/************************************************************************************* */}
               <InfoModal
                 type="publish"
-                toggle={(event) => this.toggleModal(event)}
+                toggle={this.toggleModal}
                 isOpen={this.state.modalOpen.publish}
                 id={'publish'}
                 handleConfirm={(event) => this.handlePublish(event)}
@@ -552,7 +555,7 @@ class AdminPage extends Component {
               />
               <InfoModal
                 type="cancel"
-                toggle={(event) => this.toggleModal(event)}
+                toggle={this.toggleModal}
                 isOpen={this.state.modalOpen.cancel}
                 id={'cancel'}
                 handleConfirm={(event) => this.handleCancel(event)}

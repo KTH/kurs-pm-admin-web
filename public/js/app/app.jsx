@@ -3,11 +3,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'mobx-react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import '../../css/memo-admin.scss'
 
 import { StaticRouter } from 'react-router'
 import RouterStore from './stores/RouterStore'
 import AdminPage from './views/AdminPage'
-import '../../css/memo-admin.scss'
 
 function appFactory() {
   const routerStore = new RouterStore()
@@ -34,10 +34,7 @@ function staticRender(context, location) {
 }
 
 if (typeof window !== 'undefined') {
-  ReactDOM.render(
-    <BrowserRouter>{appFactory()}</BrowserRouter>,
-    document.getElementById('kth-kurs-pm-admin')
-  )
+  ReactDOM.render(<BrowserRouter>{appFactory()}</BrowserRouter>, document.getElementById('app'))
 }
 
-export { staticRender }
+export { appFactory, staticRender }

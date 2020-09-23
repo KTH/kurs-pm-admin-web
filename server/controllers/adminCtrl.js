@@ -59,9 +59,9 @@ async function* _getUsedRounds(req, res, next) {
 async function* _getKoppsCourseData(req, res, next) {
   const courseCode = req.params.courseCode
   const language = req.params.language || 'sv'
-  log.info('_getKoppsCourseData with code:' + courseCode)
   try {
     const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, language)
+    log.info('_getKoppsCourseData with code answered:' + courseCode)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from koppsAPI ', { error: err })

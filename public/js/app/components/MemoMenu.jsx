@@ -51,9 +51,6 @@ class MemoMenu extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    console.log('asdcpropsadcddfasdfsd', props)
-    console.log('state', state)
-
     const { routerStore } = props
     const { semester } = state
 
@@ -75,13 +72,14 @@ class MemoMenu extends Component {
   //******************************* SEMESTER DROPDOWN ******************************* */
   //********************************************************************************** */
   toggleDropdown = () => {
-    // event.preventDefault()
+    console.log('hello')
     this.setState({
       dropdownOpen: !this.state.dropdownOpen
     })
   }
 
   handleSelectedSemester = async (event) => {
+    console.log('ollalala')
     event.preventDefault()
     const roundsChange = this.getUsedRounds(event.target.id)
     this.setState({
@@ -144,7 +142,7 @@ class MemoMenu extends Component {
     window.location = `${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
   }
 
-  toggleModal = () => {
+  toggleModal = (event) => {
     console.log('gdfgsdfgdgsdfgsdfgdfg---_><>>>>>>>>>>')
     let modalOpen = this.state.modalOpen
     modalOpen[event.target.id] = !modalOpen[event.target.id]
@@ -157,10 +155,16 @@ class MemoMenu extends Component {
 
   getUsedRounds = async (semester) => {
     const { routerStore } = this.props
+    console.log('IAMHERE')
     const result = await this.props.routerStore.getUsedRounds(
       routerStore.courseData.courseCode,
       semester
     )
+    // this.setState({
+    //   semester: this.state.semester,
+    //   usedRounds: routerStore.usedRounds.usedRoundsIdList,
+    //   alert: ''
+    // })
     return {
       semester,
       usedRounds: routerStore.usedRounds.usedRoundsIdList,
@@ -171,10 +175,15 @@ class MemoMenu extends Component {
   render() {
     const { status, semesterList, roundList, routerStore } = this.props
     const translate = i18n.messages[routerStore.language].messages
+    console.log('handleSelectedSemester', this.handleSelectedSemester)
 
     if (routerStore.browserConfig.env === 'dev') {
-      console.log('this.props.routerStore - MemoMenu', this.props.routerStore)
+      // console.log('this.props.routerStore - MemoMenu', this.props.routerStore)
       console.log('this.state - MemoMenu', this.state)
+      console.log(
+        'this.props.routerStore.usedRounds.usedRoundsIdList',
+        this.props.routerStore.usedRounds.usedRoundsIdList
+      )
     }
     return (
       <div id="YearAndRounds">
@@ -183,9 +192,9 @@ class MemoMenu extends Component {
         {/************************************************************************************* */}
         {/*                                  SEMESTER DROPDOWN                                  */}
         {/************************************************************************************* */}
-        <Dropdown
+        {/* <Dropdown
           isOpen={this.state.dropdownOpen}
-          toggle={this.toggleDropdown}
+          toggle={() => console.log('WOWOWOWOWOWOWO')}
           className="select-semester"
         >
           <div className="inline-flex padding-top-30">
@@ -219,17 +228,57 @@ class MemoMenu extends Component {
                   onClick={(event) => this.handleSelectedSemester(event)}
                 >
                   {`
-                                    ${
-                                      translate.course_short_semester[
-                                        semester.toString().match(/.{1,4}/g)[1]
-                                      ]
-                                    } 
-                                    ${semester.toString().match(/.{1,4}/g)[0]}
-                                `}
+                    ${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]} 
+                    ${semester.toString().match(/.{1,4}/g)[0]}
+                `}
                 </DropdownItem>
               ))}
           </DropdownMenu>
-        </Dropdown>
+        </Dropdown> */}
+        <div className="inline-flex padding-top-30">
+          <h3>{translate.select_semester}</h3>
+          <InfoButton
+            addClass="padding-top-30"
+            id="info_select_semester"
+            textObj={translate.info_select_semester}
+          />
+        </div>
+        <form>
+          <div className="form-group">
+            <label className="form-control-label" htmlFor="exampleFormControlSelect1">
+              {translate.select_semester}
+            </label>
+            <div className="form-select form-group">
+              <div className="select-wrapper">
+                <select
+                  className="form-control"
+                  id="exampleFormControlSelect1"
+                  aria-label={translate.select_semester}
+                  onChange={this.handleSelectedSemester}
+                >
+                  <option selected>
+                    {' '}
+                    {this.state.semester && this.state.semester > 0 && !this.state.firstVisit
+                      ? `${
+                          translate.course_short_semester[
+                            this.state.semester.toString().match(/.{1,4}/g)[1]
+                          ]
+                        } ${this.state.semester.toString().match(/.{1,4}/g)[0]}`
+                      : translate.select_semester}
+                  </option>
+                  {semesterList &&
+                    semesterList.map((semester) => (
+                      <option id={semester} key={semester}>
+                        {`${
+                          translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]
+                        } ${semester.toString().match(/.{1,4}/g)[0]}`}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
 
         {this.state.alert.length > 0 ? (
           <Alert color="danger" className="margin-bottom-40">
