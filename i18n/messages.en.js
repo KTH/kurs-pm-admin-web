@@ -18,8 +18,8 @@ module.exports = {
     title: "Course memo administration",
 
     lang_block_id: "1.272446",
-    locale_text: "Course information in English",
-    site_name: "Course information",
+    locale_text: "This page in English",
+    site_name: "Administrate About course",
     host_name: "KTH",
     page_student: "STUDENT PÅ KTH",
     page_course_programme: "KURS- OCH PROGRAMKATALOGEN",
@@ -29,7 +29,7 @@ module.exports = {
       2: "Autumn ",
     },
 
-    header_main: "Publish course memo",
+    header_main: "Upload alternative course memo as PDF",
 
     /** **** PROGRESS BAR  */
     header_progress_select: "1. Choose course offering",
@@ -45,15 +45,15 @@ module.exports = {
 
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     intro_memo_menu:
-      "Choose a semester and a course offering for the course memo to be published (step 1 of 3). In the next step (2 of 3), course memo shall be uploaded for the selected semester and course offering. Preview the course memo that is about to be published in the last step (3 of 3). The course memo will then be published on the page Course information.",
+      "Choose a semester and a course offering for the course memo to be uploaded (step 1 of 3). In the next step (2 of 3), course memo as PDF shall be uploaded for the selected semester and course offering. Preview the course memo that is about to be published in the last step (3 of 3). The course memo will then be published on the page Course information.",
     intro_edit:
-      "In this step (2 of 3) course memo shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.",
+      "In this step (2 of 3) course memo as PDF shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.",
     intro_preview:
       "In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.",
 
     intro_new:
       "Select one or more administrative course instances that is included in the course offering:",
-    has_published_memo: " Has a published course memo" /** FÄRSK SEMLA */,
+    has_published_memo: " Has an uploaded course memo as PDF" /** FÄRSK SEMLA */,
     has_web_based_memo:
       " This administrative course instance has a published course memo as a web page and cannot be selected.",
     not_authorized_publish_new:
@@ -87,13 +87,13 @@ module.exports = {
     alert_not_pdf:
       "The specified file could not be uploaded. The file format must be PDF.",
     alert_have_published_memo:
-      "Any previously published course memo (see course offering below) will be replaced by the new course memo to be uploaded." /** FÄRSK SEMLA */,
+      "Any previously uploaded course memo as PDF (see course offering below) will be replaced by the new course memo to be uploaded." /** FÄRSK SEMLA */,
     alert_empty_fields:
       "All mandatory fields must contain information before proceeding to Preview and publish.",
     /** ************ MODALS ************** */
     info_publish: {
       header: "To be aware of before publishing!",
-      body: `The information will be published on the page Course information
+      body: `The information will be published on the page Before choosing course
         <br/> 
         <br/> 
         Do you want to publish?`,
@@ -119,9 +119,9 @@ module.exports = {
         "Choose all the administrative course instances that is included in the course offering. Students are admitted to an administrative course instance. Degree program students and non-programme students are admitted to different administrative course instances but may be educated in the same course offering. A course offering is thereby the practical realisation of the course with a common start date, common pace, common timetable etc. for all students. Several administrative course instances are grouped to one course offering.",
     },
     info_upload_course_memo: {
-      header: "Upload course memo",
+      header: "Upload course memo as PDF",
       body:
-        "Upload the latest version of the course memo for the course offering.",
+        "Upload the latest version of the course memo for the course offering as PDF.",
     },
 
     // PREVIEW PAGE
