@@ -282,7 +282,7 @@ class MemoMenu extends Component {
         {/************************************************************************************* */}
         <Collapse isOpen={this.state.collapseOpen}>
           <Row id="memoMenuContainer">
-            {this.state.semester.length > 0 ? (
+            {this.state.semester.length > 0 && (
               <Form>
                 <div className="inline-flex">
                   <h3>{translate.header_memo_menu}</h3>
@@ -297,7 +297,7 @@ class MemoMenu extends Component {
                   {/************************************************************************************* */}
                   {/*                           ROUND LIST FOR SELECTED SEMESTER                          */}
                   {/************************************************************************************* */}
-                  {roundList[this.state.semester].length > 0 ? (
+                  {roundList[this.state.semester].length > 0 && (
                     <FormGroup id="rounds">
                       <p>{translate.intro_new}</p>
                       <ul className="no-padding-left">
@@ -308,8 +308,9 @@ class MemoMenu extends Component {
                               .toString()
                               .includes(roundId) || false;
                           const hasWebVersion =
-                            this.state.usedRoundsInWebVer..toString().includes(roundId) ||
-                            false;
+                            this.state.usedRoundsInWebVer
+                              .toString()
+                              .includes(roundId) || false;
                           const hasPublishedPdf = hasBeenUsed && !hasWebVersion;
                           return (
                             <li className="select-list" key={roundId}>
@@ -340,13 +341,9 @@ class MemoMenu extends Component {
                         })}
                       </ul>
                     </FormGroup>
-                  ) : (
-                    ""
                   )}
                 </div>
               </Form>
-            ) : (
-              ""
             )}
           </Row>
         </Collapse>
