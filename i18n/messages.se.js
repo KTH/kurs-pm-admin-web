@@ -21,12 +21,12 @@ module.exports = {
      * Message keys
      */
     service_name: "kurs ",
-    title: "Administrera kurs-pm",
+    title: "Administrera kurs-PM",
 
     lang_block_id: "1.272446",
-    locale_text: "Administrera kurs-pm på svenska",
+    locale_text: "Denna sida på svenska",
 
-    site_name: "Kurs-pm Admin",
+    site_name: "Administrera Om kursen",
     host_name: "KTH",
     page_student: "STUDENT PÅ KTH",
     page_course_programme: "KURS- OCH PROGRAMKATALOGEN",
@@ -36,10 +36,10 @@ module.exports = {
       2: "HT ",
     },
 
-    header_main: "Publicera kurs-pm",
+    header_main: "Ladda upp alternativt kurs-PM som PDF",
     //* **** PROGRESS BAR  */
     header_progress_select: "1. Välj kursomgång",
-    header_progress_edit_upload: "2. Ladda upp kurs-pm",
+    header_progress_edit_upload: "2. Ladda upp kurs-PM",
     header_progress_review: "3. Granska och publicera",
 
     /** ***** PAGE 1 - ANALYSIS MENU */
@@ -51,15 +51,15 @@ module.exports = {
 
     /* **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     intro_memo_menu:
-      "Börja med att välja termin och kursomgång för det kurs-pm som ska publiceras (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-pm. I sista steget (3 av 3) ges möjlighet att först granska kurs-pm och sedan publicera det på sidan Kursinformation för vald termin och kursomgång.",
+      "Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska kurs-PM och sedan publicera det på sidan Kursinformation för vald termin och kursomgång.",
     intro_edit:
-      "I detta steg (2 av 3) ska kurs-pm laddas upp. Finns redan ett publicerat kurs-pm kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-pm innan publicering.",
+      "I detta steg (2 av 3) ska kurs-PM som PDF laddas upp. Finns redan ett publicerat kurs-PM kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-PM innan publicering.",
     intro_preview:
-      "I detta steg (3 av 3) visas hur kurs-pm kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-pm.",
+      "I detta steg (3 av 3) visas hur kurs-PM kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.",
 
     intro_new:
       "Markera ett eller flera kurstillfällen som ingår i kursomgången:",
-    has_published_memo: " Finns publicerat kurs-pm" /** FÄRSK SEMLA */,
+    has_published_memo: " Finns uppladdat kurs-PM som PDF" /** FÄRSK SEMLA */,
     has_web_based_memo:
       " Detta kurstillfälle har ett publicerat kurs-PM i form av webbsida och kan därför inte väljas.",
     not_authorized_publish_new:
@@ -80,7 +80,7 @@ module.exports = {
     header_course_offering: "Kursomgång:",
 
     header_upload: "Ladda upp",
-    header_upload_file_pm: "Kurs-pm (endast i fil-formatet PDF)",
+    header_upload_file_pm: "kurs-PM (endast i fil-formatet PDF)",
     header_upload_file_date: "Publiceringsdatum för kursanalys",
     header_preview: "Granska" /** FÄRSK SEMLA */,
 
@@ -92,13 +92,13 @@ module.exports = {
     alert_not_pdf:
       "Du måste ladda upp en fil med format PDF (se markering i rött nedan) för att kunna gå vidare till Granska och publicera.",
     alert_have_published_memo:
-      "Observera att kurs-pm som finns publicerat (se kursomgång nedan) kommer att ersättas av kurs-pm som du laddar upp här." /** FÄRSK SEMLA */,
+      "Observera att redan uppladdat kurs-PM som PDF (se kursomgång nedan) kommer att ersättas av kurs-PM som du laddar upp här." /** FÄRSK SEMLA */,
     alert_empty_fields:
       "Du behöver fylla i obligatoriska fält för att gå vidare till Granska och publicera.",
     /** ************ MODALS ************** */
     info_publish: {
       header: "Att tänka på innan du publicerar!",
-      body: `Publicering kommer att ske på sidan Kursinformation.
+      body: `Kurs-PM kommer att laddas upp på sidan Inför kursval.
         <br/>
         <br/>
         Vill du fortsätta att publicera?`,
@@ -129,8 +129,8 @@ module.exports = {
     },
 
     info_upload_course_memo: {
-      header: "Ladda upp kurs-pm",
-      body: "Ladda upp den senaste versionen av kurs-pm för kursomgången.",
+      header: "Ladda upp kurs-PM som PDF",
+      body: "Ladda upp den senaste versionen av kurs-PM för kursomgången som PDF.",
       btnCancel: "Close",
     },
     info_upload_course_memo_date: {
