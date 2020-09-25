@@ -44,6 +44,15 @@ module.exports = {
     label_start_date: "Start date",
 
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
+    alert_recommendation: {
+      alert_header: "KTH recommends",
+      before_create_memo_link: "KTH recommends you to use",
+      label_create_memo_link: "Create and publish course memo",
+      after_create_memo_link: `instead because: you will be provided with information about how to create a useful course memo based on a KTH template, course memo will automatically be published as a page where students know where to find it and the system manage each version of the course memo. 
+      Notice that uploaded course memos as PDF must comply with the accessibility requirements accordning to the international standard WCAG 2.1. 
+      If you despite this want to continue and upload an alternative course memo as PDF, we recommend you to use the same course memo template (Word) found on`,
+      label_kurs_pm_web_link: "Course memo",
+    },
     intro_memo_menu:
       "Choose a semester and a course offering for the course memo to be uploaded (step 1 of 3). In the next step (2 of 3), course memo as PDF shall be uploaded for the selected semester and course offering. Preview the course memo that is about to be published in the last step (3 of 3). The course memo will then be published on the page Course information.",
     intro_edit:
@@ -53,7 +62,8 @@ module.exports = {
 
     intro_new:
       "Select one or more administrative course instances that is included in the course offering:",
-    has_published_memo: " Has an uploaded course memo as PDF" /** FÄRSK SEMLA */,
+    has_published_memo:
+      " Has an uploaded course memo as PDF" /** FÄRSK SEMLA */,
     has_web_based_memo:
       " This administrative course instance has a published course memo as a web page and cannot be selected.",
     not_authorized_publish_new:

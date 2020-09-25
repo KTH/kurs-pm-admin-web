@@ -50,6 +50,16 @@ module.exports = {
     label_start_date: "Startdatum",
 
     /* **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
+    alert_recommendation: {
+      alert_header: "KTH rekommenderar",
+      before_create_memo_link:
+        "KTH rekommenderar att du i stället använder funktionen",
+      label_create_memo_link: "Skapa och publicera kurs-PM",
+      after_create_memo_link: `eftersom: du där får stöd i hur du gör ett bra kurs-pm enligt en mall framtagen på KTH, kurs-PM automatiskt kommer att publiceras som en sida (med tillgänglig PDF) på en plats dit studenter enkelt hittar och versioner hanteras. 
+      Observera att även kurs-PM som PDF måste leva upp till kraven på digital tillgänglighet enligt den internationella standarden WCAG 2.1. 
+      Om du ändå vill fortsätta att Ladda upp ett alternativt kurs-PM som PDF så bör du utgå från samma mall för kurs-PM (Word) som hittas på`,
+      label_kurs_pm_web_link: "Kurs-PM",
+    },
     intro_memo_menu:
       "Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska kurs-PM och sedan publicera det på sidan Kursinformation för vald termin och kursomgång.",
     intro_edit:
@@ -130,7 +140,8 @@ module.exports = {
 
     info_upload_course_memo: {
       header: "Ladda upp kurs-PM som PDF",
-      body: "Ladda upp den senaste versionen av kurs-PM för kursomgången som PDF.",
+      body:
+        "Ladda upp den senaste versionen av kurs-PM för kursomgången som PDF.",
       btnCancel: "Close",
     },
     info_upload_course_memo_date: {
