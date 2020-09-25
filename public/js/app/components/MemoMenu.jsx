@@ -247,35 +247,31 @@ class MemoMenu extends Component {
                   onClick={this.handleSelectedSemester}
                 >
                   {`
-                                    ${
-                                      translate.course_short_semester[
-                                        semester.toString().match(/.{1,4}/g)[1]
-                                      ]
-                                    } 
-                                    ${semester.toString().match(/.{1,4}/g)[0]}
-                                `}
+                    ${
+                      translate.course_short_semester[
+                        semester.toString().match(/.{1,4}/g)[1]
+                      ]
+                    } 
+                    ${semester.toString().match(/.{1,4}/g)[0]}
+                  `}
                 </DropdownItem>
               ))}
           </DropdownMenu>
         </Dropdown>
 
-        {this.state.alert.length > 0 ? (
+        {this.state.alert.length > 0 && (
           <Alert color="danger" className="margin-bottom-40">
             {" "}
             {this.state.alert}
           </Alert>
-        ) : (
-          ""
         )}
         {routerStore.usedRounds.usedRoundsIdList &&
-        routerStore.usedRounds.usedRoundsIdList.length > 0 ? (
-          <Alert color="info" className="margin-bottom-40">
-            {" "}
-            {translate.alert_have_published_memo}
-          </Alert>
-        ) : (
-          ""
-        )}
+          routerStore.usedRounds.usedRoundsIdList.length > 0 && (
+            <Alert color="info" className="margin-bottom-40">
+              {" "}
+              {translate.alert_have_published_memo}
+            </Alert>
+          )}
 
         {/************************************************************************************* */}
         {/*                              SELECT BUTTONS FOR  ROUNDS                             */}

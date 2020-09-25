@@ -26,8 +26,6 @@ const RoundLabel = ({
         translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]
       } 
        ${semester.toString().match(/.{1,4}/g)[0]}-${roundId} `;
-  console.log("hasWebVersion", hasWebVersion);
-  console.log("hasPublishedPdf", hasPublishedPdf);
 
   return (
     <div key={"round-" + roundId}>

@@ -418,11 +418,11 @@ class AdminPage extends Component {
           {/************************************************************************************* */}
           {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
           {/************************************************************************************* */}
-          {routerStore.errorMessage.length > 0 ? (
+          {(routerStore.errorMessage.length > 0 && (
             <Alert color="info" className="margin-bottom-40">
               {routerStore.errorMessage}
             </Alert>
-          ) : (
+          )) || (
             <div>
               <Title
                 title={routerStore.courseTitle}
@@ -442,13 +442,11 @@ class AdminPage extends Component {
                 </p>
               </div>
 
-              {this.state.usedRoundSelected > 0 ? (
+              {this.state.usedRoundSelected > 0 && (
                 <Alert color="info" className="margin-bottom-40">
                   {" "}
                   {translate.alert_have_published_memo}
                 </Alert>
-              ) : (
-                ""
               )}
               {/* ---- Selected semester---- */}
               <h2>{translate.header_edit_content}</h2>
@@ -488,8 +486,7 @@ class AdminPage extends Component {
               {/************************************************************************************* */}
               {/*                                   PREVIEW                                           */}
               {/************************************************************************************* */}
-              {routerStore.newMemoList.length > 0 &&
-              this.state.isPreviewMode ? (
+              {routerStore.newMemoList.length > 0 && this.state.isPreviewMode && (
                 <div>
                   {<h4>{translate.header_preview}</h4>}
                   <a
@@ -504,8 +501,6 @@ class AdminPage extends Component {
                     )}
                   </a>
                 </div>
-              ) : (
-                ""
               )}
               <Row key="form" id="form-container">
                 <Col sm="12" lg="12">
@@ -514,68 +509,64 @@ class AdminPage extends Component {
                   {/************************************************************************************* */}
 
                   {routerStore.newMemoList.length > 0 &&
-                  !this.state.isPreviewMode ? (
-                    <Form className="admin-form">
-                      {/* ----- ALERTS ----- */}
+                    !this.state.isPreviewMode && (
+                      <Form className="admin-form">
+                        {/* ----- ALERTS ----- */}
 
-                      {this.state.alert.length > 0 ? (
-                        <Row>
-                          <Alert color="info" className="margin-bottom-40">
-                            {this.state.alert}{" "}
-                          </Alert>
+                        {this.state.alert.length > 0 && (
+                          <Row>
+                            <Alert color="info" className="margin-bottom-40">
+                              {this.state.alert}{" "}
+                            </Alert>
+                          </Row>
+                        )}
+                        {this.state.alertSuccess.length > 0 && (
+                          <Row>
+                            <Alert color="success">
+                              {this.state.alertSuccess}{" "}
+                            </Alert>
+                          </Row>
+                        )}
+                        {this.state.alertError.length > 0 && (
+                          <Row>
+                            <Alert color="danger">
+                              {this.state.alertError}{" "}
+                            </Alert>
+                          </Row>
+                        )}
+
+                        {/* FORM - FIRST COLUMN */}
+                        <Row className="form-group">
+                          <Col sm="6" className="col-form">
+                            <h4>{translate.header_upload}</h4>
+
+                            {/** ------- PM-FILE UPLOAD --------- */}
+                            <FormLabel
+                              translate={translate}
+                              header={"header_upload_file_pm"}
+                              id={"info_upload_course_memo"}
+                            />
+                            <UpLoad
+                              id="pm"
+                              key="pm"
+                              handleUpload={this.handleUploadFile}
+                              progress={fileProgress.pm}
+                              path={
+                                routerStore.browserConfig.proxyPrefixPath.uri
+                              }
+                              file={this.state.memoFile}
+                              notValid={this.state.notValid}
+                              handleRemoveFile={this.handleRemoveFile}
+                              type="memoFile"
+                            />
+                            <br />
+                            <br />
+                          </Col>
+
+                          <Col sm="4" className="col-form"></Col>
                         </Row>
-                      ) : (
-                        ""
-                      )}
-                      {this.state.alertSuccess.length > 0 ? (
-                        <Row>
-                          <Alert color="success">
-                            {this.state.alertSuccess}{" "}
-                          </Alert>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-                      {this.state.alertError.length > 0 ? (
-                        <Row>
-                          <Alert color="danger">{this.state.alertError} </Alert>
-                        </Row>
-                      ) : (
-                        ""
-                      )}
-
-                      {/* FORM - FIRST COLUMN */}
-                      <Row className="form-group">
-                        <Col sm="6" className="col-form">
-                          <h4>{translate.header_upload}</h4>
-
-                          {/** ------- PM-FILE UPLOAD --------- */}
-                          <FormLabel
-                            translate={translate}
-                            header={"header_upload_file_pm"}
-                            id={"info_upload_course_memo"}
-                          />
-                          <UpLoad
-                            id="pm"
-                            key="pm"
-                            handleUpload={this.handleUploadFile}
-                            progress={fileProgress.pm}
-                            path={routerStore.browserConfig.proxyPrefixPath.uri}
-                            file={this.state.memoFile}
-                            notValid={this.state.notValid}
-                            handleRemoveFile={this.handleRemoveFile}
-                            type="memoFile"
-                          />
-                          <br />
-                          <br />
-                        </Col>
-
-                        <Col sm="4" className="col-form"></Col>
-                      </Row>
-                    </Form>
-                  ) : (
-                    ""
-                  )}
+                      </Form>
+                    )}
                   {/************************************************************************************* */}
                   {/*                                BUTTONS FOR PAG 2 AND 3                              */}
                   {/************************************************************************************* */}
@@ -599,7 +590,7 @@ class AdminPage extends Component {
                       )}
                     </Col>
                     <Col sm="3" className="align-right-sm-center">
-                      {routerStore.status !== "preview" ? (
+                      {routerStore.status !== "preview" && (
                         <Button
                           color="secondary"
                           id="cancel"
@@ -608,8 +599,6 @@ class AdminPage extends Component {
                         >
                           {translate.btn_cancel}
                         </Button>
-                      ) : (
-                        ""
                       )}
                     </Col>
                     <Col sm="3"></Col>
@@ -618,7 +607,7 @@ class AdminPage extends Component {
                         ""
                       ) : (
                         <span>
-                          {this.state.isPreviewMode ? (
+                          {(this.state.isPreviewMode && (
                             <Button
                               color="success"
                               id="publish"
@@ -627,7 +616,7 @@ class AdminPage extends Component {
                             >
                               {translate.btn_publish}
                             </Button>
-                          ) : (
+                          )) || (
                             <Button
                               color="success"
                               id="preview"
