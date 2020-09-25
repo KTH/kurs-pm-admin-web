@@ -1,34 +1,72 @@
-import React, { Component } from 'react'
-import ProgressBar from '../components/ProgressBar'
+import React from "react";
+import ProgressBar from "../components/ProgressBar";
+import i18n from "../../../../i18n/index";
 
-class Title extends Component{
-    render(){
-        const { courseCode, header, title, language, progress, showProgressBar} = this.props
-       
-        if(title && title.credits){
-            title.credits = title.length > 0 && title.credits.toString().indexOf('.') < 0 ? title.credits + '.0' : title.credits
-        }
-        return(
-            <div key='course-title' id='course-title'>
-                <h1>{header}</h1>
-                <h4>
-                    <span>{courseCode}&nbsp;</span>
-                    { title 
-                    ?<span content={title.credits} datatype='xsd:decimal' property='teach:ects'> 
-                        {title.name}&nbsp;
-                        {language === 0 
-                            ? title.credits 
-                            : title.credits.toString().replace('.', ',')}&nbsp;{language === 0 ? 'credits' : 'hp'} 
-                    </span>
-                    : ''}
-                </h4>
-                {showProgressBar
-                    ? <ProgressBar language={language} active = {progress}/>
-                    : ''
-                }
-            </div>
-        )
-    }
-}
+const ADMIN_COURSE_PM_DATA = "/kursinfoadmin/kurs-pm-data/";
+const PUBLIC_COURSE_PM_DATA = "/kurs-pm/";
 
-export default Title
+const showInfoKTHrecommendation = (courseCode, langIndex) => {
+  const langAbbr = langIndex === 0 ? "en" : "sv";
+  const {
+    after_create_memo_link,
+    alert_header,
+    before_create_memo_link,
+    label_create_memo_link,
+    label_kurs_pm_web_link,
+  } = i18n.messages[langIndex].messages.alert_recommendation;
+
+  return (
+    <div class="alert alert-info" role="alert">
+      <h4>{alert_header}</h4>
+      <p>
+        {`${before_create_memo_link} `}
+        <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>
+          {label_create_memo_link}
+        </a>
+        {` ${after_create_memo_link} `}
+        <a href={`${PUBLIC_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>
+          {label_kurs_pm_web_link}
+        </a>
+        {"."}
+      </p>
+    </div>
+  );
+};
+
+const Title = ({
+  courseCode,
+  header,
+  title,
+  language: langIndex,
+  progress,
+  showProgressBar,
+}) => {
+  const { credits: courseCredits, name: courseTitle } = title;
+  const credits =
+    courseCredits && !courseCredits.toString().includes(".")
+      ? courseCredits + ".0"
+      : courseCredits || "";
+  const creditUnit =
+    langIndex === 0
+      ? `${credits} credits`
+      : `${credits.toString().replace(".", ",")} hp` || "";
+
+  const courseName = `${courseCode} ${courseTitle} ${creditUnit}`;
+
+  return (
+    <header id="course-title" className="pageTitle">
+      {title && (
+        <span id="page-course-title" role="heading" aria-level="1">
+          <span className="t1">{header}</span>
+          <span className="t4">{courseCode && courseName}</span>
+        </span>
+      )}
+      {progress === 1 && showInfoKTHrecommendation(courseCode, langIndex)}
+      {showProgressBar && (
+        <ProgressBar language={langIndex} active={progress} />
+      )}
+    </header>
+  );
+};
+
+export default Title;
