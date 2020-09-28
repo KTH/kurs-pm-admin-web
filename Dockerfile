@@ -1,4 +1,4 @@
-FROM kthse/kth-nodejs:10.14.0
+FROM kthse/kth-nodejs:12.0.0
 
 RUN mkdir -p /npm && \
     mkdir -p /application
@@ -7,7 +7,7 @@ RUN mkdir -p /npm && \
 WORKDIR /npm
 
 COPY ["package.json", "package.json"]
-#COPY ["package-lock.json", "package-lock.json"]
+COPY ["package-lock.json", "package-lock.json"]
 
 RUN npm install --production --no-optional
 
@@ -22,9 +22,7 @@ COPY ["public", "public"]
 COPY ["i18n", "i18n"]
 COPY [".babelrc", ".babelrc"]
 COPY [".eslintrc", ".eslintrc"]
-COPY ["webpack.config.js", "webpack.config.js"]
 COPY ["package.json", "package.json"]
-COPY ["gulpfile.js", "gulpfile.js"]
 RUN npm run docker
 
 # Copy source files, so changes does not trigger gulp.
