@@ -21,7 +21,7 @@ $kth-blue: #007fae;
   margin-top: 20px;
   margin-bottom: 30px;
 
-  [role="heading"] {
+  [role='heading'] {
     display: flex;
     flex-direction: column;
     .t1 {
@@ -93,7 +93,7 @@ $kth-blue: #007fae;
         background: url(https://intra-r.referens.sys.kth.se/img/kth-style/icons/arrow-white-down-d7377bdc4e7188ca890eab41c5f6e373.svg)
           no-repeat 0;
         background-size: 14px auto;
-        content: "";
+        content: '';
         width: 100%;
         height: 100%;
         position: absolute;
@@ -197,7 +197,7 @@ ul.no-padding-left {
 }
 
 .popover-body {
-  font-family: "Open Sans", Arial, "Helvetica Neue", helvetica, sans-serif;
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', helvetica, sans-serif;
   //font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -242,9 +242,8 @@ span.right-links {
 //Kursplan, kurspm, kursanalys links
 .pdf-link {
   &:before {
-    background: url(https://app.kth.se/style/kth-style/img/kth-style/icons/file-pdf-fa-regular.svg)
-      no-repeat;
-    content: "";
+    background: url(https://app.kth.se/style/static/kth-style/img/kth-style/icons/file-pdf-fa-regular.svg) no-repeat;
+    content: '';
     display: inline-block;
     height: 1.3em;
     width: 1.3em;
@@ -296,40 +295,8 @@ span.right-links {
   margin: auto;
 }
 
-.arrow-back {
-  background-image: url("https://app.kth.se/style/kth-style/img/kth-style/icons/pill-back.svg");
-  top: 4px;
-  float: left;
-  margin-right: 4px;
-  width: 25px;
-  height: 25px;
-  filter: grayscale(0.9) brightness(0.5);
-}
-
-.arrow-forward {
-  background-image: url("https://app.kth.se/style/kth-style/img/kth-style/icons/pill-back.svg");
-  transform: rotate(180deg);
-  top: -3px;
-  float: right;
-  margin-left: 7px;
-  width: 25px;
-  height: 25px;
-  filter: brightness(9);
-}
-
-.icon-back-arrow {
-  position: relative;
-  top: 1px;
-  transform: rotate(180deg);
-  display: inline-block;
-  height: 20px;
-  width: 30px;
-  background: top left / 1em auto no-repeat
-    url("https://app.kth.se/style/kth-style/img/kth-style/icons/back-link.svg");
-}
-
 .icon-trash-can {
-  background-image: url("https://app.kth.se/style/kth-style/img/kth-style/icons/trash-can-blue.svg");
+  background-image: url('https://app.kth.se/style/static/kth-style/img/kth-style/icons/trash-can-blue.svg');
   cursor: pointer;
   width: 20px;
   height: 20px;

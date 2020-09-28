@@ -7,7 +7,14 @@
  * *************************************************
  *
  */
-const { getEnv, devDefaults, unpackLDAPConfig, unpackKOPPSConfig, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
+const {
+  getEnv,
+  devDefaults,
+  unpackLDAPConfig,
+  unpackKOPPSConfig,
+  unpackRedisConfig,
+  unpackNodeApiConfig,
+} = require('kth-node-configuration')
 const { typeConversion } = require('kth-node-configuration/lib/utils')
 const { safeGet } = require('safe-utils')
 
@@ -24,7 +31,7 @@ const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use en
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')
 const devStorageAccountName = devDefaults('kursinfostoragestage')
-const devStorageKey = devDefaults('ybZZ0R0y1/AFPj9o6kAEiPuCgmYSaD9AgbPccC4c9b1dj7J2+NXcMzXUowfLQULB3qsDBX0abpS9oi/p+mskyw==')
+const devStorageKey = devDefaults('1234567890')
 const devStorageContainer = devDefaults('memo-blob-container')
 // END DEFAULT SETTINGS
 
@@ -38,9 +45,9 @@ const ldapOptions = {
   testSearch: true, // TODO: Should this be an ENV setting?
   timeout: typeConversion(getEnv('LDAP_TIMEOUT', null)),
   reconnectTime: typeConversion(getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
-  reconnectOnIdle: (!!getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null)),
+  reconnectOnIdle: !!getEnv('LDAP_IDLE_RECONNECT_INTERVAL', null),
   connecttimeout: typeConversion(getEnv('LDAP_CONNECT_TIMEOUT', null)),
-  searchtimeout: typeConversion(getEnv('LDAP_SEARCH_TIMEOUT', null))
+  searchtimeout: typeConversion(getEnv('LDAP_SEARCH_TIMEOUT', null)),
 }
 
 Object.keys(ldapOptions).forEach(key => {
@@ -56,49 +63,49 @@ module.exports = {
   ssl: {
     // In development we don't have SSL feature enabled
     pfx: getEnv('SERVER_CERT_FILE', ''),
-    passphrase: getEnv('SERVER_CERT_PASSPHRASE', '')
+    passphrase: getEnv('SERVER_CERT_PASSPHRASE', ''),
   },
 
   // API keys
   apiKey: {
-    memoApi: getEnv('KURS_PM_API_KEY', devDefaults('9876'))
+    memoApi: getEnv('KURS_PM_API_KEY', devDefaults('9876')),
   },
 
   // Authentication
   auth: {
-    superuserGroup: 'app.kursinfo.kursinfo-admins'
+    superuserGroup: 'app.kursinfo.kursinfo-admins',
   },
   cas: {
-    ssoBaseURL: getEnv('CAS_SSO_URI', devSsoBaseURL)
+    ssoBaseURL: getEnv('CAS_SSO_URI', devSsoBaseURL),
   },
   ldap: unpackLDAPConfig('LDAP_URI', getEnv('LDAP_PASSWORD'), devLdap, ldapOptions),
 
   // Service API's
   nodeApi: {
-    memoApi: unpackNodeApiConfig('KURS_PM_API_URI', devmemoApi)
+    memoApi: unpackNodeApiConfig('KURS_PM_API_URI', devmemoApi),
   },
 
   // Cortina
   blockApi: {
-    blockUrl: getEnv('CM_HOST_URL', devDefaults('https://www-r.referens.sys.kth.se/cm/')) // Block API base URL
+    blockUrl: getEnv('CM_HOST_URL', devDefaults('https://www-r.referens.sys.kth.se/cm/')), // Block API base URL
   },
 
   // Logging
   logging: {
     log: {
-      level: getEnv('LOGGING_LEVEL', 'debug')
+      level: getEnv('LOGGING_LEVEL', 'debug'),
     },
     accessLog: {
-      useAccessLog: getEnv('LOGGING_ACCESS_LOG', true)
-    }
+      useAccessLog: getEnv('LOGGING_ACCESS_LOG', true),
+    },
   },
   clientLogging: {
-    level: 'debug'
+    level: 'debug',
   },
   cache: {
     cortinaBlock: {
-      redis: unpackRedisConfig('REDIS_URI', devRedis)
-    }
+      redis: unpackRedisConfig('REDIS_URI', devRedis),
+    },
   },
 
   // Session
@@ -108,25 +115,26 @@ module.exports = {
     useRedis: safeGet(() => getEnv('SESSION_USE_REDIS', devSessionUseRedis) === 'true'),
     sessionOptions: {
       // do not set session secret here!!
-      cookie: { secure: safeGet(() => getEnv('SESSION_SECURE_COOKIE', false) === 'true') },
-      proxy: safeGet(() => getEnv('SESSION_TRUST_PROXY', true) === 'true')
+      cookie: {
+        secure: safeGet(() => getEnv('SESSION_SECURE_COOKIE', false) === 'true'),
+      },
+      proxy: safeGet(() => getEnv('SESSION_TRUST_PROXY', true) === 'true'),
     },
-    redisOptions: unpackRedisConfig('REDIS_URI', devRedis)
+    redisOptions: unpackRedisConfig('REDIS_URI', devRedis),
   },
 
   koppsApi: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
 
   appInsights: {
-    instrumentationKey: getEnv('APPINSIGHTS_INSTRUMENTATIONKEY')
+    instrumentationKey: getEnv('APPINSIGHTS_INSTRUMENTATIONKEY'),
   },
 
   fileStorage: {
     kursPMStorage: {
       account: getEnv('STORAGE_ACCOUNT_NAME', devStorageAccountName),
       accountKey: getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey),
-      storageContainer: getEnv('BLOB_CONTAINER', devStorageContainer)
+      storageContainer: getEnv('BLOB_CONTAINER', devStorageContainer),
       //, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
-    }
-  }
-
+    },
+  },
 }
