@@ -1,5 +1,5 @@
 import React from 'react'
-import loader from '../../../img/*.gif'
+import { Spinner } from 'reactstrap'
 
 const styles = {
   fontFamily: 'sans-serif',
@@ -42,9 +42,12 @@ class UpLoad extends React.Component {
           <label className="custom-file-upload">
             <input type="file" id={id} onChange={this.onChange} />
             {progress > 0 && (
-              <div className="file-progress-bar">
-                <div className="file-progress" style={{ width: progress + '%' }}></div>
-              </div>
+              <>
+                <Spinner size="sm" color="primary" />
+                <div className="file-progress-bar">
+                  <div className="file-progress" style={{ width: progress + '%' }}></div>
+                </div>
+              </>
             )}
           </label>
         )}
