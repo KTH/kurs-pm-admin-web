@@ -62,7 +62,14 @@ class AdminPage extends Component {
 
   async handleUploadFile(id, file, e) {
     if (e.target.files[0].type === 'application/pdf') {
-      response = await this.sendRequest(id, file, e)
+      try {
+        const response = await this.sendRequest(id, file, e)
+      } catch (err) {
+        this.setState({
+          notValid: ['savingToStorage'],
+          alertError: i18n.messages[this.props.routerStore.language].messages.alert_storage_error,
+        })
+      }
     } else {
       const notValid = ['memoFile']
       this.setState({
