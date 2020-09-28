@@ -37,12 +37,12 @@ module.exports = {
 
 // ------- MEMO FROM PM-API: POST, GET USED ROUNDS ------- /
 
-function* _postMemoData(req, res, next) {
+async function _postMemoData(req, res, next) {
   const sendObject = JSON.parse(req.body.params)
   log.debug('_postMemoData :' + req.body.params)
   try {
     let apiResponse = {}
-    apiResponse = yield memoApi.setMemoData('default', sendObject)
+    apiResponse = await memoApi.setMemoData('default', sendObject)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from _postMemoData ', { error: err })
@@ -50,12 +50,12 @@ function* _postMemoData(req, res, next) {
   }
 }
 
-function* _getUsedRounds(req, res, next) {
+async function _getUsedRounds(req, res, next) {
   const courseCode = req.params.courseCode
   const semester = req.params.semester
   log.debug('_getUsedRounds with course code: ' + courseCode + 'and semester: ' + semester)
   try {
-    const apiResponse = yield memoApi.getUsedRounds(courseCode, semester)
+    const apiResponse = await memoApi.getUsedRounds(courseCode, semester)
     log.debug('_getUsedRounds response: ', apiResponse.body)
     return httpResponse.json(res, apiResponse.body)
   } catch (error) {
@@ -65,12 +65,12 @@ function* _getUsedRounds(req, res, next) {
 }
 
 // ------- COURSE DATA FROM KOPPS-API   ------- /
-function* _getKoppsCourseData(req, res, next) {
+async function _getKoppsCourseData(req, res, next) {
   const courseCode = req.params.courseCode
   const language = req.params.language || 'sv'
   log.info('_getKoppsCourseData with code:' + courseCode)
   try {
-    const apiResponse = yield koppsCourseData.getKoppsCourseData(courseCode, language)
+    const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, language)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from koppsAPI ', { error: err })
@@ -79,11 +79,11 @@ function* _getKoppsCourseData(req, res, next) {
 }
 
 // ------- FILES IN BLOB STORAGE: SAVE, UPDATE, DELETE ------- /
-function* _saveFileToStorage(req, res, next) {
+async function _saveFileToStorage(req, res, next) {
   log.info('Saving uploaded file to storage ' + req.files.file)
   let file = req.files.file
   try {
-    const fileName = yield runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
+    const fileName = await runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
     return httpResponse.json(res, fileName)
   } catch (error) {
     log.error('Exception from saveFileToStorage ', { error: error })
@@ -91,10 +91,10 @@ function* _saveFileToStorage(req, res, next) {
   }
 }
 
-function* _updateFileInStorage(req, res, next) {
+async function _updateFileInStorage(req, res, next) {
   log.info('_updateFileInStorage file name:' + req.params.fileName + ', metadata:' + req.body.params.metadata)
   try {
-    const response = yield updateMetaData(req.params.fileName, req.body.params.metadata)
+    const response = await updateMetaData(req.params.fileName, req.body.params.metadata)
     return httpResponse.json(res, response)
   } catch (error) {
     log.error('Exception from updateFileInStorage ', { error: error })
@@ -102,10 +102,10 @@ function* _updateFileInStorage(req, res, next) {
   }
 }
 
-function* _deleteFileInStorage(res, req, next) {
+async function _deleteFileInStorage(res, req, next) {
   log.debug('_deleteFileInStorage, fileName:' + req.req.params.fileName)
   try {
-    const response = yield deleteBlob(req.req.params.fileName)
+    const response = await deleteBlob(req.req.params.fileName)
     log.debug('_deleteFileInStorage, fileName:', response)
     return httpResponse.json(res.res)
   } catch (error) {
