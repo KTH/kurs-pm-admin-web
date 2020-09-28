@@ -46,11 +46,10 @@ module.exports = {
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     alert_recommendation: {
       alert_header: "KTH recommends",
-      before_create_memo_link: "KTH recommends you to use",
+      before_create_memo_link:
+        "KTH recommends, instead of uploading an alternative course PM, to use the function",
       label_create_memo_link: "Create and publish course memo",
-      after_create_memo_link: `instead because: you will be provided with information about how to create a useful course memo based on a KTH template, course memo will automatically be published as a page where students know where to find it and the system manage each version of the course memo. 
-      Notice that uploaded course memos as PDF must comply with the accessibility requirements accordning to the international standard WCAG 2.1. 
-      If you despite this want to continue and upload an alternative course memo as PDF, we recommend you to use the same course memo template (Word) found on`,
+      after_create_memo_link: `where the result is a course PM that is published as a web page in a place students easily can find and versions are managed. From this web page, course PM also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course PM according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course PM. If you still choose to upload an alternative course PM as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course PM template`,
       label_kurs_pm_web_link: "Course memo",
     },
     intro_memo_menu:

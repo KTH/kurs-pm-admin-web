@@ -53,11 +53,9 @@ module.exports = {
     alert_recommendation: {
       alert_header: "KTH rekommenderar",
       before_create_memo_link:
-        "KTH rekommenderar att du i stället använder funktionen",
+        "KTH rekommenderar att du, i stället för att ladda upp ett alternativt kurs-PM, använder funktionen",
       label_create_memo_link: "Skapa och publicera kurs-PM",
-      after_create_memo_link: `eftersom: du där får stöd i hur du gör ett bra kurs-pm enligt en mall framtagen på KTH, kurs-PM automatiskt kommer att publiceras som en sida (med tillgänglig PDF) på en plats dit studenter enkelt hittar och versioner hanteras. 
-      Observera att även kurs-PM som PDF måste leva upp till kraven på digital tillgänglighet enligt den internationella standarden WCAG 2.1. 
-      Om du ändå vill fortsätta att Ladda upp ett alternativt kurs-PM som PDF så bör du utgå från samma mall för kurs-PM (Word) som hittas på`,
+      after_create_memo_link: `där resultatet blir ett kurs-PM som publiceras som en webbsida på en plats dit studenter enkelt hittar och versioner hanteras. Kurs-PM kan därifrån även sparas som PDF. Ytterligare anledningen till rekommendationen är att du får stöd i hur du gör ett bra kurs-pm enligt en mall framtagen på KTH, information från kursplanen hämtas automatiskt in i ditt kurs-PM. Om du ändå väljer att ladda upp ett alternativt kurs-PM som PDF så tänk på att du ansvarar för att dokumentet lever upp till kraven på digital tillgänglighet enligt den internationella standarden WCAG 2.1. Det är också bra om du utgår från samma kurs-PM-mall som hittas på`,
       label_kurs_pm_web_link: "Kurs-PM",
     },
     intro_memo_menu:
