@@ -24,7 +24,7 @@ const showInfoKTHrecommendation = (courseCode, langIndex) => {
           {label_create_memo_link}
         </a>
         {` ${after_create_memo_link} `}
-        <a href={`${PUBLIC_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>
+        <a href="https://intra.kth.se/utbildning/utveckling-och-hogskolepedagogik/stodmaterial/kurs-pm">
           {label_kurs_pm_web_link}
         </a>
         {"."}
