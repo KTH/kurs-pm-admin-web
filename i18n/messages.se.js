@@ -66,9 +66,9 @@ module.exports = {
       'I detta steg (3 av 3) visas hur kurs-PM kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
-    has_published_memo: ' Finns uppladdat kurs-PM som PDF' /** FÄRSK SEMLA */,
+    has_published_memo: ' Ett alternativt kurs-PM som PDF finns publicerat. Du kan välja att ladda upp ett nytt kurs-PM som ersätter det befintliga.' /** FÄRSK SEMLA */,
     has_web_based_memo:
-      ' Detta kurstillfälle har ett publicerat kurs-PM i form av webbsida och kan därför inte väljas.',
+      ' Ett kurs-PM i form av en webbsida finns som utkast eller är publicerat. Gå till Administrera Om kursen för att redigera det.',
     not_authorized_publish_new: ' Du är inte kursansvarig för detta kurstillfälle och kan därför inte välja det.',
 
     /** ************ BUTTONS ****************** */
