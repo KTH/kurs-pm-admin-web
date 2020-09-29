@@ -60,7 +60,7 @@ module.exports = {
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo: ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
     has_web_based_memo:
-      ' This administrative course has a draft or a published course memo. Go to Administrate About course to change it.',
+      ' This administrative course instance has a draft or a published course memo. Go to Administrate About course to change it.',
     not_authorized_publish_new: ' You are not course responsible for this instance and cannot select it.',
 
     /** ************ BUTTONS ****************** */
