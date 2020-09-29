@@ -45,9 +45,9 @@ module.exports = {
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     alert_recommendation: {
       alert_header: 'KTH recommends',
-      before_create_memo_link: 'KTH recommends, instead of uploading an alternative course PM, to use the function',
+      before_create_memo_link: 'KTH recommends, instead of uploading an alternative course memo, to use the function',
       label_create_memo_link: 'Create and publish course memo',
-      after_create_memo_link: `where the result is a course PM that is published as a web page in a place students easily can find and versions are managed. From this web page, course PM also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course PM according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course PM. If you still choose to upload an alternative course PM as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course PM template`,
+      after_create_memo_link: `where the result is a course memo that is published as a web page in a place students easily can find and versions are managed. From this web page, course memo also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course memo according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course memo. If you still choose to upload an alternative course memo as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course memo template`,
       label_kurs_pm_web_link: 'Course memo',
     },
     intro_memo_menu:
@@ -58,9 +58,9 @@ module.exports = {
       'In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
 
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
-    has_published_memo: ' Has an uploaded course memo as PDF' /** FÄRSK SEMLA */,
+    has_published_memo: ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
     has_web_based_memo:
-      ' This administrative course instance has a published course memo as a web page and cannot be selected.',
+      ' This administrative course has a draft or a published course memo. Go to Administrate About course to change it.',
     not_authorized_publish_new: ' You are not course responsible for this instance and cannot select it.',
 
     /** ************ BUTTONS ****************** */
