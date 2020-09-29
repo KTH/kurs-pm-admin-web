@@ -217,12 +217,6 @@ class MemoMenu extends Component {
             {this.state.alert}
           </Alert>
         )}
-        {routerStore.usedRounds.usedRoundsIdList && routerStore.usedRounds.usedRoundsIdList.length > 0 && (
-          <Alert color="info" className="margin-bottom-40">
-            {' '}
-            {translate.alert_have_published_memo}
-          </Alert>
-        )}
 
         {/************************************************************************************* */}
         {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
