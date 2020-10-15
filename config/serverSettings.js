@@ -30,9 +30,8 @@ const devRedis = devDefaults('redis://localhost:6379/')
 const devLdap = undefined // Do not enter LDAP_URI or LDAP_PASSWORD here, use env_vars
 const devSsoBaseURL = devDefaults('https://login-r.referens.sys.kth.se')
 const devLdapBase = devDefaults('OU=UG,DC=ref,DC=ug,DC=kth,DC=se')
-const devStorageAccountName = devDefaults('kursinfostoragestage')
-const devStorageKey = devDefaults('1234567890')
-const devStorageContainer = devDefaults('memo-blob-container')
+const devStorageContainerName = devDefaults('memo-blob-container')
+
 // END DEFAULT SETTINGS
 
 // These options are fixed for this application
@@ -131,10 +130,8 @@ module.exports = {
 
   fileStorage: {
     kursPMStorage: {
-      account: getEnv('STORAGE_ACCOUNT_NAME', devStorageAccountName),
-      accountKey: getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey),
-      storageContainer: getEnv('BLOB_CONTAINER', devStorageContainer),
-      //, getEnv('STORAGE_ACCOUNT_ACCESS_KEY', devStorageKey)]
+      containerName: getEnv('STORAGE_CONTAINER_NAME', devStorageContainerName),
+      blobServiceSasUrl: getEnv('BLOB_SERVICE_SAS_URL', ''),
     },
   },
 }
