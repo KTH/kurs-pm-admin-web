@@ -13,8 +13,6 @@ The course information project (KIP) is an initiative at KTH that was launched i
 
 ## Overview
 
-## Overview
-
 Firstly, the app has only one function. It is to upload a course memo pdf file to a blob storage and send data about it to `kurs-pm-api`.
 Later this files can be found on public pages 'About course memo' served by `kurs-pm-web` and for a short time on pages served by `kursinfo-web`.
 User can choose several course offerings and upload the same course memo file. It will be upload once in blob storage while in a database data about file and course offering will be saved per course offering. User can delete uploaded course memo or replace by a new one. The history of uploaded course-memos will be saved in api data.
@@ -37,6 +35,8 @@ Application is fetching data from KOPPS-API for:
 Application is fetching data from KURS-PM-API for:
 
 - Fetch course offerings which have a published course memo to sort per termin and filter course offerings fetched from KOPPS-API.
+
+- Fetch information about course memo file and course offering it saved for if user want to replace a published course memo file
 
 - [https://github.com/KTH/kurs-pm-api](https://github.com/KTH/kurs-pm-api)
 
