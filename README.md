@@ -101,7 +101,7 @@ REDIS_URI=[connection string to redis]
 /*If you want to start your server on another port, add the following two variables, else use default ones from serversettings.js*/
 SERVER_PORT=[your port for the server]
 SERVER_HOST_URL=http://localhost:[SERVER_PORT]
-BLOB_SERVICE_SAS_URL=https://kursinfostoragestage.blob.core.windows.net/?sv=[date]&ss=b&srt=o&sp=rwcx&se=[date]&st=[date]&spr=https&sig=[generated signature]
+BLOB_SERVICE_SAS_URL=[f.e., https://kursinfostoragestage.blob.core.windows.net/?[generated parameters]&spr=https&sig=[generated signature]
 STORAGE_CONTAINER_NAME=memo-blob-container
 ```
 
