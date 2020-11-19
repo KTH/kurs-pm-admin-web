@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM kthse/kth-nodejs:14.0.0
 
 RUN mkdir -p /npm && \
     mkdir -p /application
