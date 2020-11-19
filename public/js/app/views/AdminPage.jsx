@@ -12,7 +12,7 @@ import RoundLabel from '../components/RoundLabel'
 
 //Helpers
 import { SERVICE_URL } from '../util/constants'
-import { getTodayDate, isValidDate, getDateFormat } from '../util/helpers'
+import { getTodayDate, getDateFormat } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 
 @inject(['routerStore'])
@@ -329,10 +329,10 @@ class AdminPage extends Component {
     const { fileProgress } = this.state
     const translate = i18n.messages[routerStore.language].messages
 
-    if (routerStore.browserConfig.env === 'dev') {
-      console.log('routerStore - AdminPage', routerStore)
-      console.log('this.state - AdminPage', this.state)
-    }
+    // if (routerStore.browserConfig.env === 'dev') {
+    //   console.log('routerStore - AdminPage', routerStore)
+    //   console.log('this.state - AdminPage', this.state)
+    // }
     if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
         <div ref={this.divTop}>
