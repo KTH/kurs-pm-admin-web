@@ -172,10 +172,10 @@ class MemoMenu extends Component {
     const { status, semesterList, roundList, routerStore } = this.props
     const translate = i18n.messages[routerStore.language].messages
 
-    if (routerStore.browserConfig.env === 'dev') {
-      console.log('this.props - MemoMenu', this.props)
-      console.log('this.state - MemoMenu', this.state)
-    }
+    // if (routerStore.browserConfig.env === 'dev') {
+    //   console.log('this.props - MemoMenu', this.props)
+    //   console.log('this.state - MemoMenu', this.state)
+    // }
     return (
       <div id="YearAndRounds">
         <p>{translate.intro_memo_menu}</p>
