@@ -58,10 +58,11 @@ module.exports = {
       'In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
 
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
-    has_published_memo: ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
+    has_published_memo:
+      ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
     has_web_based_memo:
       ' This administrative course instance has a draft or a published course memo. Go to Administrate About course to change it.',
-    not_authorized_publish_new: ' You are not course responsible for this instance and cannot select it.',
+    not_authorized_publish_new: ' You are not course coordinator for this instance and cannot select it.',
 
     /** ************ BUTTONS ****************** */
     btn_add_memo: 'Upload',
