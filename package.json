@@ -11,6 +11,7 @@
   },
   "scripts": {
     "//": "Webpack installs css and javascript",
+    "preinstall": "npx npm-force-resolutions",
     "vendor": "parcel build ./public/js/vendor.js",
     "lint": "eslint . && prettier-eslint --list-different **/*.js",
     "test": "NODE_ENV=test jest test/unit/*/*.js --passWithNoTests",
@@ -99,6 +100,9 @@
     "pretty-quick": "^3.1.0",
     "sass": "^1.32.8",
     "zombie": "^6.1.4"
+  },
+  "resolutions": {
+    "node-forge": "0.10.0"
   },
   "engines": {
     "node": "14.0.0"
