@@ -52,33 +52,12 @@ class RouterStore {
     return [host, newPath].join('')
   }
 
-  _getOptions(params) {
-    // Pass Cookie header on SSR-calls
-    let options
-    if (typeof window === 'undefined') {
-      options = {
-        headers: {
-          Cookie: this.cookieHeader,
-          Accept: 'application/json',
-          'X-Forwarded-Proto': _webUsesSSL(this.apiHost) ? 'https' : 'http',
-        },
-        timeout: 10000,
-        params: params,
-      }
-    } else {
-      options = {
-        params: params,
-      }
-    }
-    return options
-  }
-
   /** ***************************************************************************************************************************************** */
   /*                                                       FILE STORAGE ACTIONS                                                      */
   /** ***************************************************************************************************************************************** */
   @action updateFileInStorage(fileName, metadata) {
     return axios
-      .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName: fileName }), this._getOptions({ metadata }))
+      .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: metadata })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
           return 'ERROR-' + apiResponse.statusCode
@@ -94,14 +73,12 @@ class RouterStore {
   }
 
   @action deleteFileInStorage(fileName) {
-    return axios
-      .post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName: fileName }), this._getOptions())
-      .then(apiResponse => {
-        if (apiResponse.statusCode >= 400) {
-          return 'ERROR-' + apiResponse.statusCode
-        }
-        return apiResponse.data
-      })
+    return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName: fileName })).then(apiResponse => {
+      if (apiResponse.statusCode >= 400) {
+        return 'ERROR-' + apiResponse.statusCode
+      }
+      return apiResponse.data
+    })
   }
 
   /** ***************************************************************************************************************************************** */
@@ -114,10 +91,7 @@ class RouterStore {
       postObject[index].pdfMemoUploadDate = uploadDate
     }
     return axios
-      .post(
-        this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), //TODO !!
-        this._getOptions(JSON.stringify(postObject))
-      )
+      .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), { params: JSON.stringify(postObject) })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
           this.errorMessage = result.statusText
@@ -137,10 +111,9 @@ class RouterStore {
 
   @action putMemoData(postObject, status) {
     return axios
-      .post(
-        this.buildApiUrl(this.paths.api.memoPost.uri, { id: postObject._id, status: status /*, lang: lang*/ }),
-        this._getOptions(JSON.stringify(postObject))
-      )
+      .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: postObject._id, status: status /*, lang: lang*/ }), {
+        params: JSON.stringify(postObject),
+      })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
           this.errorMessage = result.statusText
@@ -163,10 +136,7 @@ class RouterStore {
   @action getUsedRounds(courseCode, semester) {
     this.courseCode = courseCode
     return axios
-      .get(
-        this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode: courseCode, semester: semester }),
-        this._getOptions()
-      )
+      .get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode: courseCode, semester: semester }))
       .then(result => {
         if (result.status >= 400) {
           return 'ERROR-' + result.status
@@ -186,10 +156,7 @@ class RouterStore {
   @action getCourseInformation(courseCode, ldapUsername, lang = 'sv') {
     this.courseCode = courseCode
     return axios
-      .get(
-        this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode: courseCode, language: lang }),
-        this._getOptions()
-      )
+      .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode: courseCode, language: lang }))
       .then(result => {
         //log.info('getCourseInformation: ' + result)
         if (result.status >= 400) {
