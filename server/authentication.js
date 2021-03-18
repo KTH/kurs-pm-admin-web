@@ -134,7 +134,7 @@ function _hasCourseResponsibleGroup(courseCode, courseInitials, ldapUser, rounds
 }
 
 function _hasCourseTeacherGroup(courseCode, courseInitials, ldapUser, rounds, role) {
-  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
+  // 'edu.courses.SF.SF1624.20192.1.teachers'
   if (rounds === undefined || rounds.length === 0) {
     // TODO
     return false
