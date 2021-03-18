@@ -243,14 +243,14 @@ appRoute.get(
   'system.index',
   config.proxyPrefixPath.uri + '/:id',
   serverLogin,
-  requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser'),
+  requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'),
   Admin.getIndex
 )
 appRoute.get(
   'system.gateway',
   config.proxyPrefixPath.uri + '/gateway',
   getServerGatewayLogin('/'),
-  requireRole('isAdmin'),
+  requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'),
   Admin.getIndex
 )
 
