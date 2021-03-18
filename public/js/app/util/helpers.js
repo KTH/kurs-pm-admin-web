@@ -1,4 +1,5 @@
 'use strict'
+
 import { SUPERUSER_PART } from './constants'
 
 const getDateFormat = (date, language) => {
@@ -10,22 +11,22 @@ const getDateFormat = (date, language) => {
 }
 
 const getTodayDate = (date = '') => {
-  let today = date.length > 0 ? new Date(date) : new Date()
-  let dd = String(today.getDate()).padStart(2, '0')
-  let mm = String(today.getMonth() + 1).padStart(2, '0') // January is 0!
-  let yyyy = today.getFullYear()
+  const today = date.length > 0 ? new Date(date) : new Date()
+  const dd = String(today.getDate()).padStart(2, '0')
+  const mm = String(today.getMonth() + 1).padStart(2, '0') // January is 0!
+  const yyyy = today.getFullYear()
 
   return yyyy + '-' + mm + '-' + dd
 }
 
 const formatDate = (date, lang) => {
-  let thisDate = getTodayDate(date)
+  const thisDate = getTodayDate(date)
   return getDateFormat(thisDate, lang)
 }
 
 const isValidDate = date => {
-  let dateFormat = /^\d{4}-\d{2}-\d{2}$/
-  let regex = new RegExp(dateFormat)
+  const dateFormat = /^\d{4}-\d{2}-\d{2}$/
+  const regex = new RegExp(dateFormat)
   return regex.test(date)
 }
 
@@ -53,6 +54,10 @@ const getAccess = (memberOf, round, courseCode, semester) => {
   if (
     memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.courseresponsible`) > -1
   ) {
+    return true
+  }
+
+  if (memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.teachers`) > -1) {
     return true
   }
 
