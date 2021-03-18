@@ -438,7 +438,7 @@ class AdminPage extends Component {
                       round={round}
                       semester={routerStore.activeSemester}
                       usedRounds={routerStore.usedRounds.usedRoundsIdList}
-                      showAssesInfo={false}
+                      showAccessInfo={false}
                     />
                   )
               })}

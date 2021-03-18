@@ -1,7 +1,7 @@
 'use strict'
-import { observable, action } from 'mobx'
+
+import { action } from 'mobx'
 import axios from 'axios'
-import { SUPERUSER_PART } from '../util/constants'
 import { getAccess } from '../util/helpers'
 
 const paramRegex = /\/(:[^\/\s]*)/g
@@ -14,10 +14,6 @@ function _paramReplace(path, params) {
       tmpPath = tmpPath.replace(element, '/' + params[element.slice(2)])
     })
   return tmpPath
-}
-
-function _webUsesSSL(url) {
-  return url.startsWith('https:')
 }
 
 class RouterStore {
@@ -73,7 +69,7 @@ class RouterStore {
   }
 
   @action deleteFileInStorage(fileName) {
-    return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName: fileName })).then(apiResponse => {
+    return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName })).then(apiResponse => {
       if (apiResponse.statusCode >= 400) {
         return 'ERROR-' + apiResponse.statusCode
       }
@@ -94,7 +90,7 @@ class RouterStore {
       .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), { params: JSON.stringify(postObject) })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
-          this.errorMessage = result.statusText
+          this.errorMessage = apiResponse.statusText
           return 'ERROR-' + apiResponse.statusCode
         }
         return apiResponse.data
@@ -103,7 +99,6 @@ class RouterStore {
         if (err.response) {
           this.errorMessage = err.message
           return err.message
-          //throw new Error(err.message)
         }
         throw err
       })
@@ -111,12 +106,12 @@ class RouterStore {
 
   @action putMemoData(postObject, status) {
     return axios
-      .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: postObject._id, status: status /*, lang: lang*/ }), {
+      .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: postObject._id, status }), {
         params: JSON.stringify(postObject),
       })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
-          this.errorMessage = result.statusText
+          this.errorMessage = apiResponse.statusText
           return 'ERROR-' + apiResponse.statusCode
         }
         this.errorMessage = apiResponse.data.message
@@ -136,7 +131,7 @@ class RouterStore {
   @action getUsedRounds(courseCode, semester) {
     this.courseCode = courseCode
     return axios
-      .get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode: courseCode, semester: semester }))
+      .get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode, semester }))
       .then(result => {
         if (result.status >= 400) {
           return 'ERROR-' + result.status
@@ -156,7 +151,7 @@ class RouterStore {
   @action getCourseInformation(courseCode, ldapUsername, lang = 'sv') {
     this.courseCode = courseCode
     return axios
-      .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode: courseCode, language: lang }))
+      .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode, language: lang }))
       .then(result => {
         //log.info('getCourseInformation: ' + result)
         if (result.status >= 400) {
@@ -206,7 +201,7 @@ class RouterStore {
       }
 
       const thisStore = this
-      courseObject.termsWithCourseRounds.map((semester, index) => {
+      courseObject.termsWithCourseRounds.map(semester => {
         if (thisStore.semesters.indexOf(semester.term) < 0) thisStore.semesters.push(semester.term)
 
         if (!thisStore.roundData.hasOwnProperty(semester.term)) {
@@ -214,7 +209,7 @@ class RouterStore {
           thisStore.roundAccess[semester.term] = {}
         }
 
-        thisStore.roundData[semester.term] = semester.rounds.map((round, index) => {
+        thisStore.roundData[semester.term] = semester.rounds.map(round => {
           return (round.ladokRoundId = {
             roundId: round.ladokRoundId,
             language: round.language[language],
@@ -235,7 +230,6 @@ class RouterStore {
 
   @action createMemoData(semester, rounds) {
     // Creates a list with memo object with information from selected rounds
-    //const roundLang = language === 'English' || language === 'Engelska' ? 'en' : 'sv'
     this.status = 'new'
     let newMemo = {}
     this.newMemoList = []
@@ -244,7 +238,6 @@ class RouterStore {
 
     for (let round = 0; round < rounds.length; round++) {
       ;(id = `${this.courseData.courseCode}_${semester}_${rounds[round]}`),
-        //if()
         (newMemo = {
           _id: `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
           courseMemoFileName: '',
@@ -274,55 +267,11 @@ class RouterStore {
     this.language = lang === 'en' ? 0 : 1
   }
 
-  @action getBreadcrumbs() {
-    return {
-      url: '/kursinfoadmin/memo/',
-      label: 'TODO',
-    }
-  }
-
   @action setBrowserConfig(config, paths, apiHost, profileBaseUrl) {
     this.browserConfig = config
     this.paths = paths
     this.apiHost = apiHost
     this.profileBaseUrl = profileBaseUrl
-  }
-
-  @action doSetLanguage(lang) {
-    this.language = lang
-  }
-
-  @action getBrowserInfo() {
-    var navAttrs = [
-      'appCodeName',
-      'appName',
-      'appMinorVersion',
-      'cpuClass',
-      'platform',
-      'opsProfile',
-      'userProfile',
-      'systemLanguage',
-      'userLanguage',
-      'appVersion',
-      'userAgent',
-      'onLine',
-      'cookieEnabled',
-    ]
-    var docAttrs = ['referrer', 'title', 'URL']
-    var value = { document: {}, navigator: {} }
-
-    for (let i = 0; i < navAttrs.length; i++) {
-      if (navigator[navAttrs[i]] || navigator[navAttrs[i]] === false) {
-        value.navigator[navAttrs[i]] = navigator[navAttrs[i]]
-      }
-    }
-
-    for (let i = 0; i < docAttrs.length; i++) {
-      if (document[docAttrs[i]]) {
-        value.document[docAttrs[i]] = document[docAttrs[i]]
-      }
-    }
-    return value
   }
 
   initializeStore(storeName) {
