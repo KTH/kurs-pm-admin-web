@@ -133,23 +133,17 @@ function _hasCourseResponsibleGroup(courseCode, courseInitials, ldapUser, rounds
   return false
 }
 
-function _hasCourseTeacherGroup(courseCode, courseInitials, ldapUser, rounds, role) {
-  // 'edu.courses.SF.SF1624.20192.1.teachers'
-  if (rounds === undefined || rounds.length === 0) {
-    // TODO
-    return false
-  }
+function _hasThisTypeGroup(courseCode, courseInitials, ldapUser, employeeType) {
+  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
+  // 'edu.courses.SF.SF1624.20182.9.teachers'
+
   const groups = ldapUser.memberOf
   const startWith = `edu.courses.${courseInitials}.${courseCode}.` // TODO: What to do with years 20192. ?
-  const endString = '.' + role
-  let endWith = ''
+  const endWith = `.${employeeType}`
   if (groups && groups.length > 0) {
-    for (let round = 0; round < rounds.length; round++) {
-      endWith = rounds[round] + endString
-      for (let i = 0; i < groups.length; i++) {
-        if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(endWith) >= 0) {
-          return true
-        }
+    for (let i = 0; i < groups.length; i++) {
+      if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(endWith) >= 0) {
+        return true
       }
     }
   }
@@ -186,7 +180,7 @@ module.exports.requireRole = function () {
         'courseresponsible',
         isPreview
       ),
-      isCourseTeacher: _hasCourseTeacherGroup(courseCode, courseInitials, ldapUser, rounds, 'teachers'),
+      isCourseTeacher: _hasThisTypeGroup(courseCode, courseInitials, ldapUser, 'teachers'),
       isSuperUser: ldapUser.isSuperUser,
     }
 
