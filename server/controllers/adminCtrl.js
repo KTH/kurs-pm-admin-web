@@ -124,7 +124,9 @@ async function getIndex(req, res, next) {
   }
 
   const lang = language.getLanguage(res) || 'sv'
-  const ldapUser = req.session.passport.user ? req.session.passport.user.username : 'null'
+  const { user: loggedInUser } = req.session.passport
+  const username = loggedInUser ? loggedInUser.username : 'null'
+  const { memberOf } = loggedInUser
 
   try {
     const renderProps = _staticRender({}, req.url)
@@ -132,9 +134,9 @@ async function getIndex(req, res, next) {
     renderProps.props.children.props.routerStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
     renderProps.props.children.props.routerStore.setLanguage(lang)
     await renderProps.props.children.props.routerStore.getMemberOf(
-      req.session.authUser.memberOf,
+      memberOf,
       req.params.id.toUpperCase(),
-      req.session.authUser.username,
+      username,
       serverConfig.auth.superuserGroup
     )
     if (req.params.id.length <= 7) {
@@ -147,7 +149,7 @@ async function getIndex(req, res, next) {
         await renderProps.props.children.props.routerStore.handleCourseData(
           apiResponse.body,
           req.params.id.toUpperCase(),
-          ldapUser,
+          username,
           lang
         )
       }
