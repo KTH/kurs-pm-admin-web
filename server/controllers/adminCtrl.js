@@ -51,23 +51,21 @@ async function _postMemoData(req, res, next) {
 }
 
 async function _getUsedRounds(req, res, next) {
-  const courseCode = req.params.courseCode
-  const semester = req.params.semester
+  const { courseCode, semester } = req.params
   log.debug('_getUsedRounds with course code: ' + courseCode + 'and semester: ' + semester)
   try {
     const apiResponse = await memoApi.getUsedRounds(courseCode, semester)
     log.debug('_getUsedRounds response: ', apiResponse.body)
     return httpResponse.json(res, apiResponse.body)
   } catch (error) {
-    log.error('Exception from _getUsedRounds ', { error: error })
+    log.error('Exception from _getUsedRounds ', { error })
     next(error)
   }
 }
 
 // ------- COURSE DATA FROM KOPPS-API   ------- /
 async function _getKoppsCourseData(req, res, next) {
-  const courseCode = req.params.courseCode
-  const language = req.params.language || 'sv'
+  const { courseCode, language = 'sv' } = req.params
   log.info('_getKoppsCourseData with code:' + courseCode)
   try {
     const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, language)
@@ -86,7 +84,7 @@ async function _saveFileToStorage(req, res, next) {
     const fileName = await runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
     return httpResponse.json(res, fileName)
   } catch (error) {
-    log.error('Exception from saveFileToStorage ', { error: error })
+    log.error('Exception from saveFileToStorage ', { error })
     next(error)
   }
 }
@@ -97,7 +95,7 @@ async function _updateFileInStorage(req, res, next) {
     const response = await updateMetaData(req.params.fileName, req.body.params.metadata)
     return httpResponse.json(res, response)
   } catch (error) {
-    log.error('Exception from updateFileInStorage ', { error: error })
+    log.error('Exception from updateFileInStorage ', { error })
     next(error)
   }
 }
@@ -109,7 +107,7 @@ async function _deleteFileInStorage(res, req, next) {
     log.debug('_deleteFileInStorage, fileName:', response)
     return httpResponse.json(res.res)
   } catch (error) {
-    log.error('Exception from _deleteFileInStorage ', { error: error })
+    log.error('Exception from _deleteFileInStorage ', { error })
     next(error)
   }
 }
@@ -125,8 +123,10 @@ async function getIndex(req, res, next) {
     return next(error)
   }
 
-  let lang = language.getLanguage(res) || 'sv'
-  const ldapUser = req.session.authUser ? req.session.authUser.username : 'null'
+  const lang = language.getLanguage(res) || 'sv'
+  const { user: loggedInUser } = req.session.passport
+  const username = loggedInUser ? loggedInUser.username : 'null'
+  const { memberOf } = loggedInUser
 
   try {
     const renderProps = _staticRender({}, req.url)
@@ -134,9 +134,9 @@ async function getIndex(req, res, next) {
     renderProps.props.children.props.routerStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
     renderProps.props.children.props.routerStore.setLanguage(lang)
     await renderProps.props.children.props.routerStore.getMemberOf(
-      req.session.authUser.memberOf,
+      memberOf,
       req.params.id.toUpperCase(),
-      req.session.authUser.username,
+      username,
       serverConfig.auth.superuserGroup
     )
     if (req.params.id.length <= 7) {
@@ -149,7 +149,7 @@ async function getIndex(req, res, next) {
         await renderProps.props.children.props.routerStore.handleCourseData(
           apiResponse.body,
           req.params.id.toUpperCase(),
-          ldapUser,
+          username,
           lang
         )
       }
@@ -160,10 +160,10 @@ async function getIndex(req, res, next) {
     res.render('admin/index', {
       debug: 'debug' in req.query,
       instrumentationKey: serverConfig.appInsights.instrumentationKey,
-      html: html,
+      html,
       title: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
       initialState: JSON.stringify(hydrateStores(renderProps)),
-      lang: lang,
+      lang,
       description: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
     })
   } catch (err) {

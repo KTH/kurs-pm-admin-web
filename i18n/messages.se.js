@@ -12,10 +12,20 @@ module.exports = {
      * Error messages
      */
 
+    error_bad_request: 'Tyvärr kan eller vill inte servern svara',
     error_not_found: 'Tyvärr kunde vi inte hitta sidan du efterfrågade',
     error_course_not_found: 'Tyvärr så finns det ingen kurs med kurskod ',
     error_generic: 'Något gick fel på servern, var god försök igen senare',
-    error_auth: 'Du har inte behörighet att se sidan.',
+
+    /**
+     * Authentication message
+     */
+
+    contact_support: 'Kontakta',
+    for_questions: 'vid frågor',
+    friendly_message_have_not_rights: 'Du saknar behörighet att använda Om kursens administrationsverktyg',
+    look_at_list_of_kopps_admin: 'Vill du veta vem som är Kopps-administratör på din skola, se förteckning här:',
+    message_have_not_rights: `Du saknar behörighet att använda Om kursens administrationsverktyg. Behörighet ges per automatik till de som är inlagda i KOPPS som examinator, kursansvarig eller lärare för kursen. `,
 
     /**
      * Message keys
@@ -66,7 +76,8 @@ module.exports = {
       'I detta steg (3 av 3) visas hur kurs-PM kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
-    has_published_memo: ' Ett alternativt kurs-PM som PDF finns publicerat. Du kan välja att ladda upp ett nytt kurs-PM som ersätter det befintliga.' /** FÄRSK SEMLA */,
+    has_published_memo:
+      ' Ett alternativt kurs-PM som PDF finns publicerat. Du kan välja att ladda upp ett nytt kurs-PM som ersätter det befintliga.' /** FÄRSK SEMLA */,
     has_web_based_memo:
       ' Ett kurs-PM i form av en webbsida finns som utkast eller är publicerat. Gå till Administrera Om kursen för att redigera det.',
     not_authorized_publish_new: ' Du är inte kursansvarig för detta kurstillfälle och kan därför inte välja det.',

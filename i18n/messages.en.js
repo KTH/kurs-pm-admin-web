@@ -5,10 +5,10 @@ module.exports = {
   messages: {
     date_format_short: '%d-%b-%Y',
 
+    error_bad_request: 'Sorry, the server cannot or will not process the request',
     error_not_found: "Sorry, we can't find your requested page",
     error_course_not_found: 'Sorry, there is no course with course code ',
     error_generic: 'Something went wrong on the server, please try again later.',
-    error_auth: 'You are not authorized to access this page',
 
     /**
      * Message keys
@@ -29,6 +29,17 @@ module.exports = {
     },
 
     header_main: 'Upload alternative course memo as PDF',
+
+    /**
+     * Authentication message
+     */
+
+    contact_support: 'Contact',
+    for_questions: 'for questions',
+    friendly_message_have_not_rights: 'Missing permission to use About the course administration tool.',
+    look_at_list_of_kopps_admin:
+      'If you want to know who is the Kopps administrator at your school, look at the list here:',
+    message_have_not_rights: `Missing permission to use About the course administration tool. Permission is automatically granted to those who are registered in KOPPS as an examiner, course coordinator or teacher for the course.`,
 
     /** **** PROGRESS BAR  */
     header_progress_select: '1. Choose course offering',
