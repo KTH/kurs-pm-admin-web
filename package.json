@@ -1,7 +1,7 @@
 {
   "//": "JSHint configuration - http://jshint.com/docs/options/",
   "name": "kurs-pm-admin-web",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "The admin page to upload a course memo as a PDF for a course",
   "main": "app.js",
   "license": "MIT",
@@ -10,7 +10,6 @@
     "uri": "git+https://github.com/KTH/kurs-pm-admin-web.git"
   },
   "scripts": {
-    "//": "Webpack installs css and javascript",
     "preinstall": "npx npm-force-resolutions",
     "vendor": "parcel build ./public/js/vendor.js",
     "lint": "eslint . && prettier-eslint --list-different **/*.js",
