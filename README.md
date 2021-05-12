@@ -1,6 +1,6 @@
 # Welcome to kurs-pm-admin-web
 
-![Prerequisite](https://img.shields.io/badge/node-14.0.0-blue.svg)
+![Prerequisite](https://img.shields.io/badge/node-14.2.0-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 ## Introduction
@@ -52,7 +52,9 @@ We must try to make changes that affect the template projects in the template pr
 
 ## Prerequisites
 
-- node 14.0.0
+- node 14.2.0
+
+Because OICD library is compatible only with node 12.0.0 or > 14.2.0
 
 ### Blob storage. Generate Shared access signature
 
@@ -92,9 +94,9 @@ KURS_PM_API_KEY=[secret key to connect to kurs-pm-api]
 LOGGING_LEVEL=DEBUG [only for dev env]
 SESSION_SECRET=[something random]
 SESSION_KEY=kurs-pm-admin-web.sid
-LDAP_BASE=OU=UG,DC=ref,DC=ug,DC=kth,DC=se
-LDAP_URI=ldaps://[find in gsv-key vault]@[ref].ug.kth.se@ldap.[ref].ug.kth.se
-LDAP_PASSWORD=[password]
+OIDC_APPLICATION_ID=<FROM ADFS>
+OIDC_CLIENT_SECRET=<FROM ADFS>
+OIDC_TOKEN_SECRET=<Random string>
 REDIS_URI=[connection string to redis]
 /*If you want to start your server on another port, add the following two variables, else use default ones from serversettings.js*/
 SERVER_PORT=[your port for the server]

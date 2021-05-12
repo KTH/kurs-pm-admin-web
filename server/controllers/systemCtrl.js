@@ -4,16 +4,17 @@
  * System controller for functions such as /about and /monitor
  */
 const log = require('kth-node-log')
+const { getPaths } = require('kth-node-express-routing')
+const language = require('kth-node-web-common/lib/language')
+const registry = require('component-registry').globalRegistry
+const { IHealthCheck } = require('kth-node-monitor').interfaces
+
 const version = require('../../config/version')
 const config = require('../configuration').server
 const packageFile = require('../../package.json')
-const ldapClient = require('../adldapClient')
-const { getPaths } = require('kth-node-express-routing')
-const language = require('kth-node-web-common/lib/language')
+
 const i18n = require('../../i18n')
 const api = require('../api')
-const registry = require('component-registry').globalRegistry
-const { IHealthCheck } = require('kth-node-monitor').interfaces
 
 /**
  * Get request on not found (404)
@@ -27,6 +28,10 @@ function _notFound(req, res, next) {
 
 function _getFriendlyErrorMessage(lang, statusCode) {
   switch (statusCode) {
+    case 400:
+      return i18n.message('error_bad_request', lang)
+    case 403:
+      return i18n.message('friendly_message_have_not_rights', lang)
     case 404:
       return i18n.message('error_not_found', lang)
     default:
@@ -35,28 +40,37 @@ function _getFriendlyErrorMessage(lang, statusCode) {
 }
 
 // this function must keep this signature for it to work properly
-function _final(err, req, res) {
-  switch (err.status) {
+// eslint-disable-next-line no-unused-vars
+function _final(err, req, res, next) {
+  const statusCode = err.status || err.statusCode || 500
+
+  switch (statusCode) {
+    case 400:
+      log.debug({ message: err }, `400 Bad request ${err.message}`)
+      break
     case 403:
-      log.info({ err }, `403 Forbidden ${err.message}`)
+      // Forbidden is not an error but a message with information
+      log.debug({ message: err }, `403 Forbidden ${err.message}`)
       break
     case 404:
-      log.info({ err }, `404 Not found ${err.message}`)
+      log.debug({ message: err }, `404 Not found ${err.message}`)
       break
     default:
       log.error({ err }, `Unhandled error ${err.message}`)
       break
   }
 
-  const statusCode = err.status || err.statusCode || 500
   const isProd = /prod/gi.test(process.env.NODE_ENV)
   const lang = language.getLanguage(res)
 
   res.format({
     'text/html': () => {
       res.status(statusCode).render('system/error', {
+        lang,
         layout: 'errorLayout',
         message: err.message,
+        showMessage: err.showMessage || false,
+        showKoppsLink: statusCode === 403,
         friendly: _getFriendlyErrorMessage(lang, statusCode),
         error: isProd ? {} : err,
         status: statusCode,
@@ -68,7 +82,7 @@ function _final(err, req, res) {
       res.status(statusCode).json({
         message: err.message,
         friendly: _getFriendlyErrorMessage(lang, statusCode),
-        error: isProd ? undefined : err.stack,
+        error: isProd ? null : err.stack,
       })
     },
 
@@ -117,9 +131,6 @@ function _monitor(req, res) {
       required: apiConfig[apiKey].required,
     })
   })
-  // Check LDAP
-  const ldapHealthUtil = registry.getUtility(IHealthCheck, 'kth-node-ldap')
-  subSystems.push(ldapHealthUtil.status(ldapClient, config.ldap))
 
   // If we need local system checks, such as memory or disk, we would add it here.
   // Make sure it returns a promise which resolves with an object containing:
