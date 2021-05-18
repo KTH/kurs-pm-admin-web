@@ -148,7 +148,7 @@ class RouterStore {
   /** ***************************************************************************************************************************************** */
   /*                                             GET COURSE INFORMATION ACTION (KOPPS - API)                                                    */
   /** ***************************************************************************************************************************************** */
-  @action getCourseInformation(courseCode, ldapUsername, lang = 'sv') {
+  @action getCourseInformation(courseCode, userName, lang = 'sv') {
     this.courseCode = courseCode
     return axios
       .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode, language: lang }))
@@ -158,7 +158,7 @@ class RouterStore {
           this.errorMessage = result.statusText
           return 'ERROR-' + result.status
         }
-        this.handleCourseData(result.data, courseCode, ldapUsername, lang)
+        this.handleCourseData(result.data, courseCode, userName, lang)
         return result.body
       })
       .catch(err => {
@@ -173,7 +173,7 @@ class RouterStore {
   /*                                                     HANDLE DATA FROM API                                                                  */
   /** ***************************************************************************************************************************************** */
 
-  @action handleCourseData(courseObject, courseCode, ldapUsername, language) {
+  @action handleCourseData(courseObject, courseCode, userName, language) {
     // Building up courseTitle, courseData, semesters and roundData
     if (courseObject === undefined) {
       this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
@@ -252,7 +252,7 @@ class RouterStore {
     return this.newMemoList
   }
 
-  getMemberOf(memberOf, id, ldapUsername, superUser) {
+  getMemberOf(memberOf, id, userName, superUser) {
     if (id.length > 7) {
       let splitId = id.split('_')
       this.courseCode = splitId[0].length > 12 ? id.slice(0, 7).toUpperCase() : id.slice(0, 6).toUpperCase()
@@ -260,7 +260,7 @@ class RouterStore {
       this.courseCode = id.toUpperCase()
     }
     this.member = memberOf.filter(member => member.indexOf(this.courseCode) > -1 || member.indexOf(superUser) > -1)
-    this.user = ldapUsername
+    this.user = userName
   }
 
   setLanguage(lang = 'sv') {
