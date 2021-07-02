@@ -3,7 +3,7 @@
 const log = require('kth-node-log')
 const language = require('kth-node-web-common/lib/language')
 const { toJS } = require('mobx')
-const httpResponse = require('kth-node-response')
+const httpResponse = require('@kth/kth-node-response')
 const paths = require('../server').getPaths()
 const ReactDOMServer = require('react-dom/server')
 
