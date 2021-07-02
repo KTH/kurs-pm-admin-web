@@ -10,6 +10,7 @@
     "uri": "git+https://github.com/KTH/kurs-pm-admin-web.git"
   },
   "scripts": {
+    "prepare": "husky install",
     "preinstall": "npx npm-force-resolutions",
     "vendor": "parcel build ./public/js/vendor.js",
     "lint": "eslint . && prettier-eslint --list-different **/*.js",
@@ -74,7 +75,7 @@
     "eslint": "^7.29.0",
     "eslint-plugin-jest": "^24.3.6",
     "eslint-plugin-jest-extended": "^0.0.1",
-    "husky": "^4.3.8",
+    "husky": "^7.0.0",
     "jest": "^27.0.6",
     "jest-extended": "^0.11.5",
     "nodemon": "^2.0.9",
@@ -92,12 +93,6 @@
   },
   "jshintConfig": {
     "maxerr": 5
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "npm run test",
-      "pre-commit": "pretty-quick --staged"
-    }
   },
   "prettier": {
     "arrowParens": "avoid",
