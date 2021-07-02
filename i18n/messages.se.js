@@ -69,18 +69,19 @@ module.exports = {
       label_kurs_pm_web_link: 'Kurs-PM',
     },
     intro_memo_menu:
-      'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska kurs-PM och sedan publicera det på sidan Kursinformation för vald termin och kursomgång.',
+      'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.',
     intro_edit:
       'I detta steg (2 av 3) ska kurs-PM som PDF laddas upp. Finns redan ett publicerat kurs-PM kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-PM innan publicering.',
     intro_preview:
-      'I detta steg (3 av 3) visas hur kurs-PM kommer att se ut på sidan Kursinformation för vald termin och kursomgång. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
+      'I detta steg (3 av 3) visas hur ditt kurs-PM kommer att se ut på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D när du har publicerat det. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
     has_published_memo:
       ' Ett alternativt kurs-PM som PDF finns publicerat. Du kan välja att ladda upp ett nytt kurs-PM som ersätter det befintliga.' /** FÄRSK SEMLA */,
     has_web_based_memo:
       ' Ett kurs-PM i form av en webbsida finns som utkast eller är publicerat. Gå till Administrera Om kursen för att redigera det.',
-    not_authorized_publish_new: ' Du är inte kursansvarig för detta kurstillfälle och kan därför inte välja det.',
+    not_authorized_publish_new: 'Du är inte kursansvarig/lärare för detta kurstillfälle och kan därför inte välja det.',
+    not_authorized_publish_new_link_label: 'Behörigheter för Om kursen',
 
     /** ************ BUTTONS ****************** */
     btn_add_memo: 'Ladda upp',
@@ -117,7 +118,7 @@ module.exports = {
     /** ************ MODALS ************** */
     info_publish: {
       header: 'Att tänka på innan du publicerar!',
-      body: `Kurs-PM kommer att laddas upp på sidan Inför kursval.
+      body: `Ditt kurs-PM kommer att laddas upp på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.
         <br/>
         <br/>
         Vill du fortsätta att publicera?`,
@@ -136,14 +137,12 @@ module.exports = {
     /** **** INFO BUTTONS ***** */
     info_select_semester: {
       header: 'Välj termin',
-      body:
-        'Välj vilken termin kursomgången startade. Om kursomgången sträcker sig över flera terminer; välj kursomgångens starttermin.',
+      body: 'Välj vilken termin kursomgången startade. Om kursomgången sträcker sig över flera terminer; välj kursomgångens starttermin.',
       btnCancel: 'Close',
     },
     info_choose_course_offering: {
       header: 'Välj kursomgång',
-      body:
-        'Välj alla kurstillfällen som ingick i kursomgången. Studenter är antagna till ett kurstillfälle. Programstudenter, betalande studenter och fristående studenter antas till olika kurstillfällen men kan utbildas i samma kursomgång. Kurstillfällen ska alltså grupperas ihop till en kursomgång. Kursomgången är ett praktiskt genomförande av en kurs. Kursomgången har en gemensam starttidpunkt, gemensam kurstakt och normalt gemensam undervisning för en studentgrupp. Schemat läggs per kursomgång, kurs-PM utformas per kursomgång och kursanalys genomförs per kursomgång.',
+      body: 'Välj alla kurstillfällen som ingick i kursomgången. Studenter är antagna till ett kurstillfälle. Programstudenter, betalande studenter och fristående studenter antas till olika kurstillfällen men kan utbildas i samma kursomgång. Kurstillfällen ska alltså grupperas ihop till en kursomgång. Kursomgången är ett praktiskt genomförande av en kurs. Kursomgången har en gemensam starttidpunkt, gemensam kurstakt och normalt gemensam undervisning för en studentgrupp. Schemat läggs per kursomgång, kurs-PM utformas per kursomgång och kursanalys genomförs per kursomgång.',
       btnCancel: 'Close',
     },
 

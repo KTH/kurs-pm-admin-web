@@ -62,18 +62,19 @@ module.exports = {
       label_kurs_pm_web_link: 'Course memo',
     },
     intro_memo_menu:
-      'Choose a semester and a course offering for the course memo to be uploaded (step 1 of 3). In the next step (2 of 3), course memo as PDF shall be uploaded for the selected semester and course offering. Preview the course memo that is about to be published in the last step (3 of 3). The course memo will then be published on the page Course information.',
+      'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo.\u201D',
     intro_edit:
       'In this step (2 of 3) course memo as PDF shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.',
     intro_preview:
-      'In this step (3 of 3) a preview of the course memo is presented as it will be published on the page Course information. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
+      'This step (3 out of 3) shows you what your course memo will look like on \u201CPrepare and take course/Course memo\u201D after publishing it. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
 
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:
       ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
     has_web_based_memo:
       ' This administrative course instance has a draft or a published course memo. Go to Administrate About course to change it.',
-    not_authorized_publish_new: ' You are not course coordinator for this instance and cannot select it.',
+    not_authorized_publish_new: ' You are not course coordinator/teacher for this instance and cannot select it.',
+    not_authorized_publish_new_link_label: 'Permissions for About course',
 
     /** ************ BUTTONS ****************** */
     btn_add_memo: 'Upload',
@@ -107,7 +108,7 @@ module.exports = {
     /** ************ MODALS ************** */
     info_publish: {
       header: 'To be aware of before publishing!',
-      body: `The information will be published on the page Before choosing course
+      body: `Your course memo will be uploaded to \u201CPrepare and take course/Course memo.\u201D
         <br/> 
         <br/> 
         Do you want to publish?`,
@@ -116,21 +117,18 @@ module.exports = {
     },
     info_cancel: {
       header: 'To be aware of before cancelling!',
-      body:
-        'Unsaved changes will be lost if you cancel the publishing of this course memo <br/>  <br/> Do you want to cancel?',
+      body: 'Unsaved changes will be lost if you cancel the publishing of this course memo <br/>  <br/> Do you want to cancel?',
       btnCancel: 'No, go back',
       btnConfirm: 'Yes, cancel',
     },
     /** **** INFO BUTTONS ***** */
     info_select_semester: {
       header: 'Choose semester',
-      body:
-        'Choose what semester the course offering started. If the course offering stretched over several semesters then choose the first semester.',
+      body: 'Choose what semester the course offering started. If the course offering stretched over several semesters then choose the first semester.',
     },
     info_choose_course_offering: {
       header: 'Choose course offering',
-      body:
-        'Choose all the administrative course instances that is included in the course offering. Students are admitted to an administrative course instance. Degree program students and non-programme students are admitted to different administrative course instances but may be educated in the same course offering. A course offering is thereby the practical realisation of the course with a common start date, common pace, common timetable etc. for all students. Several administrative course instances are grouped to one course offering.',
+      body: 'Choose all the administrative course instances that is included in the course offering. Students are admitted to an administrative course instance. Degree program students and non-programme students are admitted to different administrative course instances but may be educated in the same course offering. A course offering is thereby the practical realisation of the course with a common start date, common pace, common timetable etc. for all students. Several administrative course instances are grouped to one course offering.',
     },
     info_upload_course_memo: {
       header: 'Upload course memo as PDF',
