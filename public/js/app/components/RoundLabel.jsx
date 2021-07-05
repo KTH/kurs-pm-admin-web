@@ -1,7 +1,7 @@
 import React from 'react'
 // Helpers
 import i18n from '../../../../i18n/index'
-import { getDateFormat } from '../util/helpers'
+import { getDateFormat, formatRoundName } from '../util/helpers'
 
 const NotAuthorizedPublishMessage = ({ languageIndex }) => {
   const translate = i18n.messages[languageIndex].messages
@@ -23,16 +23,13 @@ const RoundLabel = ({ round, semester, hasPublishedPdf, hasWebVersion, showAcces
   const translate = i18n.messages[language].messages
   const { roundId, shortName, startDate, language: roundLang, hasAccess } = round
 
-  const roundName = shortName
-    ? shortName + ' '
-    : `${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]} 
-       ${semester.toString().match(/.{1,4}/g)[0]}-${roundId} `
+  const roundName = formatRoundName(language, shortName, semester, roundId)
 
   const hasPublishedPdfMessage = hasPublishedPdf ? translate.has_published_memo : ''
 
   return (
     <div key={'round-' + roundId}>
-      {`${roundName}(${translate.label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang} )`}
+      {`${roundName} (${translate.label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang} )`}
       {(hasWebVersion && <span className="no-access">{translate.has_web_based_memo}</span>) ||
         (!showAccessInfo ? (
           <span className="no-access">{hasPublishedPdfMessage}</span>

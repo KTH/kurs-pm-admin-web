@@ -12,7 +12,7 @@ import RoundLabel from '../components/RoundLabel'
 
 //Helpers
 import { SERVICE_URL } from '../util/constants'
-import { getTodayDate, getDateFormat } from '../util/helpers'
+import { getTodayDate, getDateFormat, formatRoundName } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 
 @inject(['routerStore'])
@@ -454,7 +454,16 @@ class AdminPage extends Component {
                     href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
                     target="_blank"
                   >
-                    {translate.link_pm}: {getDateFormat(this.state.pdfMemoDate, routerStore.language)}
+                    {routerStore.roundData[routerStore.activeSemester].map(round => {
+                      const hasChoosenRounds = this.state.roundIdList.indexOf(round.roundId) > -1
+                      if (hasChoosenRounds)
+                        return `${translate.link_pm} ${routerStore.courseCode} ${formatRoundName(
+                          routerStore.language,
+                          round.shortName,
+                          routerStore.activeSemester,
+                          round.roundId
+                        )}`
+                    })}
                   </a>
                 </div>
               )}

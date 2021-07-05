@@ -1,5 +1,6 @@
 'use strict'
 
+import i18n from '../../../../i18n/index'
 import { SUPERUSER_PART } from './constants'
 
 const getDateFormat = (date, language) => {
@@ -75,4 +76,22 @@ const getValueFromObjectList = (objectList, value, key, returnKey) => {
   return null
 }
 
-export { getAccess, noAccessToRoundsList, formatDate, getTodayDate, getDateFormat, getValueFromObjectList, isValidDate }
+const formatRoundName = (language, shortName, semester, roundId) => {
+  const translate = i18n.messages[language].messages
+  return shortName
+    ? shortName + ' '
+    : `${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]}${
+        semester.toString().match(/.{1,4}/g)[0]
+      }-${roundId}`
+}
+
+export {
+  getAccess,
+  noAccessToRoundsList,
+  formatDate,
+  getTodayDate,
+  getDateFormat,
+  getValueFromObjectList,
+  isValidDate,
+  formatRoundName,
+}
