@@ -39,7 +39,7 @@ class AdminPage extends Component {
       fileProgress: {
         pm: 0,
       },
-      roundIdList: '',
+      roundIdList: [],
       usedRoundSelected: 0,
     }
     this.handlePreview = this.handlePreview.bind(this)
@@ -326,7 +326,7 @@ class AdminPage extends Component {
 
   render() {
     const { routerStore } = this.props
-    const { fileProgress } = this.state
+    const { fileProgress, roundIdList } = this.state
     const translate = i18n.messages[routerStore.language].messages
 
     // if (routerStore.browserConfig.env === 'dev') {
@@ -454,16 +454,9 @@ class AdminPage extends Component {
                     href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
                     target="_blank"
                   >
-                    {routerStore.roundData[routerStore.activeSemester].map(round => {
-                      const hasChoosenRounds = this.state.roundIdList.indexOf(round.roundId) > -1
-                      if (hasChoosenRounds)
-                        return `${translate.link_pm} ${routerStore.courseCode} ${formatRoundName(
-                          routerStore.language,
-                          round.shortName,
-                          routerStore.activeSemester,
-                          round.roundId
-                        )}`
-                    })}
+                    {`${translate.link_pm} ${routerStore.courseCode} ${
+                      translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]
+                    } ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}-${roundIdList.sort().join('-')}`}
                   </a>
                 </div>
               )}
