@@ -78,10 +78,13 @@ async function _getKoppsCourseData(req, res, next) {
 
 // ------- FILES IN BLOB STORAGE: SAVE, UPDATE, DELETE ------- /
 async function _saveFileToStorage(req, res, next) {
-  log.info('Saving uploaded file to storage ' + req.files.file)
+  log.info(' Saving uploaded file for course ' + req.params.courseCode)
+  log.info(' Saving uploaded file to storage ' + req.files.file)
   let file = req.files.file
   try {
     const fileName = await runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
+    log.info(' fileName ' + fileName)
+
     return httpResponse.json(res, fileName)
   } catch (error) {
     log.error('Exception from saveFileToStorage ', { error })

@@ -57,10 +57,10 @@ async function runBlobStorage(file, semester, courseCode, rounds, metadata) {
   const fileType = file.mimetype
   const newId = createID()
   const blobName = `memo-${courseCode}${semester}-${newId}.pdf`
-
+  log.info(' Blobstorage - uploaded file ', file)
   const uploadResponse = await uploadBlob(blobName, content, fileType, metadata)
-  log.debug(' Blobstorage - uploaded file response ', uploadResponse)
-
+  log.info(' Blobstorage - uploaded file response ', uploadResponse)
+  // TODO: ADD ERROR IF NO UPLOADRESPONSE
   return blobName
 }
 
@@ -70,7 +70,7 @@ async function updateMetaData(blobName, metadata) {
 
   metadata.date = getTodayDate(false)
 
-  log.debug(`Update metadata for ${blobName}`)
+  log.info(`Update metadata for ${blobName}`)
   try {
     const response = await blockBlobClient.setMetadata(metadata)
     return response
