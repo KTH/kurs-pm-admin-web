@@ -9,49 +9,23 @@ $kth-blue: #007fae;
 
 // --- PAGE TOP --- //
 
+.container {
+  header {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+}
 .container.articleNavigation {
   padding: 15px 15px 0 !important;
 }
 
-.pageTitle {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-
-  margin-top: 20px;
-  margin-bottom: 30px;
-
-  [role='heading'] {
-    display: flex;
-    flex-direction: column;
-    .t1 {
-      margin-bottom: 0;
-      margin-left: -0.095em;
-    }
-    .t4 {
-      margin-top: 4px;
-      margin-bottom: 20px;
-    }
-  }
-  .alert {
-    margin-left: 0;
-    font-size: 1rem;
-  }
-}
-
 .progress-bar-container {
-  width: 100%;
+  margin-left: 0.1em;
   .progress-bar1 {
     text-align: center;
-    border-bottom: 2px solid #d4d4d4;
-    font-weight: 900;
     padding-top: 30px;
-    &.progress-active {
-      border-bottom: 3px solid $kth-blue;
-    }
   }
 }
-
 // ------- MEMO MENU --------- //
 
 #memoMenuContainer {
@@ -83,8 +57,8 @@ $kth-blue: #007fae;
     }
     .caretholder {
       background-color: $kth-blue;
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       margin: 0;
       position: relative;
 
@@ -144,6 +118,9 @@ ul.no-padding-left {
     margin-left: 15px;
     margin-top: 15px;
   }
+  label {
+    margin-bottom: 10px;
+  }
 }
 
 .col-form {
@@ -186,14 +163,25 @@ ul.no-padding-left {
 
 .select-list {
   display: block;
+  label {
+    font-weight: 400;
+  }
 }
 
 .button-container {
-  padding: 20px 10px;
+  margin-top: 50px;
+  padding: 30px 0;
   min-width: 100%;
-  border-top: 1px solid #ddd;
-  margin-top: 15px;
+  border-top: 1px solid #65656c;
   line-height: 3;
+  div:first-of-type {
+    text-align: start;
+    padding-left: 0;
+  }
+  div:last-of-type {
+    text-align: end;
+    padding-right: 0;
+  }
 }
 
 .popover-body {
@@ -253,6 +241,10 @@ span.right-links {
 }
 
 // ------- HELPERS ------- //
+.alert-margin {
+  margin-top: 40px !important;
+  margin-bottom: 40px !important;
+}
 .inline-flex {
   display: inline-flex;
 }
@@ -264,10 +256,6 @@ span.right-links {
 
 .padding-top-30 {
   padding-top: 30px;
-}
-
-.margin-bottom-40 {
-  margin-bottom: 40px;
 }
 
 .align-right-sm-center {
