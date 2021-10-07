@@ -48,10 +48,23 @@ module.exports = {
 
     header_main: 'Ladda upp alternativt kurs-PM som PDF',
     //* **** PROGRESS BAR  */
-    header_progress_select: '1. Välj kursomgång',
-    header_progress_edit_upload: '2. Ladda upp kurs-PM',
-    header_progress_review: '3. Granska och publicera',
-
+    pagesProgressBar: [
+      {
+        title: 'Välj kursomgång',
+        intro:
+          'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.',
+      },
+      {
+        title: 'Ladda upp kurs-PM',
+        intro:
+          'I detta steg (2 av 3) ska kurs-PM som PDF laddas upp. Finns redan ett publicerat kurs-PM kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-PM innan publicering.',
+      },
+      {
+        title: 'Granska och publicera',
+        intro:
+          'I detta steg (3 av 3) visas hur ditt kurs-PM kommer att se ut på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D när du har publicerat det. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
+      },
+    ],
     /** ***** PAGE 1 - ANALYSIS MENU */
 
     header_select_semester: 'Välj termin',
@@ -68,12 +81,6 @@ module.exports = {
       after_create_memo_link: `där resultatet blir ett kurs-PM som publiceras som en webbsida på en plats dit studenter enkelt hittar och versioner hanteras. Kurs-PM kan därifrån även sparas som PDF. Ytterligare anledningen till rekommendationen är att du får stöd i hur du gör ett bra kurs-pm enligt en mall framtagen på KTH, information från kursplanen hämtas automatiskt in i ditt kurs-PM. Om du ändå väljer att ladda upp ett alternativt kurs-PM som PDF så tänk på att du ansvarar för att dokumentet lever upp till kraven på digital tillgänglighet enligt den internationella standarden WCAG 2.1. Det är också bra om du utgår från samma kurs-PM-mall som hittas på`,
       label_kurs_pm_web_link: 'Kurs-PM',
     },
-    intro_memo_menu:
-      'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.',
-    intro_edit:
-      'I detta steg (2 av 3) ska kurs-PM som PDF laddas upp. Finns redan ett publicerat kurs-PM kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-PM innan publicering.',
-    intro_preview:
-      'I detta steg (3 av 3) visas hur ditt kurs-PM kommer att se ut på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D när du har publicerat det. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
     has_published_memo:

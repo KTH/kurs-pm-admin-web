@@ -42,9 +42,23 @@ module.exports = {
     message_have_not_rights: `Missing permission to use About the course administration tool. Permission is automatically granted to those who are registered in KOPPS as an examiner, course coordinator or teacher for the course.`,
 
     /** **** PROGRESS BAR  */
-    header_progress_select: '1. Choose course offering',
-    header_progress_edit_upload: '2. Upload course memo',
-    header_progress_review: '3. Review and publish',
+    pagesProgressBar: [
+      {
+        title: 'Choose course offering',
+        intro:
+          'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo.\u201D',
+      },
+      {
+        title: 'Upload course memo',
+        intro:
+          'In this step (2 of 3) course memo as PDF shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.',
+      },
+      {
+        title: 'Review and publish',
+        intro:
+          'This step (3 out of 3) shows you what your course memo will look like on \u201CPrepare and take course/Course memo\u201D after publishing it. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
+      },
+    ],
 
     /** ***** PAGE 1 - ANALYSIS MENU */
     header_choose_course_offering: 'Choose course offering',
@@ -61,13 +75,6 @@ module.exports = {
       after_create_memo_link: `where the result is a course memo that is published as a web page in a place students easily can find and versions are managed. From this web page, course memo also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course memo according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course memo. If you still choose to upload an alternative course memo as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course memo template`,
       label_kurs_pm_web_link: 'Course memo',
     },
-    intro_memo_menu:
-      'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo.\u201D',
-    intro_edit:
-      'In this step (2 of 3) course memo as PDF shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.',
-    intro_preview:
-      'This step (3 out of 3) shows you what your course memo will look like on \u201CPrepare and take course/Course memo\u201D after publishing it. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
-
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:
       ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
