@@ -358,3 +358,8 @@ button.close {
 .btn-secondary {
   min-height: 0;
 }
+
+h3 + div > .btn-info-modal {
+  min-height: 0.75rem;
+  vertical-align: middle !important;
+}
