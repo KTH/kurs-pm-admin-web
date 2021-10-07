@@ -196,8 +196,6 @@ class MemoMenu extends Component {
     // }
     return (
       <div id="YearAndRounds">
-        <p>{translate.intro_memo_menu}</p>
-
         {/** *********************************************************************************** */}
         {/*                                  SEMESTER DROPDOWN                                  */}
         {/** *********************************************************************************** */}
@@ -214,7 +212,7 @@ class MemoMenu extends Component {
                                     ${semester.toString().match(/.{1,4}/g)[0]}`
                 : selectSemester}
             </span>
-            <span className="caretholder" id={'_spanCaret'}></span>
+            <span className="caretholder" id="_spanCaret" />
           </DropdownToggle>
           <DropdownMenu>
             {semesterList &&
@@ -230,9 +228,8 @@ class MemoMenu extends Component {
         </Dropdown>
 
         {alert.length > 0 && (
-          <Alert color="danger" className="margin-bottom-40">
-            {' '}
-            {alert}
+          <Alert color="danger" className="alert-margin">
+            {` ${alert}`}
           </Alert>
         )}
 

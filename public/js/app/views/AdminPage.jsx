@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
-import { Row, Col, Button, Form, Label, Input, Alert } from 'reactstrap'
+import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 
-//Components
+// Components
 import Title from '../components/Title'
 import MemoMenu from '../components/MemoMenu'
 import InfoModal from '../components/InfoModal'
@@ -10,9 +10,9 @@ import InfoButton from '../components/InfoButton'
 import UpLoad from '../components/UpLoad'
 import RoundLabel from '../components/RoundLabel'
 
-//Helpers
+// Helpers
 import { SERVICE_URL } from '../util/constants'
-import { getTodayDate, getDateFormat, formatRoundName } from '../util/helpers'
+import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 
 @inject(['routerStore'])
@@ -51,14 +51,22 @@ class AdminPage extends Component {
     this.toggleModal = this.toggleModal.bind(this)
     this.getTempData = this.getTempData.bind(this)
     this.getMetadata = this.getMetadata.bind(this)
-    //this.divTop = React.createRef()
     this.handleUploadFile = this.handleUploadFile.bind(this)
     this.handleRemoveFile = this.handleRemoveFile.bind(this)
     this.validateData = this.validateData.bind(this)
   }
 
-  //*********************************  FILE UPLOAD  ********************************* */
-  //********************************************************************************** */
+  componentDidUpdate() {
+    const thisInstance = this
+    if (thisInstance.state.alertSuccess.length > 0) {
+      setTimeout(() => {
+        thisInstance.setState({ alertSuccess: '' })
+      }, 5000)
+    }
+  }
+
+  // *********************************  FILE UPLOAD  ********************************* */
+  // ********************************************************************************** */
 
   async handleUploadFile(id, file, e) {
     if (e.target.files[0].type === 'application/pdf') {
@@ -73,7 +81,7 @@ class AdminPage extends Component {
     } else {
       const notValid = ['memoFile']
       this.setState({
-        notValid: notValid,
+        notValid,
         alertError: i18n.messages[this.props.routerStore.language].messages.alert_not_pdf,
       })
     }
@@ -81,7 +89,7 @@ class AdminPage extends Component {
 
   sendRequest(id, file, e) {
     const thisInstance = this
-    const fileProgress = this.state.fileProgress
+    const { fileProgress } = this.state
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest()
       req.upload.addEventListener('progress', event => {
@@ -315,15 +323,6 @@ class AdminPage extends Component {
     return returnObject
   }
 
-  componentDidUpdate() {
-    const thisInstance = this
-    if (thisInstance.state.alertSuccess.length > 0) {
-      setTimeout(() => {
-        thisInstance.setState({ alertSuccess: '' })
-      }, 5000)
-    }
-  }
-
   render() {
     const { routerStore } = this.props
     const { fileProgress, roundIdList } = this.state
@@ -351,7 +350,7 @@ class AdminPage extends Component {
               {/*                               PAGE1: MEMO MENU                             */}
               {/************************************************************************************* */}
               {routerStore.semesters.length === 0 ? (
-                <Alert color="info" className="margin-bottom-40">
+                <Alert color="info" className="alert-margin">
                   {' '}
                   {translate.alert_no_rounds}{' '}
                 </Alert>
@@ -371,7 +370,7 @@ class AdminPage extends Component {
               )}
             </div>
           ) : (
-            <Alert className="margin-bottom-40" color="info">
+            <Alert className="alert-margin" color="info">
               {' '}
               {routerStore.errorMessage}
             </Alert>
@@ -390,7 +389,7 @@ class AdminPage extends Component {
           {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
           {/************************************************************************************* */}
           {(routerStore.errorMessage.length > 0 && (
-            <Alert color="info" className="margin-bottom-40">
+            <Alert color="info" className="alert-margin">
               {routerStore.errorMessage}
             </Alert>
           )) || (
@@ -404,13 +403,8 @@ class AdminPage extends Component {
                 showProgressBar={routerStore.status !== 'preview'}
               />
 
-              {/* ----- Intro text for Edit  or Preview ------- */}
-              <div>
-                <p>{this.state.isPreviewMode ? translate.intro_preview : translate.intro_edit}</p>
-              </div>
-
               {this.state.usedRoundSelected > 0 && (
-                <Alert color="info" className="margin-bottom-40">
+                <Alert color="info" className="alert-margin">
                   {' '}
                   {translate.alert_have_published_memo}
                 </Alert>
@@ -472,7 +466,7 @@ class AdminPage extends Component {
 
                       {this.state.alert.length > 0 && (
                         <Row>
-                          <Alert color="info" className="margin-bottom-40">
+                          <Alert color="info" className="alert-margin">
                             {this.state.alert}{' '}
                           </Alert>
                         </Row>
