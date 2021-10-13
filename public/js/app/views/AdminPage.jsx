@@ -172,7 +172,7 @@ class AdminPage extends Component {
   handleBack(event) {
     event.preventDefault()
     const thisAdminPage = this
-    const routerStore = this.props.routerStore
+    const { routerStore } = this.props
     if (this.state.progress === 'edit') {
       this.props.history.push(routerStore.browserConfig.proxyPrefixPath.uri + '/' + routerStore.courseCode)
       if (routerStore.semesters.length === 0) {
@@ -202,14 +202,15 @@ class AdminPage extends Component {
   }
 
   handleCancel(event) {
-    if (this.state.memoFile.length > 0) {
+    const { memoFile } = this.state
+    if (memoFile.length > 0) {
       this.handleRemoveFile()
     }
 
-    let modal = this.state.modalOpen
+    const { modalOpen: modal } = this.state
     modal.cancel = false
     this.setState({ modalOpen: modal })
-    window.location = `${SERVICE_URL['admin']}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
+    window.location = `${SERVICE_URL.admin}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
   }
 
   handlePublish(event, fromModal = false) {
@@ -218,34 +219,29 @@ class AdminPage extends Component {
     }
     const { routerStore } = this.props
     const thisInstance = this
-    let modal = this.state.modalOpen
-    routerStore.updateFileInStorage(this.state.memoFile, this.getMetadata('published'))
+    const { memoFile, pdfMemoDate } = this.state
+    const { modalOpen: modal } = this.state
+    routerStore.updateFileInStorage(memoFile, this.getMetadata('published'))
 
     return this.props.routerStore
-      .postMemoData(routerStore.newMemoList, this.state.memoFile, this.state.pdfMemoDate)
+      .postMemoData(routerStore.newMemoList, memoFile, pdfMemoDate)
       .then(response => {
         modal.publish = false
-        if (response.status >= 400) {
+        if (response.status >= 400 || response === undefined || response.message) {
           this.setState({
             alert: response.message ? response.message : 'No connection with data base',
             modalOpen: modal,
           })
           return 'ERROR-' + response.status
         }
-        if (response === undefined || response.message) {
-          this.setState({
-            alert: response.message ? response.message : 'No connection with data base',
-            modalOpen: modal,
-          })
-        } else {
-          thisInstance.setState({
-            saved: true,
-            modalOpen: modal,
-          })
-          window.location = encodeURI(
-            `${routerStore.browserConfig.hostUrl}${SERVICE_URL['admin']}${routerStore.courseCode}?serv=pm&event=pub&term=${routerStore.activeSemester}`
-          )
-        }
+        // if no error go to admin start page
+        thisInstance.setState({
+          saved: true,
+          modalOpen: modal,
+        })
+        window.location = encodeURI(
+          `${routerStore.browserConfig.hostUrl}${SERVICE_URL.admin}${routerStore.courseCode}?serv=pm&event=pub&term=${routerStore.activeSemester}`
+        )
       })
       .catch(err => {
         console.log('err', err)
@@ -257,8 +253,8 @@ class AdminPage extends Component {
       })
   }
 
-  //************************ OTHER **************************** */
-  //*************************************************************/
+  //* *********************** OTHER **************************** */
+  //* ********************************************************** */
 
   editMode(semester, rounds, tempData, usedRoundSelected) {
     const thisAdminPage = this
@@ -275,24 +271,23 @@ class AdminPage extends Component {
   }
 
   toggleModal(event) {
-    let modalOpen = this.state.modalOpen
+    const { modalOpen } = this.state
     modalOpen[event.target.id] = !modalOpen[event.target.id]
     this.setState({
-      modalOpen: modalOpen,
+      modalOpen,
     })
   }
 
   handleInputChange(event) {
     this.setState({
       pdfMemoDate: event.target.value,
-      //saved: false,
       notValid: [],
       alertError: '',
     })
   }
 
   validateData() {
-    let invalidList = []
+    const invalidList = []
     if (this.state.memoFile.length === 0) {
       invalidList.push('memoFile')
     }
@@ -307,18 +302,15 @@ class AdminPage extends Component {
     return null
   }
 
+  // eslint-disable-next-line class-methods-use-this
   handleTemporaryData(tempData) {
-    let returnObject = {
+    const returnObject = {
       files: {
         memoFile: '',
       },
     }
     if (tempData) {
       returnObject.files.memoFile = tempData.memoFile
-    } else {
-      if (valueObject) {
-        returnObject.files.memoFile = this.state.memoFile
-      }
     }
     return returnObject
   }
@@ -346,9 +338,9 @@ class AdminPage extends Component {
                 showProgressBar={true}
               />
 
-              {/************************************************************************************* */}
+              {/* ************************************************************************************ */}
               {/*                               PAGE1: MEMO MENU                             */}
-              {/************************************************************************************* */}
+              {/* ************************************************************************************ */}
               {routerStore.semesters.length === 0 ? (
                 <Alert color="info" className="alert-margin">
                   {' '}
