@@ -74,12 +74,15 @@ module.exports = {
 
     /* **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     alert_recommendation: {
-      alert_header: 'KTH rekommenderar',
-      before_create_memo_link:
-        'KTH rekommenderar att du, i stället för att ladda upp ett alternativt kurs-PM, använder funktionen',
+      alert_header: 'KTH:s riktlinjer',
+      accessability_responsibility:
+        'Via denna funktion kan du ladda upp ett kurs-PM som du har skapat utanför systemstödet. Tänk på att du ansvarar för att dokumentet är tillgänglighetsanpassat och att innehållet i idtt kurs-PM följer Riktlinje om kursplan, betygssystem och examination.',
+      before_create_memo_link: 'Om du istället använder systemstödet',
       label_create_memo_link: 'Skapa och publicera kurs-PM',
-      after_create_memo_link: `där resultatet blir ett kurs-PM som publiceras som en webbsida på en plats dit studenter enkelt hittar och versioner hanteras. Kurs-PM kan därifrån även sparas som PDF. Ytterligare anledningen till rekommendationen är att du får stöd i hur du gör ett bra kurs-pm enligt en mall framtagen på KTH, information från kursplanen hämtas automatiskt in i ditt kurs-PM. Om du ändå väljer att ladda upp ett alternativt kurs-PM som PDF så tänk på att du ansvarar för att dokumentet lever upp till kraven på digital tillgänglighet enligt den internationella standarden WCAG 2.1. Det är också bra om du utgår från samma kurs-PM-mall som hittas på`,
-      label_kurs_pm_web_link: 'Kurs-PM',
+      after_create_memo_link: `kommer ditt kurs-PM att publiceras som en tillgänglighetsanpassad
+          webbsida och information från kursplanen hämtas automatiskt till ditt kurs-PM. Du får också stöd med vilka rubriker och information
+          som ditt kurs-PM bör innehålla. Läs mer om systemstöden för Kurs-PM.`,
+      // label_kurs_pm_web_link: 'Kurs-PM',
     },
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
