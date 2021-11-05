@@ -10,6 +10,7 @@ const ADMIN_COURSE_PM_DATA = '/kursinfoadmin/kurs-pm-data/'
 const showInfoKTHrecommendation = (courseCode, langIndex) => {
   const langAbbr = langIndex === 0 ? 'en' : 'sv'
   const {
+    accessability_responsibility: accessibilityResponsibility,
     after_create_memo_link: labelAfterCreateMemoLink,
     alert_header: alertHeader,
     before_create_memo_link: labelBeforeCreateMemoLink,
@@ -20,14 +21,15 @@ const showInfoKTHrecommendation = (courseCode, langIndex) => {
   return (
     <Alert color="info" className="alert-margin">
       <h4>{alertHeader}</h4>
+      <p>{accessibilityResponsibility}</p>
       <p>
         {`${labelBeforeCreateMemoLink} `}
         <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
         {` ${labelAfterCreateMemoLink} `}
-        <a href="https://intra.kth.se/utbildning/utveckling-och-hogskolepedagogik/stodmaterial/kurs-pm">
+        {/* <a href="https://intra.kth.se/utbildning/utveckling-och-hogskolepedagogik/stodmaterial/kurs-pm">
           {labelCourseMemoWebLink}
         </a>
-        .
+        . */}
       </p>
     </Alert>
   )

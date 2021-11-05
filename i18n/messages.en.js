@@ -69,11 +69,13 @@ module.exports = {
 
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     alert_recommendation: {
-      alert_header: 'KTH recommends',
-      before_create_memo_link: 'KTH recommends, instead of uploading an alternative course memo, to use the function',
+      alert_header: 'KTH’s guidelines',
+      accessability_responsibility: 'TRANSLATING...',
+      before_create_memo_link:
+        'TRANSLATING...KTH recommends, instead of uploading an alternative course memo, to use the function',
       label_create_memo_link: 'Create and publish course memo',
-      after_create_memo_link: `where the result is a course memo that is published as a web page in a place students easily can find and versions are managed. From this web page, course memo also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course memo according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course memo. If you still choose to upload an alternative course memo as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course memo template`,
-      label_kurs_pm_web_link: 'Course memo',
+      after_create_memo_link: `TRANSLATING... where the result is a course memo that is published as a web page in a place students easily can find and versions are managed. From this web page, course memo also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course memo according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course memo. If you still choose to upload an alternative course memo as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course memo template`,
+      // label_kurs_pm_web_link: 'Course memo',
     },
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:

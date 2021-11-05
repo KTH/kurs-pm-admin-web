@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap'
 
-//Custom components
+// Custom components
 
 class InfoModal extends Component {
   constructor(props) {
@@ -18,7 +18,7 @@ class InfoModal extends Component {
   }
 
   render() {
-    const { fade, isOpen, toggle, className, type, infoText, id, url, copyHeader } = this.props
+    const { fade, isOpen, toggle, className, type, infoText, id } = this.props
     const fadeModal = fade || true
 
     return (
