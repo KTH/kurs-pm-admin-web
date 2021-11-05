@@ -18,7 +18,7 @@ module.exports = {
 
     lang_block_id: '1.272446',
     locale_text: 'This page in English',
-    site_name: 'Administrate About course',
+    site_name: 'Administer Aboute course',
     host_name: 'KTH',
     page_student: 'STUDENT PÅ KTH',
     page_course_programme: 'KURS- OCH PROGRAMKATALOGEN',
@@ -79,7 +79,7 @@ module.exports = {
     has_published_memo:
       ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
     has_web_based_memo:
-      ' This administrative course instance has a draft or a published course memo. Go to Administrate About course to change it.',
+      ' This administrative course instance has a draft or a published course memo. Go to Administer Aboute course to change it.',
     not_authorized_publish_new: ' You are not course coordinator/teacher for this instance and cannot select it.',
     not_authorized_publish_new_link_label: 'Permissions for About course',
 
