@@ -76,13 +76,14 @@ module.exports = {
     alert_recommendation: {
       alert_header: 'KTH:s riktlinjer',
       accessability_responsibility:
-        'Via denna funktion kan du ladda upp ett kurs-PM som du har skapat utanför systemstödet. Tänk på att du ansvarar för att dokumentet är tillgänglighetsanpassat och att innehållet i idtt kurs-PM följer Riktlinje om kursplan, betygssystem och examination.',
+        'Via denna funktion kan du ladda upp ett kurs-PM som du har skapat utanför systemstödet. Tänk på att du ansvarar för att dokumentet är tillgänglighetsanpassat och att innehållet i idtt kurs-PM följer',
       before_create_memo_link: 'Om du istället använder systemstödet',
       label_create_memo_link: 'Skapa och publicera kurs-PM',
+      label_control_info_link: 'Riktlinje om kursplan, betygssystem och examination',
       after_create_memo_link: `kommer ditt kurs-PM att publiceras som en tillgänglighetsanpassad
           webbsida och information från kursplanen hämtas automatiskt till ditt kurs-PM. Du får också stöd med vilka rubriker och information
           som ditt kurs-PM bör innehålla. Läs mer om systemstöden för Kurs-PM.`,
-      // label_kurs_pm_web_link: 'Kurs-PM',
+      label_course_memo_guide_link: 'Läs mer om systemstödet för Kurs-PM',
     },
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
@@ -155,18 +156,10 @@ module.exports = {
       body: 'Välj alla kurstillfällen som ingick i kursomgången. Studenter är antagna till ett kurstillfälle. Programstudenter, betalande studenter och fristående studenter antas till olika kurstillfällen men kan utbildas i samma kursomgång. Kurstillfällen ska alltså grupperas ihop till en kursomgång. Kursomgången är ett praktiskt genomförande av en kurs. Kursomgången har en gemensam starttidpunkt, gemensam kurstakt och normalt gemensam undervisning för en studentgrupp. Schemat läggs per kursomgång, kurs-PM utformas per kursomgång och kursanalys genomförs per kursomgång.',
       btnCancel: 'Close',
     },
-
     info_upload_course_memo: {
       header: 'Ladda upp kurs-PM som PDF',
       body: 'Ladda upp den senaste versionen av kurs-PM för kursomgången som PDF.',
       btnCancel: 'Close',
     },
-    info_upload_course_memo_date: {
-      header: '????',
-      body: '????',
-    },
-
-    // PREVIEW PAGE
-    header_course_round: 'Kursomgång',
   },
 }

@@ -18,7 +18,7 @@ module.exports = {
 
     lang_block_id: '1.272446',
     locale_text: 'This page in English',
-    site_name: 'Administer Aboute course',
+    site_name: 'Administer About course',
     host_name: 'KTH',
     page_student: 'STUDENT PÅ KTH',
     page_course_programme: 'KURS- OCH PROGRAMKATALOGEN',
@@ -70,12 +70,13 @@ module.exports = {
     /** **** INTRO TEXT FOR ANALYSIS MENUE, EDIT, PREVIEW */
     alert_recommendation: {
       alert_header: 'KTH’s guidelines',
-      accessability_responsibility: 'TRANSLATING...',
-      before_create_memo_link:
-        'TRANSLATING...KTH recommends, instead of uploading an alternative course memo, to use the function',
+      accessability_responsibility:
+        'Here you can upload a course memo created outside the system support. Keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1, and that the content of your course memo follows the',
+      before_create_memo_link: 'If you use the system support',
       label_create_memo_link: 'Create and publish course memo',
-      after_create_memo_link: `TRANSLATING... where the result is a course memo that is published as a web page in a place students easily can find and versions are managed. From this web page, course memo also can be saved as a PDF. Another reason for the recommendation is that you get support in how to make a good course memo according to a template produced at KTH and information from the course syllabus is automatically retrieved in your course memo. If you still choose to upload an alternative course memo as a PDF, keep in mind that you are responsible for ensuring that the document meets the requirements for digital accessibility in accordance with the international standard WCAG 2.1. It is also good if you start from the same course memo template`,
-      // label_kurs_pm_web_link: 'Course memo',
+      label_control_info_link: 'Guideline on course syllabus, grading system and examination',
+      after_create_memo_link: `instead of uploading a PDF, your course memo will automatically fulfill web accessibility guidelines and information from the course syllabus will be downloaded to the course memo. You also get support with which headings and information your course memo should contain.`,
+      label_course_memo_guide_link: 'Read more about the system support for course memo',
     },
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:
@@ -143,8 +144,5 @@ module.exports = {
       header: 'Upload course memo as PDF',
       body: 'Upload the latest version of the course memo for the course offering as PDF.',
     },
-
-    // PREVIEW PAGE
-    header_course_round: 'Kursomgång',
   },
 }
