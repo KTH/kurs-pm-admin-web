@@ -9,27 +9,36 @@ const ADMIN_COURSE_PM_DATA = '/kursinfoadmin/kurs-pm-data/'
 
 const showInfoKTHrecommendation = (courseCode, langIndex) => {
   const langAbbr = langIndex === 0 ? 'en' : 'sv'
+  const linkLocale = langAbbr === 'en' ? 'en/' : ''
   const {
     accessability_responsibility: accessibilityResponsibility,
     after_create_memo_link: labelAfterCreateMemoLink,
     alert_header: alertHeader,
     before_create_memo_link: labelBeforeCreateMemoLink,
     label_create_memo_link: labelCreateMemoLink,
+    label_control_info_link: labelControlInfoLink,
     label_kurs_pm_web_link: labelCourseMemoWebLink,
+    label_course_memo_guide_link: labelCourseMemoGuideLink,
   } = i18n.messages[langIndex].messages.alert_recommendation
 
   return (
     <Alert color="info" className="alert-margin">
       <h4>{alertHeader}</h4>
-      <p>{accessibilityResponsibility}</p>
+      <p>
+        {`${accessibilityResponsibility} `}
+        <a href={`https://intra.kth.se/${linkLocale}styrning/styrdokument/regler/utbildning-overgripande`}>
+          {labelControlInfoLink}
+        </a>
+        .
+      </p>
       <p>
         {`${labelBeforeCreateMemoLink} `}
         <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
         {` ${labelAfterCreateMemoLink} `}
-        {/* <a href="https://intra.kth.se/utbildning/utveckling-och-hogskolepedagogik/stodmaterial/kurs-pm">
-          {labelCourseMemoWebLink}
+        <a href={`https://intra.kth.se/${linkLocale}utbildning/utveckling-och-hogskolepedagogik/stodmaterial/kurs-pm`}>
+          {labelCourseMemoGuideLink}
         </a>
-        . */}
+        .
       </p>
     </Alert>
   )
