@@ -6,7 +6,7 @@
 const log = require('kth-node-log')
 const { getPaths } = require('kth-node-express-routing')
 const language = require('kth-node-web-common/lib/language')
-const registry = require('component-registry').globalRegistry
+const { globalRegistry: registry } = require('component-registry')
 const { IHealthCheck } = require('kth-node-monitor').interfaces
 
 const version = require('../../config/version')
