@@ -398,15 +398,17 @@ class AdminPage extends Component {
               />
 
               {/* Accessability alert */}
-              <Alert color="info" className="alert-margin">
-                {`${translate.alert_accessability_link_before} `}
-                <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
-                {` ${translate.alert_accessability_link_after} `}
-                <a href={`${ADMIN_COURSE_PM_DATA}${routerStore.courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                  {translate.label_link_web_based_draft_memo}
-                </a>
-                {`.`}
-              </Alert>
+              {this.state.progress === 'edit' && (
+                <Alert color="info" className="alert-margin">
+                  {`${translate.alert_accessability_link_before} `}
+                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
+                  {` ${translate.alert_accessability_link_after} `}
+                  <a href={`${ADMIN_COURSE_PM_DATA}${routerStore.courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                    {translate.label_link_web_based_draft_memo}
+                  </a>
+                  {`.`}
+                </Alert>
+              )}
 
               {/* Existing PDF memo alert */}
               {this.state.usedRoundSelected > 0 && (
