@@ -120,15 +120,18 @@ module.exports = {
 
     alert_no_rounds_selected:
       'Du måste välja en kursomgång/ kurstillfälle nedan, innan du klickar på knappen "Ladda upp".',
-    alert_uploaded_file: 'Vald fil har laddatas upp och fått nytt namn',
+    alert_uploaded_file: 'Vald fil har laddats upp och fått ett nytt namn.',
     alert_not_pdf:
       'Du måste ladda upp en fil med format PDF (se markering i rött nedan) för att kunna gå vidare till Granska och publicera.',
     alert_have_published_memo:
-      'Observera att redan uppladdat kurs-PM som PDF (se kursomgång nedan) kommer att ersättas av kurs-PM som du laddar upp här.' /** FÄRSK SEMLA */,
+      'Det finns ett publicerat kurs-PM som PDF sedan tidigare. Om du laddar upp ett nytt kurs-PM kommer det att publiceras som en ny version. Tidigare versioner av kurs-PM visas på sidan Arkiv.',
     alert_empty_fields: 'Du behöver fylla i obligatoriska fält för att gå vidare till Granska och publicera.',
     alert_storage_error:
       'Det gick inte att spara dokumenten på grund av systemfel. Försök igen eller kontakta IT-support.',
-
+    alert_accessability_link_before: 'Tänk på att du behöver',
+    alert_accessability_link_after:
+      '(länk till intranätet öppnas i en ny flik). Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument. Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
+    alert_label_accessability_link: 'tillgänglighetsanpassa din PDF',
     /** ************ MODALS ************** */
     info_publish: {
       header: 'Att tänka på innan du publicerar!',

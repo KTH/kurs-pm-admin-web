@@ -4,8 +4,7 @@ import { ProgressBar } from '@kth/kth-reactstrap/dist/components/utbildningsinfo
 import { PageHeading } from '@kth/kth-reactstrap/dist/components/studinfo'
 import { Alert } from 'reactstrap'
 import i18n from '../../../../i18n/index'
-
-const ADMIN_COURSE_PM_DATA = '/kursinfoadmin/kurs-pm-data/'
+import { ADMIN_COURSE_PM_DATA } from '../util/constants'
 
 const showInfoKTHrecommendation = (courseCode, langIndex) => {
   const langAbbr = langIndex === 0 ? 'en' : 'sv'

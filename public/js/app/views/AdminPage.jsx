@@ -11,7 +11,7 @@ import UpLoad from '../components/UpLoad'
 import RoundLabel from '../components/RoundLabel'
 
 // Helpers
-import { SERVICE_URL } from '../util/constants'
+import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '../util/constants'
 import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 
@@ -69,20 +69,21 @@ class AdminPage extends Component {
   // ********************************************************************************** */
 
   async handleUploadFile(id, file, e) {
+    const { language: langIndex } = this.props.routerStore
     if (e.target.files[0].type === 'application/pdf') {
       try {
         const response = await this.sendRequest(id, file, e)
       } catch (err) {
         this.setState({
           notValid: ['savingToStorage'],
-          alertError: i18n.messages[this.props.routerStore.language].messages.alert_storage_error,
+          alertError: i18n.messages[langIndex].messages.alert_storage_error,
         })
       }
     } else {
       const notValid = ['memoFile']
       this.setState({
         notValid,
-        alertError: i18n.messages[this.props.routerStore.language].messages.alert_not_pdf,
+        alertError: i18n.messages[langIndex].messages.alert_not_pdf,
       })
     }
   }
@@ -318,8 +319,9 @@ class AdminPage extends Component {
   render() {
     const { routerStore } = this.props
     const { fileProgress, roundIdList } = this.state
-    const translate = i18n.messages[routerStore.language].messages
-
+    const { language: langIndex } = routerStore
+    const translate = i18n.messages[langIndex].messages
+    console.log('usedRoundSelected', this.state.usedRoundSelected)
     // if (routerStore.browserConfig.env === 'dev') {
     //   console.log('routerStore - AdminPage', routerStore)
     //   console.log('this.state - AdminPage', this.state)
@@ -331,7 +333,7 @@ class AdminPage extends Component {
             <div>
               <Title
                 title={routerStore.courseTitle}
-                language={routerStore.language}
+                language={langIndex}
                 courseCode={routerStore.courseCode}
                 progress={1}
                 header={translate.header_main}
@@ -388,13 +390,25 @@ class AdminPage extends Component {
             <div>
               <Title
                 title={routerStore.courseTitle}
-                language={routerStore.language}
+                language={langIndex}
                 courseCode={routerStore.courseCode}
                 progress={this.state.progress === 'edit' ? 2 : 3}
                 header={translate.header_main}
                 showProgressBar={routerStore.status !== 'preview'}
               />
 
+              {/* Accessability alert */}
+              <Alert color="info" className="alert-margin">
+                {`${translate.alert_accessability_link_before} `}
+                <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
+                {` ${translate.alert_accessability_link_after} `}
+                <a href={`${ADMIN_COURSE_PM_DATA}${routerStore.courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                  {translate.label_link_web_based_draft_memo}
+                </a>
+                {`.`}
+              </Alert>
+
+              {/* Existing PDF memo alert */}
               {this.state.usedRoundSelected > 0 && (
                 <Alert color="info" className="alert-margin">
                   {' '}
@@ -420,7 +434,7 @@ class AdminPage extends Component {
                   return (
                     <RoundLabel
                       key={'round' + round.roundId}
-                      language={routerStore.language}
+                      language={langIndex}
                       round={round}
                       semester={routerStore.activeSemester}
                       usedRounds={routerStore.usedRounds.usedRoundsIdList}

@@ -96,7 +96,7 @@ const RoundLabel = ({
         />
       </div>
     )
-  return null
+  return <div key={'round-' + roundId}>{roundInputLabel}</div>
 }
 
 export default RoundLabel

@@ -111,13 +111,18 @@ module.exports = {
     /** ************ ALERTS ************** */
     alert_no_rounds_selected:
       'Choose a course offering or administrative course instances below before you click on "Upload".',
-    alert_uploaded_file: 'Selected file has been uploaded and been given a new file name',
+    alert_uploaded_file: 'The selected file has been uploaded and given a new file name.',
     alert_not_pdf: 'The specified file could not be uploaded. The file format must be PDF.',
     alert_have_published_memo:
-      'Any previously uploaded course memo as PDF (see course offering below) will be replaced by the new course memo to be uploaded.' /** FÄRSK SEMLA */,
+      'Please note that there is a previously published course memo as PDF. If you upload a new course memo it will be published as a new version. Previous versions of course memos are to be found on the Archive page.',
     alert_empty_fields: 'All mandatory fields must contain information before proceeding to Preview and publish.',
     alert_storage_error:
       'Failed to save the docuemnt you chose, due to technical issues mightly. Try again later and contact IT Support if the problem remains.',
+    alert_accessability_link_before: 'Keep in mind that you need to',
+    alert_accessability_link_after:
+      ' (link to the intranet opens in a new tab). Having a course memo as a web page is more accessible than a published PDF. You create a course memo as a web page by instead using the system support',
+    alert_label_accessability_link: 'customize the accessibility of your PDF',
+
     /** ************ MODALS ************** */
     info_publish: {
       header: 'To be aware of before publishing!',
