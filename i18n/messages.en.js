@@ -46,7 +46,7 @@ module.exports = {
       {
         title: 'Choose course offering',
         intro:
-          'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo.\u201D',
+          'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo\u201D. If there is a previously published course PM, your course memo will be published as a new version.',
       },
       {
         title: 'Upload course memo',
@@ -80,9 +80,12 @@ module.exports = {
     },
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:
-      ' An alternative course memo as PDF is published. You can upload a new course memo that will replace the current.' /** FÄRSK SEMLA */,
-    has_web_based_memo:
-      ' This administrative course instance has a draft or a published course memo. Go to Administer Aboute course to change it.',
+      'There is a previously published course memo as PDF. You can upload a new course memo to publish a new version.' /** FÄRSK SEMLA */,
+    has_web_based_memo: 'This administrative course instance has a draft or a published course memo.',
+    label_before_link_web_based_memo: 'Go to',
+    label_after_link_web_based_memo: 'to change it.',
+    label_link_web_based_draft_memo: 'Create and publish course memo',
+    label_link_web_based_published_memo: 'Edit published course memo',
     not_authorized_publish_new: ' You are not course coordinator/teacher for this instance and cannot select it.',
     not_authorized_publish_new_link_label: 'Permissions for About course',
 

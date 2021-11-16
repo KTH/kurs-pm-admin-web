@@ -52,7 +52,7 @@ module.exports = {
       {
         title: 'Välj kursomgång',
         intro:
-          'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.',
+          'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D. Finns det ett publicerat kurs-PM sedan tidigare kommer ditt kurs-PM versionshanteras.',
       },
       {
         title: 'Ladda upp kurs-PM',
@@ -88,9 +88,12 @@ module.exports = {
 
     intro_new: 'Markera ett eller flera kurstillfällen som ingår i kursomgången:',
     has_published_memo:
-      ' Ett alternativt kurs-PM som PDF finns publicerat. Du kan välja att ladda upp ett nytt kurs-PM som ersätter det befintliga.' /** FÄRSK SEMLA */,
-    has_web_based_memo:
-      ' Ett kurs-PM i form av en webbsida finns som utkast eller är publicerat. Gå till Administrera Om kursen för att redigera det.',
+      'Ett kurs-PM som PDF finns publicerat sedan tidigare. Du kan välja att ladda upp ett nytt kurs-PM för att publicera en ny version.' /** FÄRSK SEMLA */,
+    has_web_based_memo: 'Ett kurs-PM i form av en webbsida finns som utkast eller är publicerat.',
+    label_before_link_web_based_memo: 'Gå till',
+    label_after_link_web_based_memo: 'för att redigera det.',
+    label_link_web_based_draft_memo: 'Skapa och publicera kurs-PM',
+    label_link_web_based_published_memo: 'Ändra publicerat kurs-PM',
     not_authorized_publish_new: 'Du är inte kursansvarig/lärare för detta kurstillfälle och kan därför inte välja det.',
     not_authorized_publish_new_link_label: 'Behörigheter för Om kursen',
 
