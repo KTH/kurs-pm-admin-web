@@ -42,7 +42,7 @@ class MemoMenu extends Component {
       semester: this.props.activeSemester && this.props.activeSemester.length > 0 ? this.props.activeSemester : '', //this.props.semesterList[0],
       rounds: this.props.tempData ? this.props.tempData.roundIdList : [],
       usedRounds: this.props.routerStore.usedRounds.usedRoundsIdList || [],
-      usedRoundsInWebVer: this.props.routerStore.usedRounds.roundsIdWithWebVersion || [],
+      usedRoundsWithWebVer: this.props.routerStore.usedRounds.roundsIdWithWebVersion || {},
 
       temporaryData: this.props.tempData,
       newSemester: false,
@@ -149,7 +149,7 @@ class MemoMenu extends Component {
       thisInstance.setState({
         semester,
         usedRounds: routerStore.usedRounds.usedRoundsIdList || [],
-        usedRoundsInWebVer: routerStore.usedRounds.roundsIdWithWebVersion || [],
+        usedRoundsWithWebVer: routerStore.usedRounds.roundsIdWithWebVersion || {},
         lastSelected: prevState.lastSelected,
         alert: '',
       })
@@ -167,7 +167,7 @@ class MemoMenu extends Component {
       this.setState({
         semester,
         usedRounds: routerStore.usedRounds.usedRoundsIdList || [],
-        usedRoundsInWebVer: routerStore.usedRounds.roundsIdWithWebVersion || [],
+        usedRoundsWithWebVer: routerStore.usedRounds.roundsIdWithWebVersion || {},
         lastSelected: prevState.lastSelected,
         alert: '',
       })
@@ -188,12 +188,8 @@ class MemoMenu extends Component {
       semester,
       rounds,
       usedRounds,
-      usedRoundsInWebVer,
+      usedRoundsWithWebVer,
     } = this.state
-    // if (routerStore.browserConfig.env === 'dev') {
-    //   console.log('this.props - MemoMenu', this.props)
-    //   console.log('this.state - MemoMenu', this.state)
-    // }
     return (
       <div id="YearAndRounds">
         {/** *********************************************************************************** */}
@@ -259,8 +255,8 @@ class MemoMenu extends Component {
                       <ul className="no-padding-left">
                         {roundList[semester].map(round => {
                           const { hasAccess, roundId } = round
-                          const hasBeenUsed = usedRounds.toString().includes(roundId) || false
-                          const hasWebVersion = usedRoundsInWebVer.toString().includes(roundId) || false
+                          const hasBeenUsed = usedRounds.includes(roundId) || false
+                          const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(roundId) || false
                           const hasPublishedPdf = hasBeenUsed && !hasWebVersion
                           return (
                             <li className="select-list" key={roundId}>
@@ -282,6 +278,7 @@ class MemoMenu extends Component {
                                   semester={semester}
                                   hasPublishedPdf={hasPublishedPdf}
                                   hasWebVersion={hasWebVersion}
+                                  webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[roundId] : {}}
                                   showAccessInfo
                                 />
                               </Label>
@@ -333,7 +330,6 @@ class MemoMenu extends Component {
           handleConfirm={this.handleCancel}
           infoText={translate.info_cancel}
         />
-        {/* <InfoModal type = 'delete' toggle= {this.toggleModal} isOpen = {this.state.modalOpen.delete} id={this.state.selectedRadio.draft} handleConfirm={this.handleDelete} infoText={translate.info_delete}/>*/}
       </div>
     )
   }

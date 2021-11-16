@@ -3,7 +3,7 @@ import RouterStore from '../../public/js/app/stores/RouterStore'
 const realRouterStore = new RouterStore()
 const usedRounds = {
   roundIdList: ['2'],
-  roundsIdWithWebVersion: [],
+  roundsIdWithWebVersion: {},
   memoList: [
     {
       courseMemoFileName: 'memo-EF1111HT2019_2.pdf',

@@ -211,6 +211,7 @@ class RouterStore {
 
         thisStore.roundData[semester.term] = semester.rounds.map(round => {
           return (round.ladokRoundId = {
+            courseCode: this.courseCode,
             roundId: round.ladokRoundId,
             language: round.language[language],
             shortName: round.shortName,
@@ -252,7 +253,7 @@ class RouterStore {
     return this.newMemoList
   }
 
-  getMemberOf(memberOf, id, userName, superUser) {
+  getMemberOf(memberOf = [], id, userName, superUser) {
     if (id.length > 7) {
       let splitId = id.split('_')
       this.courseCode = splitId[0].length > 12 ? id.slice(0, 7).toUpperCase() : id.slice(0, 6).toUpperCase()
