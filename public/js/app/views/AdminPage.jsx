@@ -8,7 +8,8 @@ import MemoMenu from '../components/MemoMenu'
 import InfoModal from '../components/InfoModal'
 import InfoButton from '../components/InfoButton'
 import UpLoad from '../components/UpLoad'
-import RoundLabel from '../components/RoundLabel'
+import RoundLabel, { roundFullName } from '../components/RoundLabel'
+import { ActionModalButton } from '@kth/kth-reactstrap/dist/components/utbildningsinfo'
 
 // Helpers
 import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '../util/constants'
@@ -214,10 +215,10 @@ class AdminPage extends Component {
     window.location = `${SERVICE_URL.admin}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
   }
 
-  handlePublish(event, fromModal = false) {
-    if (!fromModal) {
-      event.preventDefault()
-    }
+  handlePublish(event) {
+    // if (!fromModal) {
+    //   event.preventDefault()
+    // }
     const { routerStore } = this.props
     const thisInstance = this
     const { memoFile, pdfMemoDate } = this.state
@@ -240,8 +241,24 @@ class AdminPage extends Component {
           saved: true,
           modalOpen: modal,
         })
+        const { hostUrl } = routerStore.browserConfig
+        const { roundsIdWithPdfVersion } = routerStore.usedRounds
+        const { activeSemester, courseCode, roundData, language: langIndex } = routerStore
+        const chosenRoundsInfo = roundData[activeSemester].filter(
+          ({ roundId }) => this.state.roundIdList.indexOf(roundId) > -1
+        )
+        let publishType = 'pub'
+        const names = chosenRoundsInfo.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
+        const versions = chosenRoundsInfo
+          .map(({ roundId }) => {
+            const { version: prevVersion } = roundsIdWithPdfVersion[roundId]
+            const newVersion = prevVersion ? Number(prevVersion) + 1 : '1'
+            if (newVersion && newVersion > 1) publishType = 'pub_changed'
+            return `Ver ${newVersion}`
+          })
+          .join(', ')
         window.location = encodeURI(
-          `${routerStore.browserConfig.hostUrl}${SERVICE_URL.admin}${routerStore.courseCode}?serv=pm&event=pub&term=${routerStore.activeSemester}`
+          `${hostUrl}${SERVICE_URL.admin}${courseCode}?serv=pm&name=${names}&term=${activeSemester}&event=${publishType}&ver=${versions}`
         )
       })
       .catch(err => {
@@ -321,11 +338,6 @@ class AdminPage extends Component {
     const { fileProgress, roundIdList } = this.state
     const { language: langIndex } = routerStore
     const translate = i18n.messages[langIndex].messages
-    console.log('usedRoundSelected', this.state.usedRoundSelected)
-    // if (routerStore.browserConfig.env === 'dev') {
-    //   console.log('routerStore - AdminPage', routerStore)
-    //   console.log('this.state - AdminPage', this.state)
-    // }
     if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
         <div ref={this.divTop}>
@@ -543,9 +555,7 @@ class AdminPage extends Component {
                     </Col>
                     <Col sm="3"></Col>
                     <Col sm="2">
-                      {routerStore.status === 'preview' ? (
-                        ''
-                      ) : (
+                      {routerStore.status !== 'preview' && (
                         <span>
                           {(this.state.isPreviewMode && (
                             <Button color="success" id="publish" key="publish" onClick={this.toggleModal}>
@@ -577,7 +587,11 @@ class AdminPage extends Component {
                 isOpen={this.state.modalOpen.publish}
                 id={'publish'}
                 handleConfirm={this.handlePublish}
-                infoText={translate.info_publish}
+                infoText={
+                  this.state.usedRoundSelected > 0
+                    ? translate.info_publish_new_version
+                    : translate.info_publish_first_time
+                }
               />
               <InfoModal
                 type="cancel"
