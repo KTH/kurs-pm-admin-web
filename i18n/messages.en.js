@@ -124,9 +124,21 @@ module.exports = {
     alert_label_accessability_link: 'customize the accessibility of your PDF',
 
     /** ************ MODALS ************** */
-    info_publish: {
+    info_publish_new_version: {
       header: 'To be aware of before publishing!',
-      body: `Your course memo will be uploaded to \u201CPrepare and take course/Course memo.\u201D
+      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offerings.
+        <br/>
+        <br/>  
+        Please note: The uploaded course memo will be published as a new version.
+        <br/>
+        <br/>  
+        Do you want to publish?`,
+      btnCancel: 'No, go back',
+      btnConfirm: 'Yes, publish',
+    },
+    info_publish_first_time: {
+      header: 'To be aware of before publishing!',
+      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offerings.
         <br/> 
         <br/> 
         Do you want to publish?`,

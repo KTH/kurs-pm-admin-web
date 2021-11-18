@@ -133,9 +133,21 @@ module.exports = {
       '(länk till intranätet öppnas i en ny flik). Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument. Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
     alert_label_accessability_link: 'tillgänglighetsanpassa din PDF',
     /** ************ MODALS ************** */
-    info_publish: {
+    info_publish_new_version: {
       header: 'Att tänka på innan du publicerar!',
-      body: `Ditt kurs-PM kommer att laddas upp på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D.
+      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgångar.
+        <br/>
+        <br/>
+        Observera: Ditt uppladdade kurs-PM kommer att publiceras som en ny version.
+        <br/>
+        <br/>
+        Vill du fortsätta att publicera?`,
+      btnCancel: 'Nej, gå tillbaka',
+      btnConfirm: 'Ja, fortsätt publicera',
+    },
+    info_publish_first_time: {
+      header: 'Att tänka på innan du publicerar!',
+      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgångar.
         <br/>
         <br/>
         Vill du fortsätta att publicera?`,
