@@ -46,6 +46,16 @@ const WebBasedMemoLabelAndLink = ({ courseCode, translate, status, memoEndPoint,
   )
 }
 
+export function roundFullName(langIndex, semester, round) {
+  const { label_start_date } = i18n.messages[langIndex].messages
+
+  const { courseCode, roundId, shortName, startDate, language: roundLang } = round
+
+  const roundName = formatRoundName(langIndex, shortName, semester, roundId)
+  const roundInputLabel = `${roundName} (${label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang} )`
+  return roundInputLabel
+}
+
 const RoundLabel = ({
   round,
   semester,
@@ -56,13 +66,9 @@ const RoundLabel = ({
   webVersionInfo, // if web-based memo exist then provide memoEndPoint to display in the link
 }) => {
   const translate = i18n.messages[language].messages
-  const { courseCode, roundId, shortName, startDate, language: roundLang, hasAccess } = round
+  const { courseCode, roundId, hasAccess } = round
 
-  const roundName = formatRoundName(language, shortName, semester, roundId)
-  const roundInputLabel = `${roundName} (${translate.label_start_date} ${getDateFormat(
-    startDate,
-    roundLang
-  )}, ${roundLang} )`
+  const roundInputLabel = roundFullName(language, semester, round)
 
   if (showAccessInfo && !hasAccess)
     return (
