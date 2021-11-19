@@ -108,6 +108,7 @@ module.exports = {
     /** ************ PAGE 2 FORM ************** */
     asterix_text: 'Kommer inte att kunna ändras efter publicering',
 
+    header_course: 'Kurs:',
     header_semester: 'Termin:',
     header_course_offering: 'Kursomgång:',
 
