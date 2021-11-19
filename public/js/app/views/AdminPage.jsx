@@ -55,6 +55,8 @@ class AdminPage extends Component {
     this.handleUploadFile = this.handleUploadFile.bind(this)
     this.handleRemoveFile = this.handleRemoveFile.bind(this)
     this.validateData = this.validateData.bind(this)
+    this.filterChosenRoundsList = this.filterChosenRoundsList.bind(this)
+    this.getCourseOfferingsNames = this.getCourseOfferingsNames.bind(this)
   }
 
   componentDidUpdate() {
@@ -64,6 +66,26 @@ class AdminPage extends Component {
         thisInstance.setState({ alertSuccess: '' })
       }, 5000)
     }
+  }
+  // *********************************  Helpers  ********************************* */
+  // ********************************************************************************** */
+  filterChosenRoundsList() {
+    const { activeSemester, language: langIndex, roundData } = this.props.routerStore
+    const { roundIdList } = this.state
+
+    const chosenRoundsList = activeSemester
+      ? roundData[activeSemester].filter(({ roundId }) => roundIdList.indexOf(roundId) > -1)
+      : []
+    return chosenRoundsList
+  }
+
+  getCourseOfferingsNames(chosenRoundsList) {
+    if (!chosenRoundsList) return ''
+
+    const { activeSemester, language: langIndex } = this.props.routerStore
+
+    const courseOfferings = chosenRoundsList.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
+    return courseOfferings
   }
 
   // *********************************  FILE UPLOAD  ********************************* */
@@ -215,15 +237,16 @@ class AdminPage extends Component {
     window.location = `${SERVICE_URL.admin}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
   }
 
-  handlePublish(event) {
-    // if (!fromModal) {
-    //   event.preventDefault()
-    // }
+  handlePublish(event, fromModal = false) {
+    if (!fromModal) {
+      event.preventDefault()
+    }
     const { routerStore } = this.props
     const thisInstance = this
     const { memoFile, pdfMemoDate } = this.state
     const { modalOpen: modal } = this.state
-    routerStore.updateFileInStorage(memoFile, this.getMetadata('published'))
+    const metadata = this.getMetadata('published')
+    routerStore.updateFileInStorage(memoFile, metadata)
 
     return this.props.routerStore
       .postMemoData(routerStore.newMemoList, memoFile, pdfMemoDate)
@@ -242,23 +265,22 @@ class AdminPage extends Component {
           modalOpen: modal,
         })
         const { hostUrl } = routerStore.browserConfig
-        const { roundsIdWithPdfVersion } = routerStore.usedRounds
-        const { activeSemester, courseCode, roundData, language: langIndex } = routerStore
-        const chosenRoundsInfo = roundData[activeSemester].filter(
-          ({ roundId }) => this.state.roundIdList.indexOf(roundId) > -1
-        )
+        const { roundsIdWithPdfVersion = {} } = routerStore.usedRounds
+        const { activeSemester, courseCode, language: langIndex } = routerStore
         let publishType = 'pub'
-        const names = chosenRoundsInfo.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
-        const versions = chosenRoundsInfo
+        const chosenRoundsList = this.filterChosenRoundsList()
+        const courseOfferings = this.getCourseOfferingsNames(chosenRoundsList)
+        const versions = chosenRoundsList
           .map(({ roundId }) => {
-            const { version: prevVersion } = roundsIdWithPdfVersion[roundId]
-            const newVersion = prevVersion ? Number(prevVersion) + 1 : '1'
+            const prevFile = roundsIdWithPdfVersion[roundId]
+            const { version: prevVersion = 0 } = prevFile ? prevFile : {}
+            const newVersion = Number(prevVersion) + 1
             if (newVersion && newVersion > 1) publishType = 'pub_changed'
             return `Ver ${newVersion}`
           })
           .join(', ')
         window.location = encodeURI(
-          `${hostUrl}${SERVICE_URL.admin}${courseCode}?serv=pm&name=${names}&term=${activeSemester}&event=${publishType}&ver=${versions}`
+          `${hostUrl}${SERVICE_URL.admin}${courseCode}?serv=pm&name=${courseOfferings}&term=${activeSemester}&event=${publishType}&ver=${versions}`
         )
       })
       .catch(err => {
@@ -336,8 +358,18 @@ class AdminPage extends Component {
   render() {
     const { routerStore } = this.props
     const { fileProgress, roundIdList } = this.state
-    const { language: langIndex } = routerStore
+    const { activeSemester, courseCode, language: langIndex, roundData } = routerStore
+
     const translate = i18n.messages[langIndex].messages
+
+    const chosenRoundsList = this.filterChosenRoundsList()
+    const courseOfferings = this.getCourseOfferingsNames(chosenRoundsList)
+
+    const semesterName = activeSemester
+      ? `${translate.course_short_semester[activeSemester.toString().match(/.{1,4}/g)[1]]} ${
+          activeSemester.toString().match(/.{1,4}/g)[0]
+        }`
+      : ''
     if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
         <div ref={this.divTop}>
@@ -346,7 +378,7 @@ class AdminPage extends Component {
               <Title
                 title={routerStore.courseTitle}
                 language={langIndex}
-                courseCode={routerStore.courseCode}
+                courseCode={courseCode}
                 progress={1}
                 header={translate.header_main}
                 showProgressBar={true}
@@ -366,7 +398,7 @@ class AdminPage extends Component {
                   semesterList={routerStore.semesters}
                   roundList={routerStore.roundData}
                   progress={this.state.progress}
-                  activeSemester={routerStore.activeSemester}
+                  activeSemester={activeSemester}
                   firstVisit={routerStore.newMemoList.length === 0}
                   status={routerStore.status}
                   tempData={/*this.state.saved ? {} : */ this.getTempData()}
@@ -403,7 +435,7 @@ class AdminPage extends Component {
               <Title
                 title={routerStore.courseTitle}
                 language={langIndex}
-                courseCode={routerStore.courseCode}
+                courseCode={courseCode}
                 progress={this.state.progress === 'edit' ? 2 : 3}
                 header={translate.header_main}
                 showProgressBar={routerStore.status !== 'preview'}
@@ -415,7 +447,7 @@ class AdminPage extends Component {
                   {`${translate.alert_accessability_link_before} `}
                   <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
                   {` ${translate.alert_accessability_link_after} `}
-                  <a href={`${ADMIN_COURSE_PM_DATA}${routerStore.courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                  <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
                     {translate.label_link_web_based_draft_memo}
                   </a>
                   {`.`}
@@ -434,28 +466,23 @@ class AdminPage extends Component {
               <p>
                 {' '}
                 <b>{translate.header_semester} </b>
-                {`${translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]} 
-                  ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}`}
+                {semesterName}
               </p>
 
               {/* ---- Name of selected memo(s) ---- */}
               <p>
                 <b>{translate.header_course_offering}</b>
               </p>
-              {routerStore.roundData[routerStore.activeSemester].map(round => {
-                const hasChoosenRounds = this.state.roundIdList.indexOf(round.roundId) > -1
-                if (hasChoosenRounds)
-                  return (
-                    <RoundLabel
-                      key={'round' + round.roundId}
-                      language={langIndex}
-                      round={round}
-                      semester={routerStore.activeSemester}
-                      usedRounds={routerStore.usedRounds.usedRoundsIdList}
-                      showAccessInfo={false}
-                    />
-                  )
-              })}
+              {chosenRoundsList.map(round => (
+                <RoundLabel
+                  key={'round' + round.roundId}
+                  language={langIndex}
+                  round={round}
+                  semester={routerStore.activeSemester}
+                  usedRounds={routerStore.usedRounds.usedRoundsIdList}
+                  showAccessInfo={false}
+                />
+              ))}
 
               {/************************************************************************************* */}
               {/*                                   PREVIEW                                           */}
@@ -468,9 +495,7 @@ class AdminPage extends Component {
                     href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
                     target="_blank"
                   >
-                    {`${translate.link_pm} ${routerStore.courseCode} ${
-                      translate.course_short_semester[routerStore.activeSemester.toString().match(/.{1,4}/g)[1]]
-                    } ${routerStore.activeSemester.toString().match(/.{1,4}/g)[0]}-${roundIdList.sort().join('-')}`}
+                    {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
                   </a>
                 </div>
               )}
@@ -592,6 +617,10 @@ class AdminPage extends Component {
                     ? translate.info_publish_new_version
                     : translate.info_publish_first_time
                 }
+                langIndex={langIndex}
+                courseCode={courseCode}
+                semester={semesterName}
+                courseOfferings={courseOfferings}
               />
               <InfoModal
                 type="cancel"
