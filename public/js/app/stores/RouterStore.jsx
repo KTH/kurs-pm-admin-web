@@ -53,7 +53,7 @@ class RouterStore {
   /** ***************************************************************************************************************************************** */
   @action updateFileInStorage(fileName, metadata) {
     return axios
-      .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: metadata })
+      .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: { metadata } })
       .then(apiResponse => {
         if (apiResponse.statusCode >= 400) {
           return 'ERROR-' + apiResponse.statusCode
@@ -238,16 +238,16 @@ class RouterStore {
     let id = ''
 
     for (let round = 0; round < rounds.length; round++) {
-      ;(id = `${this.courseData.courseCode}_${semester}_${rounds[round]}`),
-        (newMemo = {
-          _id: `${this.courseData.courseCode}_${semester}_${rounds[round]}`,
-          courseMemoFileName: '',
-          changedBy: this.user,
-          courseCode: this.courseData.courseCode,
-          pdfMemoUploadDate: '',
-          semester: semester,
-          koppsRoundId: rounds[round],
-        })
+      const id = `${this.courseData.courseCode}_${semester}_${rounds[round]}`
+      const newMemo = {
+        _id: id,
+        courseMemoFileName: '',
+        changedBy: this.user,
+        courseCode: this.courseData.courseCode,
+        pdfMemoUploadDate: '',
+        semester: semester,
+        koppsRoundId: rounds[round],
+      }
       this.newMemoList.push(newMemo)
     }
     return this.newMemoList
