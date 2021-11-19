@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap'
+import i18n from '../../../../i18n/index'
 
 // Custom components
 
@@ -18,8 +19,22 @@ class InfoModal extends Component {
   }
 
   render() {
-    const { fade, isOpen, toggle, className, type, infoText, id } = this.props
+    const {
+      fade,
+      isOpen,
+      toggle,
+      className,
+      type,
+      infoText,
+      id,
+      courseCode,
+      semester,
+      courseOfferings,
+      langIndex = 0,
+    } = this.props
     const fadeModal = fade || true
+
+    const { header_course, header_semester, header_course_offering } = i18n.messages[langIndex].messages
 
     return (
       <div>
@@ -29,6 +44,9 @@ class InfoModal extends Component {
         <Modal isOpen={isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
           <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
           <ModalBody>
+            {courseCode && <p>{`${header_course} ${courseCode}`}</p>}
+            {semester && <p>{`${header_semester} ${semester}`}</p>}
+            {courseOfferings && <p>{`${header_course_offering} ${courseOfferings}`}</p>}
             <p dangerouslySetInnerHTML={{ __html: infoText.body }} />
           </ModalBody>
           <ModalFooter>
