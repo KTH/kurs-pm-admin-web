@@ -28,7 +28,7 @@ module.exports = {
       2: 'Autumn ',
     },
 
-    header_main: 'Upload alternative course memo as PDF',
+    header_main: 'Upload or edit course memo as PDF',
 
     /**
      * Authentication message
