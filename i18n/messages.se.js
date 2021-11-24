@@ -113,7 +113,7 @@ module.exports = {
     header_upload: 'Ladda upp',
     header_upload_file_pm: 'kurs-PM (endast i fil-formatet PDF)',
     header_upload_file_date: 'Publiceringsdatum för kursanalys',
-    header_preview: 'Granska' /** FÄRSK SEMLA */,
+    header_preview: 'Granska kurs-PM' /** FÄRSK SEMLA */,
 
     link_pm: 'Kurs-PM',
 

@@ -102,7 +102,7 @@ module.exports = {
     header_upload: 'Upload',
     header_upload_file_pm: 'Course memo (only as PDF file format)',
     header_upload_file_date: 'Publish date of course analysis *',
-    header_preview: 'Preview' /** FÄRSK SEMLA */,
+    header_preview: 'Preview course memo' /** FÄRSK SEMLA */,
     link_pm: 'Course memo',
 
     header_rounds: 'Administrative course instances included in the course offering',
