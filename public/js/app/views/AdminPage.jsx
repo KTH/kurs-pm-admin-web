@@ -441,26 +441,6 @@ class AdminPage extends Component {
                 showProgressBar={routerStore.status !== 'preview'}
               />
 
-              {/* Accessability alert */}
-              {this.state.progress === 'edit' && (
-                <Alert color="info" className="alert-margin">
-                  {`${translate.alert_accessability_link_before} `}
-                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
-                  {` ${translate.alert_accessability_link_after} `}
-                  <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                    {translate.label_link_web_based_draft_memo}
-                  </a>
-                  {`.`}
-                </Alert>
-              )}
-
-              {/* Existing PDF memo alert */}
-              {this.state.usedRoundSelected > 0 && (
-                <Alert color="info" className="alert-margin">
-                  {' '}
-                  {translate.alert_have_published_memo}
-                </Alert>
-              )}
               {/* ---- Selected semester---- */}
               <h2>{translate.header_edit_content}</h2>
               <p>
@@ -483,6 +463,27 @@ class AdminPage extends Component {
                   showAccessInfo={false}
                 />
               ))}
+
+              {/* Existing PDF memo alert */}
+              {this.state.usedRoundSelected > 0 && (
+                <Alert color="info" className="alert-margin">
+                  {' '}
+                  {translate.alert_have_published_memo}
+                </Alert>
+              )}
+
+              {/* Accessability alert */}
+              {this.state.progress === 'edit' && (
+                <Alert color="info" className="alert-margin">
+                  {`${translate.alert_accessability_link_before} `}
+                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
+                  {` ${translate.alert_accessability_link_after} `}
+                  <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                    {translate.label_link_web_based_draft_memo}
+                  </a>
+                  {`.`}
+                </Alert>
+              )}
 
               {/************************************************************************************* */}
               {/*                                   PREVIEW                                           */}
