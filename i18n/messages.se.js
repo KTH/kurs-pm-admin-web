@@ -52,7 +52,7 @@ module.exports = {
       {
         title: 'Välj kursomgång',
         intro:
-          'Börja med att välja termin och kursomgång för det kurs-PM som ska laddas upp (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D. Finns det ett publicerat kurs-PM sedan tidigare kommer ditt kurs-PM versionshanteras.',
+          'Börja med att välja termin och kursomgång för det kurs-PM som ska publiceras/ändras (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D. Finns det ett publicerat kurs-PM sedan tidigare kommer ditt kurs-PM versionshanteras.',
       },
       {
         title: 'Ladda upp kurs-PM',
@@ -76,13 +76,13 @@ module.exports = {
     alert_recommendation: {
       alert_header: 'KTH:s riktlinjer',
       accessability_responsibility:
-        'Via denna funktion kan du ladda upp ett kurs-PM som du har skapat utanför systemstödet. Tänk på att du ansvarar för att dokumentet är tillgänglighetsanpassat och att innehållet i idtt kurs-PM följer',
+        'Via denna funktion kan du ladda upp ett kurs-PM som du har skapat utanför systemstödet. Tänk på att du ansvarar för att dokumentet är tillgänglighetsanpassat och att innehållet i ditt kurs-PM följer',
       before_create_memo_link: 'Om du istället använder systemstödet',
       label_create_memo_link: 'Skapa och publicera kurs-PM',
       label_control_info_link: 'Riktlinje om kursplan, betygssystem och examination',
       after_create_memo_link: `kommer ditt kurs-PM att publiceras som en tillgänglighetsanpassad
           webbsida och information från kursplanen hämtas automatiskt till ditt kurs-PM. Du får också stöd med vilka rubriker och information
-          som ditt kurs-PM bör innehålla. Läs mer om systemstöden för Kurs-PM.`,
+          som ditt kurs-PM bör innehålla.`,
       label_course_memo_guide_link: 'Läs mer om systemstödet för Kurs-PM',
     },
 

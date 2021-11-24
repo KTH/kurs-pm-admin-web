@@ -46,7 +46,7 @@ module.exports = {
       {
         title: 'Choose course offering',
         intro:
-          'Start by selecting the semester and course offering for the course memo to be uploaded (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo\u201D. If there is a previously published course PM, your course memo will be published as a new version.',
+          'Start by selecting the semester and course offering for the course memo to be published/changed (step 1 of 3). Then, in the next step (2 out of 3), you will upload the course memo as a PDF. Finally, in the last step (3 out of 3), you will review your course memo and publish it on \u201CPrepare and take course/Course memo\u201D. If there is a previously published course PM, your course memo will be published as a new version.',
       },
       {
         title: 'Upload course memo',
