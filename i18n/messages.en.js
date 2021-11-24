@@ -50,13 +50,11 @@ module.exports = {
       },
       {
         title: 'Upload course memo',
-        intro:
-          'In this step (2 of 3) course memo as PDF shall be uploaded. If there is already a published course memo it will be replaced. Preview the uploaded course memo before publishing in the next step.',
+        intro: '',
       },
       {
         title: 'Review and publish',
-        intro:
-          'This step (3 out of 3) shows you what your course memo will look like on \u201CPrepare and take course/Course memo\u201D after publishing it. It is possible to go back to upload another course memo, or to proceed and publish the course memo.',
+        intro: '',
       },
     ],
 

@@ -56,13 +56,11 @@ module.exports = {
       },
       {
         title: 'Ladda upp/ändra kurs-PM',
-        intro:
-          'I detta steg (2 av 3) ska kurs-PM som PDF laddas upp. Finns redan ett publicerat kurs-PM kommer det att skrivas över. I nästa steg finns möjlighet att granska kurs-PM innan publicering.',
+        intro: '',
       },
       {
         title: 'Granska och publicera',
-        intro:
-          'I detta steg (3 av 3) visas hur ditt kurs-PM kommer att se ut på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D när du har publicerat det. Här finns möjlighet att gå tillbaka för att ladda upp ny fil eller publicera kurs-PM.',
+        intro: '',
       },
     ],
     /** ***** PAGE 1 - ANALYSIS MENU */
