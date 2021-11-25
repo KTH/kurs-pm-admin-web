@@ -15,6 +15,7 @@ import { ActionModalButton } from '@kth/kth-reactstrap/dist/components/utbildnin
 import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '../util/constants'
 import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
+import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
 
 @inject(['routerStore'])
 @observer
@@ -529,14 +530,17 @@ class AdminPage extends Component {
                       {/* FORM - FIRST COLUMN */}
                       <Row className="form-group">
                         <Col sm="6" className="col-form">
-                          <h4>{translate.header_upload}</h4>
-
-                          {/** ------- PM-FILE UPLOAD --------- */}
-                          <FormLabel
+                          <h2>{translate.header_upload_memo}</h2>
+                          <FormHeaderAndInfo
                             translate={translate}
-                            header={'header_upload_file_pm'}
-                            id={'info_upload_course_memo'}
+                            headerId={'header_upload'}
+                            infoId={'info_upload_course_memo'}
                           />
+                          <p>
+                            <Label>{translate.header_upload_file_pm}</Label>
+                          </p>
+                          {/** ------- PM-FILE UPLOAD --------- */}
+
                           <UpLoad
                             id="pm"
                             key="pm"
@@ -636,13 +640,13 @@ class AdminPage extends Component {
   }
 }
 
-const FormLabel = ({ translate, header, id }) => {
-  return (
-    <span className="inline-flex">
-      <Label>{translate[header]} </Label>
-      <InfoButton id={id} textObj={translate[id]} />
-    </span>
-  )
-}
+// const FormLabel = ({ translate, header }) => {
+//   return (
+//     <span className="inline-flex">
+//       <Label>{translate[header]} </Label>
+//       {/* <InfoButton id={id} textObj={translate[id]} /> */}
+//     </span>
+//   )
+// }
 
 export default AdminPage

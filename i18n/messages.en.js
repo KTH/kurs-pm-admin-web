@@ -29,6 +29,7 @@ module.exports = {
     },
 
     header_main: 'Upload or edit course memo as PDF',
+    header_upload_memo: 'Upload course memo',
 
     /**
      * Authentication message

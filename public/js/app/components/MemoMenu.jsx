@@ -20,7 +20,7 @@ import {
 import InfoModal from './InfoModal'
 import InfoButton from './InfoButton'
 import RoundLabel from './RoundLabel'
-
+import FormHeaderAndInfo from './FormHeaderAndInfo'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
 
@@ -196,10 +196,12 @@ class MemoMenu extends Component {
         {/*                                  SEMESTER DROPDOWN                                  */}
         {/** *********************************************************************************** */}
         <Dropdown isOpen={dropdownOpen} toggle={this.toggleDropdown} className="select-semester">
-          <div className="inline-flex padding-top-30">
-            <h3> {selectSemester} </h3>
-            <InfoButton addClass="padding-top-30" id="info_select_semester" textObj={translate.info_select_semester} />
-          </div>
+          <FormHeaderAndInfo
+            className="padding-top-30"
+            infoId="info_select_semester"
+            header={selectSemester}
+            translate={translate}
+          />
 
           <DropdownToggle>
             <span>
@@ -236,14 +238,11 @@ class MemoMenu extends Component {
           <Row id="memoMenuContainer">
             {semester.length > 0 && (
               <Form>
-                <div className="inline-flex">
-                  <h3>{translate.header_memo_menu}</h3>
-                  <InfoButton
-                    addClass="padding-top-30"
-                    id="info_choose_course_offering"
-                    textObj={translate.info_choose_course_offering}
-                  />
-                </div>
+                <FormHeaderAndInfo
+                  infoId="info_choose_course_offering"
+                  headerId="header_memo_menu"
+                  translate={translate}
+                />
 
                 <div className="selectBlock">
                   {/** *********************************************************************************** */}
