@@ -440,29 +440,29 @@ class AdminPage extends Component {
                 header={translate.header_main}
                 showProgressBar={routerStore.status !== 'preview'}
               />
-
-              {/* ---- Selected semester---- */}
-              <h2>{translate.header_edit_content}</h2>
-              <p>
-                {' '}
-                <b>{translate.header_semester} </b>
-                {semesterName}
-              </p>
-
-              {/* ---- Name of selected memo(s) ---- */}
-              <p>
-                <b>{translate.header_course_offering}</b>
-              </p>
-              {chosenRoundsList.map(round => (
-                <RoundLabel
-                  key={'round' + round.roundId}
-                  language={langIndex}
-                  round={round}
-                  semester={routerStore.activeSemester}
-                  usedRounds={routerStore.usedRounds.usedRoundsIdList}
-                  showAccessInfo={false}
-                />
-              ))}
+              <div className="page-header-wrapper">
+                {/* ---- Selected semester---- */}
+                <div className="page-header-container section-50">
+                  <h4>{translate.header_semester}</h4>
+                  <p className="no-wrap">{semesterName}</p>
+                </div>
+                {/* ---- Name of selected memo(s) ---- */}
+                <div className="page-header-container section-50">
+                  <h4>{translate.header_course_offering}</h4>
+                  <p>
+                    {chosenRoundsList.map(round => (
+                      <RoundLabel
+                        key={'round' + round.roundId}
+                        language={langIndex}
+                        round={round}
+                        semester={routerStore.activeSemester}
+                        usedRounds={routerStore.usedRounds.usedRoundsIdList}
+                        showAccessInfo={false}
+                      />
+                    ))}
+                  </p>
+                </div>
+              </div>
 
               {/* Existing PDF memo alert */}
               {this.state.usedRoundSelected > 0 && (
@@ -471,7 +471,6 @@ class AdminPage extends Component {
                   {translate.alert_have_published_memo}
                 </Alert>
               )}
-
               {/* Accessability alert */}
               {this.state.progress === 'edit' && (
                 <Alert color="info" className="alert-margin">
@@ -484,7 +483,6 @@ class AdminPage extends Component {
                   {`.`}
                 </Alert>
               )}
-
               {/************************************************************************************* */}
               {/*                                   PREVIEW                                           */}
               {/************************************************************************************* */}

@@ -26,6 +26,58 @@ $kth-blue: #007fae;
     padding-top: 30px;
   }
 }
+//MOVE TO COMMON STYLES
+%long-text-font-style {
+  font-family: Georgia, 'garamond pro', garamond, 'times new roman', times, serif;
+  word-break: break-word;
+}
+
+%short-text-font-style {
+  font-family: 'Open Sans', Arial, 'Helvetica Neue', helvetica, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: #000;
+  line-height: 1.5;
+}
+.page-header-wrapper {
+  display: flex;
+  margin: 0;
+  div {
+    margin-right: 30px; //1.25em;
+    &:last-of-type {
+      margin-right: 0;
+    }
+    p {
+      @extend %short-text-font-style;
+    }
+  }
+  .page-header-container {
+    display: flex;
+    h4 {
+      margin: 0 0.3rem 0 0;
+      line-height: 1.5;
+      font-size: 1em;
+      &:after {
+        content: ':';
+      }
+    }
+  }
+  .no-wrap {
+    white-space: nowrap;
+  }
+}
+.section-50 {
+  //row
+  margin-bottom: 0;
+  padding-top: 50px;
+  & > h2:first-child {
+    margin-top: 0;
+  }
+  .col {
+    margin-bottom: 0;
+  }
+}
+
 // ------- MEMO MENU --------- //
 
 #memoMenuContainer {

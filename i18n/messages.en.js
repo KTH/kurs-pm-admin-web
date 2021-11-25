@@ -96,9 +96,9 @@ module.exports = {
     btn_back_edit: 'Edit, upload',
 
     /** ************ PAGE 2 FORM ************** */
-    header_course: 'Course:',
-    header_semester: 'Semester: ',
-    header_course_offering: 'Course offering:',
+    header_course: 'Course',
+    header_semester: 'Semester',
+    header_course_offering: 'Course offering',
     header_upload: 'Upload',
     header_upload_file_pm: 'Course memo (only as PDF file format)',
     header_upload_file_date: 'Publish date of course analysis *',

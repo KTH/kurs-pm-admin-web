@@ -106,9 +106,9 @@ module.exports = {
     /** ************ PAGE 2 FORM ************** */
     asterix_text: 'Kommer inte att kunna ändras efter publicering',
 
-    header_course: 'Kurs:',
-    header_semester: 'Termin:',
-    header_course_offering: 'Kursomgång:',
+    header_course: 'Kurs',
+    header_semester: 'Termin',
+    header_course_offering: 'Kursomgång',
 
     header_upload: 'Ladda upp',
     header_upload_file_pm: 'kurs-PM (endast i fil-formatet PDF)',
@@ -134,7 +134,7 @@ module.exports = {
     /** ************ MODALS ************** */
     info_publish_new_version: {
       header: 'Att tänka på innan du publicerar!',
-      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgångar.
+      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgång.
         <br/>
         <br/>
         Observera: Ditt uppladdade kurs-PM kommer att publiceras som en ny version.
@@ -146,7 +146,7 @@ module.exports = {
     },
     info_publish_first_time: {
       header: 'Att tänka på innan du publicerar!',
-      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgångar.
+      body: `Publicering kommer att ske på sidan: Förbereda/gå kurs (kurs-PM) för vald termin och kursomgång.
         <br/>
         <br/>
         Vill du fortsätta att publicera?`,

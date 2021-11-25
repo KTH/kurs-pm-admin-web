@@ -44,9 +44,9 @@ class InfoModal extends Component {
         <Modal isOpen={isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
           <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
           <ModalBody>
-            {courseCode && <p>{`${header_course} ${courseCode}`}</p>}
-            {semester && <p>{`${header_semester} ${semester}`}</p>}
-            {courseOfferings && <p>{`${header_course_offering} ${courseOfferings}`}</p>}
+            {courseCode && <p>{`${header_course}: ${courseCode}`}</p>}
+            {semester && <p>{`${header_semester}: ${semester}`}</p>}
+            {courseOfferings && <p>{`${header_course_offering}: ${courseOfferings}`}</p>}
             <p dangerouslySetInnerHTML={{ __html: infoText.body }} />
           </ModalBody>
           <ModalFooter>
