@@ -18,7 +18,6 @@ import {
 
 // Custom components
 import InfoModal from './InfoModal'
-import InfoButton from './InfoButton'
 import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
 import i18n from '../../../../i18n/index'

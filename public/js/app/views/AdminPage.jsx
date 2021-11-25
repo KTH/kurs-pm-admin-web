@@ -6,7 +6,6 @@ import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 import Title from '../components/Title'
 import MemoMenu from '../components/MemoMenu'
 import InfoModal from '../components/InfoModal'
-import InfoButton from '../components/InfoButton'
 import UpLoad from '../components/UpLoad'
 import RoundLabel, { roundFullName } from '../components/RoundLabel'
 import { ActionModalButton } from '@kth/kth-reactstrap/dist/components/utbildningsinfo'
@@ -639,14 +638,5 @@ class AdminPage extends Component {
       )
   }
 }
-
-// const FormLabel = ({ translate, header }) => {
-//   return (
-//     <span className="inline-flex">
-//       <Label>{translate[header]} </Label>
-//       {/* <InfoButton id={id} textObj={translate[id]} /> */}
-//     </span>
-//   )
-// }
 
 export default AdminPage
