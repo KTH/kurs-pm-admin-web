@@ -195,12 +195,9 @@ class MemoMenu extends Component {
         {/*                                  SEMESTER DROPDOWN                                  */}
         {/** *********************************************************************************** */}
         <Dropdown isOpen={dropdownOpen} toggle={this.toggleDropdown} className="select-semester">
-          <FormHeaderAndInfo
-            className="padding-top-30"
-            infoId="info_select_semester"
-            header={selectSemester}
-            translate={translate}
-          />
+          <h2 className="section-50">{translate.header_memo_menu}</h2>
+
+          <FormHeaderAndInfo infoId="info_select_semester" header={selectSemester} translate={translate} />
 
           <DropdownToggle>
             <span>
@@ -237,7 +234,6 @@ class MemoMenu extends Component {
           <Row id="memoMenuContainer">
             {semester.length > 0 && (
               <Form>
-                <h2>{translate.header_memo_menu}</h2>
                 <FormHeaderAndInfo
                   infoId="info_choose_course_offering"
                   headerId="header_memo_menu"
