@@ -26,6 +26,21 @@ $kth-blue: #007fae;
     padding-top: 30px;
   }
 }
+.progress-bar-container.row {
+  margin: 0;
+  div {
+    &:first-of-type {
+      text-align: left;
+    }
+    &:nth-of-type(2) {
+      text-align: center;
+    }
+    &:nth-of-type(3) {
+      text-align: right;
+      padding-right: 0;
+    }
+  }
+}
 //MOVE TO COMMON STYLES
 %long-text-font-style {
   font-family: Georgia, 'garamond pro', garamond, 'times new roman', times, serif;

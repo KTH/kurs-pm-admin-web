@@ -237,6 +237,7 @@ class MemoMenu extends Component {
           <Row id="memoMenuContainer">
             {semester.length > 0 && (
               <Form>
+                <h2>{translate.header_memo_menu}</h2>
                 <FormHeaderAndInfo
                   infoId="info_choose_course_offering"
                   headerId="header_memo_menu"
