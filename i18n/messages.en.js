@@ -126,7 +126,7 @@ module.exports = {
     /** ************ MODALS ************** */
     info_publish_new_version: {
       header: 'To be aware of before publishing!',
-      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offerings.
+      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offering.
         <br/>
         <br/>  
         Please note: The uploaded course memo will be published as a new version.
@@ -138,7 +138,7 @@ module.exports = {
     },
     info_publish_first_time: {
       header: 'To be aware of before publishing!',
-      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offerings.
+      body: `Your course memo will be uploaded to: \u201CPrepare and take course/Course memo\u201D for selected semester and course offering.
         <br/> 
         <br/> 
         Do you want to publish?`,
