@@ -477,10 +477,15 @@ class AdminPage extends Component {
                   {`${translate.alert_accessability_link_before} `}
                   <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
                   {` ${translate.alert_accessability_link_after} `}
-                  <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                    {translate.label_link_web_based_draft_memo}
-                  </a>
-                  {`.`}
+                  {this.state.usedRoundSelected < 1 && (
+                    <>
+                      {` ${translate.alert_web_memo_support} `}
+                      <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                        {translate.label_link_web_based_draft_memo}
+                      </a>
+                      {`.`}
+                    </>
+                  )}
                 </Alert>
               )}
               {/************************************************************************************* */}

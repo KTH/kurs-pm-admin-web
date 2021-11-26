@@ -130,7 +130,8 @@ module.exports = {
       'Det gick inte att spara dokumenten på grund av systemfel. Försök igen eller kontakta IT-support.',
     alert_accessability_link_before: 'Tänk på att du behöver',
     alert_accessability_link_after:
-      '(länk till intranätet öppnas i en ny flik). Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument. Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
+      '(länk till intranätet öppnas i en ny flik). Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument.',
+    alert_web_memo_support: 'Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
     alert_label_accessability_link: 'tillgänglighetsanpassa din PDF',
     /** ************ MODALS ************** */
     info_publish_new_version: {

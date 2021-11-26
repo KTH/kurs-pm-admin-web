@@ -28,7 +28,7 @@ module.exports = {
       2: 'Autumn ',
     },
 
-    header_main: 'Upload or edit course memo as PDF',
+    header_main: 'Upload or change course memo as PDF',
     header_upload_memo: 'Upload course memo',
 
     /**
@@ -80,7 +80,8 @@ module.exports = {
     intro_new: 'Select one or more administrative course instances that is included in the course offering:',
     has_published_memo:
       'There is a previously published course memo as PDF. You can upload a new course memo to publish a new version.' /** FÄRSK SEMLA */,
-    has_web_based_memo: 'This administrative course instance has a draft or a published course memo.',
+    has_web_based_memo:
+      'This administrative course instance has a draft or a published course memo created as a webpage.',
     label_before_link_web_based_memo: 'Go to',
     label_after_link_web_based_memo: 'to change it.',
     label_link_web_based_draft_memo: 'Create and publish course memo',
@@ -120,7 +121,8 @@ module.exports = {
       'Failed to save the docuemnt you chose, due to technical issues mightly. Try again later and contact IT Support if the problem remains.',
     alert_accessability_link_before: 'Keep in mind that you need to',
     alert_accessability_link_after:
-      ' (link to the intranet opens in a new tab). Having a course memo as a web page is more accessible than a published PDF. You create a course memo as a web page by instead using the system support',
+      ' (link to the intranet opens in a new tab). Having a course memo as a web page is more accessible than a published PDF.',
+    alert_web_memo_support: 'You create a course memo as a web page by instead using the system support',
     alert_label_accessability_link: 'customize the accessibility of your PDF',
 
     /** ************ MODALS ************** */
