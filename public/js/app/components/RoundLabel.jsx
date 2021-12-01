@@ -52,7 +52,7 @@ export function roundFullName(langIndex, semester, round) {
   const { courseCode, roundId, shortName, startDate, language: roundLang } = round
 
   const roundName = formatRoundName(langIndex, shortName, semester, roundId)
-  const roundInputLabel = `${roundName} (${label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang} )`
+  const roundInputLabel = `${roundName} (${label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang})`
   return roundInputLabel
 }
 
