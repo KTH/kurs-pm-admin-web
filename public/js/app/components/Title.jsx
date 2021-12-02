@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { ProgressBar } from '@kth/kth-reactstrap/dist/components/utbildningsinfo'
 import { PageHeading } from '@kth/kth-reactstrap/dist/components/studinfo'
-import { Alert } from 'reactstrap'
+import { Alert, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { ADMIN_COURSE_PM_DATA } from '../util/constants'
 
@@ -21,25 +21,27 @@ const showInfoKTHrecommendation = (courseCode, langIndex) => {
   } = i18n.messages[langIndex].messages.alert_recommendation
 
   return (
-    <Alert color="info" className="alert-margin">
-      <h4>{alertHeader}</h4>
-      <p>
-        {`${accessibilityResponsibility} `}
-        <a href={`https://intra.kth.se/${linkLocale}styrning/styrdokument/regler/utbildning-overgripande`}>
-          {labelControlInfoLink}
-        </a>
-        .
-      </p>
-      <p>
-        {`${labelBeforeCreateMemoLink} `}
-        <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
-        {` ${labelAfterCreateMemoLink} `}
-        <a href={`https://intra.kth.se/${linkLocale}utbildning/utbildningsadministr/om-kursen/kurs-pm`}>
-          {labelCourseMemoGuideLink}
-        </a>
-        .
-      </p>
-    </Alert>
+    <Row key="show-recommendation-about-alternatives" className="w-100 my-0 mx-auto upper-alert">
+      <Alert color="info">
+        <h4>{alertHeader}</h4>
+        <p>
+          {`${accessibilityResponsibility} `}
+          <a href={`https://intra.kth.se/${linkLocale}styrning/styrdokument/regler/utbildning-overgripande`}>
+            {labelControlInfoLink}
+          </a>
+          .
+        </p>
+        <p>
+          {`${labelBeforeCreateMemoLink} `}
+          <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
+          {` ${labelAfterCreateMemoLink} `}
+          <a href={`https://intra.kth.se/${linkLocale}utbildning/utbildningsadministr/om-kursen/kurs-pm`}>
+            {labelCourseMemoGuideLink}
+          </a>
+          .
+        </p>
+      </Alert>
+    </Row>
   )
 }
 

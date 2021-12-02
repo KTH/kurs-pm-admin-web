@@ -105,6 +105,8 @@ module.exports = {
     header_upload_file_pm: 'Course memo (only as PDF file format)',
     header_upload_file_date: 'Publish date of course analysis *',
     header_preview: 'Preview course memo' /** FÄRSK SEMLA */,
+    subheader_preview: 'Preview' /** FÄRSK SEMLA */,
+
     link_pm: 'Course memo',
 
     header_rounds: 'Administrative course instances included in the course offering',
@@ -120,9 +122,9 @@ module.exports = {
     alert_storage_error:
       'Failed to save the docuemnt you chose, due to technical issues mightly. Try again later and contact IT Support if the problem remains.',
     alert_accessability_link_before: 'Keep in mind that you need to',
-    alert_accessability_link_after:
-      ' (link to the intranet opens in a new tab). Having a course memo as a web page is more accessible than a published PDF.',
-    alert_web_memo_support: 'You create a course memo as a web page by instead using the system support',
+    alert_accessability_link_after: ' (link to the intranet opens in a new tab).',
+    alert_web_memo_support:
+      'Having a course memo as a web page is more accessible than a published PDF. You create a course memo as a web page by instead using the system support',
     alert_label_accessability_link: 'customize the accessibility of your PDF',
 
     /** ************ MODALS ************** */

@@ -372,9 +372,9 @@ class AdminPage extends Component {
       : ''
     if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
       return (
-        <div ref={this.divTop}>
+        <div ref={this.divTop} className="kip-container">
           {routerStore.errorMessage.length === 0 ? (
-            <div>
+            <>
               <Title
                 title={routerStore.courseTitle}
                 language={langIndex}
@@ -388,10 +388,9 @@ class AdminPage extends Component {
               {/*                               PAGE1: MEMO MENU                             */}
               {/* ************************************************************************************ */}
               {routerStore.semesters.length === 0 ? (
-                <Alert color="info" className="alert-margin">
-                  {' '}
-                  {translate.alert_no_rounds}{' '}
-                </Alert>
+                <Row key="no-rounds" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="info"> {translate.alert_no_rounds_selected} </Alert>
+                </Row>
               ) : (
                 <MemoMenu
                   editMode={this.editMode}
@@ -406,12 +405,11 @@ class AdminPage extends Component {
                   handleRemoveFile={this.handleRemoveFile}
                 />
               )}
-            </div>
+            </>
           ) : (
-            <Alert className="alert-margin" color="info">
-              {' '}
-              {routerStore.errorMessage}
-            </Alert>
+            <Row key="error-message" className="w-100 my-0 mx-auto upper-alert">
+              <Alert color="info"> {routerStore.errorMessage}</Alert>
+            </Row>
           )}
         </div>
       )
@@ -419,7 +417,7 @@ class AdminPage extends Component {
       return (
         <div
           key="kurs-pm-form-container"
-          className="container"
+          className="kip-container"
           id="kurs-pm-form-container"
           ref={ref => (this._div = ref)}
         >
@@ -427,9 +425,9 @@ class AdminPage extends Component {
           {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
           {/************************************************************************************* */}
           {(routerStore.errorMessage.length > 0 && (
-            <Alert color="info" className="alert-margin">
-              {routerStore.errorMessage}
-            </Alert>
+            <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
+              <Alert color="info">{routerStore.errorMessage}</Alert>
+            </Row>
           )) || (
             <div>
               <Title
@@ -466,43 +464,68 @@ class AdminPage extends Component {
 
               {/* Existing PDF memo alert */}
               {this.state.usedRoundSelected > 0 && (
-                <Alert color="info" className="alert-margin">
-                  {' '}
-                  {translate.alert_have_published_memo}
-                </Alert>
+                <Row key="have-published-memo-message-alert" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="info"> {translate.alert_have_published_memo}</Alert>
+                </Row>
               )}
               {/* Accessability alert */}
               {this.state.progress === 'edit' && (
-                <Alert color="info" className="alert-margin">
-                  {`${translate.alert_accessability_link_before} `}
-                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
-                  {` ${translate.alert_accessability_link_after} `}
-                  {this.state.usedRoundSelected < 1 && (
-                    <>
-                      {` ${translate.alert_web_memo_support} `}
-                      <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                        {translate.label_link_web_based_draft_memo}
-                      </a>
-                      {`.`}
-                    </>
-                  )}
-                </Alert>
+                <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="info">
+                    {`${translate.alert_accessability_link_before} `}
+                    <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
+                    {` ${translate.alert_accessability_link_after} `}
+                    {this.state.usedRoundSelected < 1 && (
+                      <>
+                        {` ${translate.alert_web_memo_support} `}
+                        <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                          {translate.label_link_web_based_draft_memo}
+                        </a>
+                        {`.`}
+                      </>
+                    )}
+                  </Alert>
+                </Row>
+              )}
+              {/* ----- ALERTS ----- */}
+
+              {this.state.alert.length > 0 && (
+                <Row key="dynamic-alert-message" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="info">{this.state.alert} </Alert>
+                </Row>
+              )}
+              {this.state.alertSuccess.length > 0 && (
+                <Row key="success-alert" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="success">{this.state.alertSuccess} </Alert>
+                </Row>
+              )}
+              {this.state.alertError.length > 0 && (
+                <Row key="error-alert" className="w-100 my-0 mx-auto upper-alert">
+                  <Alert color="danger">{this.state.alertError} </Alert>
+                </Row>
               )}
               {/************************************************************************************* */}
               {/*                                   PREVIEW                                           */}
               {/************************************************************************************* */}
               {routerStore.newMemoList.length > 0 && this.state.isPreviewMode && (
-                <div>
-                  {<h4>{translate.header_preview}</h4>}
-                  <a
-                    className="pdf-link"
-                    href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
-                    target="_blank"
-                  >
-                    {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
-                  </a>
-                </div>
+                <Row className="preview-form">
+                  <Col>
+                    <h2 className="section-50">{translate.header_preview}</h2>
+                    <h3>{translate.subheader_preview}</h3>
+
+                    <a
+                      className="pdf-link"
+                      href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
+                      target="_blank"
+                    >
+                      {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
+                    </a>
+                  </Col>
+                </Row>
               )}
+
+              {/* ----- FORM ----- */}
+
               <Row key="form" id="form-container">
                 <Col sm="12" lg="12">
                   {/************************************************************************************* */}
@@ -511,30 +534,10 @@ class AdminPage extends Component {
 
                   {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode && (
                     <Form className="admin-form">
-                      {/* ----- ALERTS ----- */}
-
-                      {this.state.alert.length > 0 && (
-                        <Row>
-                          <Alert color="info" className="alert-margin">
-                            {this.state.alert}{' '}
-                          </Alert>
-                        </Row>
-                      )}
-                      {this.state.alertSuccess.length > 0 && (
-                        <Row>
-                          <Alert color="success">{this.state.alertSuccess} </Alert>
-                        </Row>
-                      )}
-                      {this.state.alertError.length > 0 && (
-                        <Row>
-                          <Alert color="danger">{this.state.alertError} </Alert>
-                        </Row>
-                      )}
-
                       {/* FORM - FIRST COLUMN */}
                       <Row className="form-group">
-                        <Col sm="6" className="col-form">
-                          <h2>{translate.header_upload_memo}</h2>
+                        <Col sm="6">
+                          <h2 className="section-50">{translate.header_upload_memo}</h2>
                           <FormHeaderAndInfo
                             translate={translate}
                             headerId={'header_upload'}
@@ -560,34 +563,28 @@ class AdminPage extends Component {
                           <br />
                         </Col>
 
-                        <Col sm="4" className="col-form"></Col>
+                        <Col sm="4"></Col>
                       </Row>
                     </Form>
                   )}
                   {/************************************************************************************* */}
                   {/*                                BUTTONS FOR PAG 2 AND 3                              */}
+                  {/* In case user can edit, othervise only preview is avalilable without control button  */}
                   {/************************************************************************************* */}
-
-                  <Row className="button-container text-center">
-                    <Col sm="4" className="align-left-sm-center">
-                      {routerStore.status === 'preview' ? (
-                        ''
-                      ) : (
+                  {routerStore.status !== 'preview' && (
+                    <Row className="button-container text-center">
+                      <Col sm="4" className="align-left-sm-center">
                         <Button className="back" color="secondary" id="back" key="back" onClick={this.handleBack}>
                           {this.state.isPreviewMode ? translate.btn_back_edit : translate.btn_back}
                         </Button>
-                      )}
-                    </Col>
-                    <Col sm="3" className="align-right-sm-center">
-                      {routerStore.status !== 'preview' && (
+                      </Col>
+                      <Col sm="3" className="align-right-sm-center">
                         <Button color="secondary" id="cancel" key="cancel" onClick={this.toggleModal}>
                           {translate.btn_cancel}
                         </Button>
-                      )}
-                    </Col>
-                    <Col sm="3"></Col>
-                    <Col sm="2">
-                      {routerStore.status !== 'preview' && (
+                      </Col>
+                      <Col sm="3"></Col>
+                      <Col sm="2">
                         <span>
                           {(this.state.isPreviewMode && (
                             <Button color="success" id="publish" key="publish" onClick={this.toggleModal}>
@@ -605,9 +602,9 @@ class AdminPage extends Component {
                             </Button>
                           )}
                         </span>
-                      )}
-                    </Col>
-                  </Row>
+                      </Col>
+                    </Row>
+                  )}
                 </Col>
               </Row>
               {/************************************************************************************* */}

@@ -115,6 +115,7 @@ module.exports = {
     header_upload_file_pm: 'kurs-PM (endast i fil-formatet PDF)',
     header_upload_file_date: 'Publiceringsdatum för kursanalys',
     header_preview: 'Granska kurs-PM' /** FÄRSK SEMLA */,
+    subheader_preview: 'Granska' /** FÄRSK SEMLA */,
 
     link_pm: 'Kurs-PM',
 
@@ -129,9 +130,9 @@ module.exports = {
     alert_storage_error:
       'Det gick inte att spara dokumenten på grund av systemfel. Försök igen eller kontakta IT-support.',
     alert_accessability_link_before: 'Tänk på att du behöver',
-    alert_accessability_link_after:
-      '(länk till intranätet öppnas i en ny flik). Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument.',
-    alert_web_memo_support: 'Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
+    alert_accessability_link_after: '(länk till intranätet öppnas i en ny flik).',
+    alert_web_memo_support:
+      'Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument. Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
     alert_label_accessability_link: 'tillgänglighetsanpassa din PDF',
     /** ************ MODALS ************** */
     info_publish_new_version: {

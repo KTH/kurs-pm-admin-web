@@ -190,7 +190,7 @@ class MemoMenu extends Component {
       usedRoundsWithWebVer,
     } = this.state
     return (
-      <div id="YearAndRounds">
+      <div className="First--Step--Choose--Parameters container" id="YearAndRounds">
         {/** *********************************************************************************** */}
         {/*                                  SEMESTER DROPDOWN                                  */}
         {/** *********************************************************************************** */}
@@ -220,18 +220,17 @@ class MemoMenu extends Component {
               ))}
           </DropdownMenu>
         </Dropdown>
-
         {alert.length > 0 && (
-          <Alert color="danger" className="alert-margin">
-            {` ${alert}`}
-          </Alert>
+          <Row key="smth-wrong" className="w-100 my-0 mx-auto upper-alert">
+            <Alert color="danger">{` ${alert}`}</Alert>
+          </Row>
         )}
 
         {/** *********************************************************************************** */}
         {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
         {/** *********************************************************************************** */}
-        <Collapse isOpen={collapseOpen}>
-          <Row id="memoMenuContainer">
+        {collapseOpen && (
+          <Row className="w-100 my-0 mx-auto">
             {semester.length > 0 && (
               <Form>
                 <FormHeaderAndInfo
@@ -288,7 +287,7 @@ class MemoMenu extends Component {
               </Form>
             )}
           </Row>
-        </Collapse>
+        )}
         {/** *********************************************************************************** */}
         {/*                              BUTTONS FOR MEMO MENU                                  */}
         {/** *********************************************************************************** */}
