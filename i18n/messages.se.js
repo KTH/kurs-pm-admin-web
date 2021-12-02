@@ -129,7 +129,7 @@ module.exports = {
     alert_empty_fields: 'Du behöver fylla i obligatoriska fält för att gå vidare till Granska och publicera.',
     alert_storage_error:
       'Det gick inte att spara dokumenten på grund av systemfel. Försök igen eller kontakta IT-support.',
-    alert_accessability_link_before: 'Tänk på att du behöver',
+    alert_accessability_link_before: 'Tänk på att du behöver tillgänglighetsanpassa din PDF',
     alert_accessability_link_after: '(länk till intranätet öppnas i en ny flik).',
     alert_web_memo_support:
       'Att ha kurs-PM som en webbsida är mer tillgängligt än ett publicerat PDF-dokument. Du skapar kurs-PM som en webbsida genom att istället använda systemstödet',
