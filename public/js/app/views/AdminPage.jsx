@@ -473,7 +473,9 @@ class AdminPage extends Component {
                 <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
                   <Alert color="info">
                     {`${translate.alert_accessability_link_before} `}
-                    <a href={ACCESSABILITY_INTRANET_LINK[langIndex]}>{translate.alert_label_accessability_link}</a>
+                    <a href={ACCESSABILITY_INTRANET_LINK[langIndex]} rel="noreferrer" target="_blank">
+                      {translate.alert_label_accessability_link}
+                    </a>
                     {` ${translate.alert_accessability_link_after} `}
                     {this.state.usedRoundSelected < 1 && (
                       <>
