@@ -163,7 +163,8 @@ $btn-link-height: 20px;
     max-width: 15%;
   }
 }
-.select-semester + .upper-alert {
+.select-semester + .upper-alert,
+.page-header-wrapper + .upper-alert {
   padding-top: 20px;
   margin-bottom: 0;
 }
