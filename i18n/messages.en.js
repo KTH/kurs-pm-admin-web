@@ -54,7 +54,7 @@ module.exports = {
         intro: '',
       },
       {
-        title: 'Review and publish',
+        title: 'Preview and publish',
         intro: '',
       },
     ],
