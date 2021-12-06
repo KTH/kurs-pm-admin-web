@@ -121,7 +121,7 @@ module.exports = {
     alert_empty_fields: 'All mandatory fields must contain information before proceeding to Preview and publish.',
     alert_storage_error:
       'Failed to save the docuemnt you chose, due to technical issues mightly. Try again later and contact IT Support if the problem remains.',
-    alert_accessability_link_before: 'Keep in mind that you need to use accessible PDF',
+    alert_accessability_link_before: 'Keep in mind that you need to',
     alert_accessability_link_after: ' (link to the intranet opens in a new tab).',
     alert_web_memo_support:
       'Having a course memo as a web page is more accessible than a published PDF. You create a course memo as a web page by instead using the system support',
