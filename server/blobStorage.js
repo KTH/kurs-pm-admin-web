@@ -1,7 +1,7 @@
 const { BlobServiceClient } = require('@azure/storage-blob')
 
 const serverConfig = require('./configuration').server
-const log = require('kth-node-log')
+const log = require('@kth/log')
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
