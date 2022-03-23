@@ -50,6 +50,7 @@ log.init(logConfiguration)
  */
 const exphbs = require('express-handlebars')
 const path = require('path')
+
 server.set('views', path.join(__dirname, '/views'))
 server.set('layouts', path.join(__dirname, '/views/layouts'))
 server.set('partials', path.join(__dirname, '/views/partials'))
@@ -80,38 +81,28 @@ const browserConfig = require('./configuration').browser
 const browserConfigHandler = require('kth-node-configuration').getHandler(browserConfig, getPaths())
 const express = require('express')
 
-// filter: function () { return true }
-// }))
-// const minify = require('express-minify')
-// server.use(minify())
+// Removes the "X-Powered-By: Express header" that shows the underlying Express framework
+server.disable('x-powered-by')
 
-// helper
-function setCustomCacheControl(res, path) {
-  if (express.static.mime.lookup(path) === 'text/html') {
-    // Custom Cache-Control for HTML files
-    res.setHeader('Cache-Control', 'no-cache')
-  }
-}
+/// Files/statics routes--
 
-// Files/statics routes--
-// Map components HTML files as static content, but set custom cache control header, currently no-cache to force If-modified-since/Etag check.
-server.use(
-  _addProxy('/static/js/components'),
-  express.static('./dist/js/components', { setHeaders: setCustomCacheControl })
-)
+const staticOption = { maxAge: 365 * 24 * 3600 * 1000 } // 365 days in ms is maximum
+
 // Expose browser configurations
 server.use(_addProxy('/static/browserConfig'), browserConfigHandler)
-// Map Bootstrap.
-server.use(_addProxy('/static/bootstrap'), express.static('./node_modules/bootstrap/dist'))
-// Map kth-style.
-server.use(_addProxy('/static/kth-style'), express.static('./node_modules/kth-style/dist'))
+
+// Files/statics routes
+server.use(_addProxy('/static/kth-style'), express.static('./node_modules/kth-style/dist', staticOption))
 
 // Map static content like images, css and js.
-server.use(_addProxy('/static'), express.static('./dist'))
+server.use(_addProxy('/static'), express.static('./dist', staticOption))
+
+server.use(_addProxy('/static/icon/favicon'), express.static('./public/favicon.ico', staticOption))
+
 // Return 404 if static file isn't found so we don't go through the rest of the pipeline
-server.use(_addProxy('/static'), function (req, res, next) {
+server.use(_addProxy('/static'), (req, res, next) => {
   const error = new Error('File not found: ' + req.originalUrl)
-  error.statusCode = 404
+  error.status = 404
   next(error)
 })
 

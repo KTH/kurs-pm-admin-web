@@ -29,23 +29,26 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
   test('renders a course development page', done => {
     done()
   })
+  test('renders headers h2', () => {
+    const allH3Headers = getAllByRole('heading', { level: 2 })
+    expect(allH3Headers.length).toBe(1)
+    expect(allH3Headers[0]).toHaveTextContent('Välj kursomgång')
+  })
   test('renders headers h3', () => {
     const allH3Headers = getAllByRole('heading', { level: 3 })
-    expect(allH3Headers.length).toBe(2)
+    expect(allH3Headers.length).toBe(1)
     expect(allH3Headers[0]).toHaveTextContent('Välj termin')
-    expect(allH3Headers[1]).toHaveTextContent('Välj kursomgång')
   })
 
   test('renders buttons. English.', () => {
     const buttons = getAllByRole('button')
-    expect(buttons.length).toBe(4)
+    expect(buttons.length).toBe(3)
     expect(buttons[0]).toHaveTextContent('')
     expect(buttons[1]).toHaveTextContent('Välj termin')
-    expect(buttons[2]).toHaveTextContent('')
-    expect(buttons[3]).toHaveTextContent('Avbryt')
+    expect(buttons[2]).toHaveTextContent('Avbryt')
   })
 
-  test('renders checkbox for course offering which does not have a published course data', () => {
+  xtest('renders checkbox for course offering which does not have a published course data', () => {
     const checkboxes = getAllByRole('checkbox')
     expect(checkboxes.length).toBe(2)
   })
