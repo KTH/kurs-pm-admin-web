@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { inject, observer } from 'mobx-react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
+import { useStore } from '../mobx'
+import { useNavigate } from 'react-router-dom'
 
 // Components
 import Title from '../components/Title'
@@ -16,62 +18,64 @@ import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
 
-@inject(['routerStore'])
-@observer
-class AdminPage extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      saved: false, //TO DELETE
-      progress: this.props.routerStore.status === 'new' ? 'new' : 'edit',
-      isPreviewMode: this.props.routerStore.status === 'preview',
-      modalOpen: {
-        publish: false,
-        cancel: false,
-      },
-      alert: '',
-      alertSuccess: '',
-      alertError: '',
-      madatoryMessage: '',
-      memoFile: '',
-      pdfMemoDate: '',
-      hasNewUploadedFilePM: false,
-      notValid: [],
-      fileProgress: {
-        pm: 0,
-      },
-      roundIdList: [],
-      usedRoundSelected: 0,
-    }
-    this.handlePreview = this.handlePreview.bind(this)
-    this.editMode = this.editMode.bind(this)
-    this.handlePublish = this.handlePublish.bind(this)
-    this.handleBack = this.handleBack.bind(this)
-    this.handleCancel = this.handleCancel.bind(this)
-    this.handleInputChange = this.handleInputChange.bind(this)
-    this.toggleModal = this.toggleModal.bind(this)
-    this.getTempData = this.getTempData.bind(this)
-    this.getMetadata = this.getMetadata.bind(this)
-    this.handleUploadFile = this.handleUploadFile.bind(this)
-    this.handleRemoveFile = this.handleRemoveFile.bind(this)
-    this.validateData = this.validateData.bind(this)
-    this.filterChosenRoundsList = this.filterChosenRoundsList.bind(this)
-    this.getCourseOfferingsNames = this.getCourseOfferingsNames.bind(this)
-  }
+const paramsReducer = (state, action) => ({ ...state, ...action })
 
-  componentDidUpdate() {
-    const thisInstance = this
-    if (thisInstance.state.alertSuccess.length > 0) {
+function AdminPage(props) {
+  const store = useStore()
+  const history = useNavigate()
+
+  const [state, setState] = useReducer(paramsReducer, {
+    saved: false, //TO DELETE
+    progress: store.status === 'new' ? 'new' : 'edit',
+    isPreviewMode: store.status === 'preview',
+    modalOpen: {
+      publish: false,
+      cancel: false,
+    },
+    alert: '',
+    alertSuccess: '',
+    alertError: '',
+    madatoryMessage: '',
+    memoFile: '',
+    pdfMemoDate: '',
+    hasNewUploadedFilePM: false,
+    notValid: [],
+    fileProgress: {
+      pm: 0,
+    },
+    roundIdList: [],
+    usedRoundSelected: 0,
+  })
+  const { alertSuccess, fileProgress, roundIdList } = state
+
+  const { activeSemester, courseCode, language: langIndex, roundData } = store
+
+  const translate = i18n.messages[langIndex].messages
+
+  const chosenRoundsList = filterChosenRoundsList()
+  const courseOfferings = getCourseOfferingsNames(chosenRoundsList)
+
+  const semesterName = activeSemester
+    ? `${translate.course_short_semester[activeSemester.toString().match(/.{1,4}/g)[1]]} ${
+        activeSemester.toString().match(/.{1,4}/g)[0]
+      }`
+    : ''
+
+  useEffect(() => {
+    let isMounted = true
+    if (isMounted && alertSuccess.length > 0) {
       setTimeout(() => {
-        thisInstance.setState({ alertSuccess: '' })
+        setState({ alertSuccess: '' })
       }, 5000)
     }
-  }
+    return () => (isMounted = false)
+  }, [alertSuccess])
+
   // *********************************  Helpers  ********************************* */
   // ********************************************************************************** */
-  filterChosenRoundsList() {
-    const { activeSemester, language: langIndex, roundData } = this.props.routerStore
-    const { roundIdList } = this.state
+  function filterChosenRoundsList() {
+    const { activeSemester, language: langIndex, roundData } = store
+    const { roundIdList } = state
 
     const chosenRoundsList = activeSemester
       ? roundData[activeSemester].filter(({ roundId }) => roundIdList.indexOf(roundId) > -1)
@@ -79,10 +83,10 @@ class AdminPage extends Component {
     return chosenRoundsList
   }
 
-  getCourseOfferingsNames(chosenRoundsList) {
+  function getCourseOfferingsNames(chosenRoundsList) {
     if (!chosenRoundsList) return ''
 
-    const { activeSemester, language: langIndex } = this.props.routerStore
+    const { activeSemester, language: langIndex } = store
 
     const courseOfferings = chosenRoundsList.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
     return courseOfferings
@@ -91,46 +95,45 @@ class AdminPage extends Component {
   // *********************************  FILE UPLOAD  ********************************* */
   // ********************************************************************************** */
 
-  async handleUploadFile(id, file, e) {
-    const { language: langIndex } = this.props.routerStore
+  async function handleUploadFile(id, file, e) {
+    const { language: langIndex } = store
     if (e.target.files[0].type === 'application/pdf') {
       try {
-        const response = await this.sendRequest(id, file, e)
+        const response = await sendRequest(id, file, e)
       } catch (err) {
-        this.setState({
+        setState({
           notValid: ['savingToStorage'],
           alertError: i18n.messages[langIndex].messages.alert_storage_error,
         })
       }
     } else {
       const notValid = ['memoFile']
-      this.setState({
+      setState({
         notValid,
         alertError: i18n.messages[langIndex].messages.alert_not_pdf,
       })
     }
   }
 
-  sendRequest(id, file, e) {
-    const thisInstance = this
-    const { fileProgress } = this.state
+  function sendRequest(id, file, e) {
+    const { fileProgress } = state
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest()
       req.upload.addEventListener('progress', event => {
         if (event.lengthComputable) {
           fileProgress[id] = (event.loaded / event.total) * 100
           //console.log(fileProgress[id])
-          this.setState({ fileProgress: fileProgress })
+          setState({ fileProgress: fileProgress })
         }
       })
 
       req.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
           fileProgress.pm = 0
-          thisInstance.setState({
+          setState({
             memoFile: this.responseText,
             pdfMemoDate: getTodayDate(),
-            alertSuccess: i18n.messages[thisInstance.props.routerStore.language].messages.alert_uploaded_file,
+            alertSuccess: i18n.messages[store.language].messages.alert_uploaded_file,
             notValid: [],
             alertError: '',
           })
@@ -138,7 +141,7 @@ class AdminPage extends Component {
       }
 
       let formData = new FormData()
-      const data = this.getMetadata('published')
+      const data = getMetadata('published')
       formData.append('file', e.target.files[0], e.target.files[0].name)
       formData.append('courseCode', data.courseCode)
       formData.append('memo', data.pm)
@@ -146,27 +149,27 @@ class AdminPage extends Component {
       formData.append('koppsRoundIds', data.koppsRoundIds)
       req.open(
         'POST',
-        `${this.props.routerStore.browserConfig.hostUrl}${
-          this.props.routerStore.paths.storage.saveFile.uri.split(':')[0]
-        }${this.props.routerStore.activeSemester}/${this.props.routerStore.courseCode}/${this.state.rounds}`
+        `${store.browserConfig.hostUrl}${store.paths.storage.saveFile.uri.split(':')[0]}${store.activeSemester}/${
+          store.courseCode
+        }/${state.rounds}`
       )
       req.send(formData)
     })
   }
 
-  getMetadata(status) {
+  function getMetadata(status) {
     return {
-      courseCode: this.props.routerStore.courseCode,
-      pm: this.state.memoFile,
+      courseCode: store.courseCode,
+      pm: state.memoFile,
       status,
-      koppsRoundIds: this.state.roundIdList.toString(),
+      koppsRoundIds: state.roundIdList.toString(),
     }
   }
 
-  handleRemoveFile(fileName = '') {
-    if (fileName.length > 0 || this.state.memoFile.length > 0) {
-      this.props.routerStore.deleteFileInStorage(this.state.memoFile).then(result => {
-        this.setState({ memoFile: '', hasNewUploadedFilePM: false })
+  function handleRemoveFile(fileName = '') {
+    if (fileName.length > 0 || state.memoFile.length > 0) {
+      store.deleteFileInStorage(state.memoFile).then(result => {
+        setState({ memoFile: '', hasNewUploadedFilePM: false })
       })
     }
   }
@@ -174,16 +177,16 @@ class AdminPage extends Component {
   //***************************** BUTTON CLICK HANDLERS ****************************** */
   //********************************************************************************** */
 
-  handlePreview(event) {
+  function handlePreview(event) {
     event.preventDefault()
-    let invalidList = this.validateData()
+    let invalidList = validateData()
     if (invalidList.length > 0) {
-      this.setState({
+      setState({
         notValid: invalidList,
-        alertError: i18n.messages[this.props.routerStore.language].messages.alert_empty_fields,
+        alertError: i18n.messages[store.language].messages.alert_empty_fields,
       })
     } else {
-      this.setState({
+      setState({
         isPreviewMode: true,
         progress: 'preview',
         alertError: '',
@@ -193,31 +196,27 @@ class AdminPage extends Component {
     }
   }
 
-  handleBack(event) {
+  function handleBack(event) {
     event.preventDefault()
-    const thisAdminPage = this
-    const { routerStore } = this.props
-    if (this.state.progress === 'edit') {
-      this.props.history.push(routerStore.browserConfig.proxyPrefixPath.uri + '/' + routerStore.courseCode)
-      if (routerStore.semesters.length === 0) {
-        return routerStore
-          .getCourseInformation(routerStore.courseCode, routerStore.user, routerStore.language)
-          .then(courseData => {
-            thisAdminPage.setState({
-              isPreviewMode: false,
-              progress: 'back_new',
-              alert: '',
-            })
+    if (state.progress === 'edit') {
+      history.push(store.browserConfig.proxyPrefixPath.uri + '/' + store.courseCode)
+      if (store.semesters.length === 0) {
+        return store.getCourseInformation(store.courseCode, store.user, store.language).then(courseData =>
+          setState({
+            isPreviewMode: false,
+            progress: 'back_new',
+            alert: '',
           })
+        )
       }
-      this.setState({
+      setState({
         isPreviewMode: false,
         progress: 'back_new',
         alert: '',
       })
     }
-    if (this.state.isPreviewMode) {
-      this.setState({
+    if (state.isPreviewMode) {
+      setState({
         isPreviewMode: false,
         progress: 'edit',
         alert: '',
@@ -225,51 +224,49 @@ class AdminPage extends Component {
     }
   }
 
-  handleCancel(event) {
-    const { memoFile } = this.state
+  function handleCancel(event) {
+    const { memoFile } = state
     if (memoFile.length > 0) {
-      this.handleRemoveFile()
+      handleRemoveFile()
     }
 
-    const { modalOpen: modal } = this.state
+    const { modalOpen: modal } = state
     modal.cancel = false
-    this.setState({ modalOpen: modal })
-    window.location = `${SERVICE_URL.admin}${this.props.routerStore.courseCode}?serv=pm&event=cancel`
+    setState({ modalOpen: modal })
+    window.location = `${SERVICE_URL.admin}${store.courseCode}?serv=pm&event=cancel`
   }
 
-  handlePublish(event, fromModal = false) {
+  function handlePublish(event, fromModal = false) {
     if (!fromModal) {
       event.preventDefault()
     }
-    const { routerStore } = this.props
-    const thisInstance = this
-    const { memoFile, pdfMemoDate } = this.state
-    const { modalOpen: modal } = this.state
-    const metadata = this.getMetadata('published')
-    routerStore.updateFileInStorage(memoFile, metadata)
+    const { memoFile, pdfMemoDate } = state
+    const { modalOpen: modal } = state
+    const metadata = getMetadata('published')
+    store.updateFileInStorage(memoFile, metadata)
 
-    return this.props.routerStore
-      .postMemoData(routerStore.newMemoList, memoFile, pdfMemoDate)
+    return store
+      .postMemoData(store.newMemoList, memoFile, pdfMemoDate)
       .then(response => {
         modal.publish = false
         if (response.status >= 400 || response === undefined || response.message) {
-          this.setState({
+          setState({
             alert: response.message ? response.message : 'No connection with data base',
             modalOpen: modal,
           })
           return 'ERROR-' + response.status
         }
         // if no error go to admin start page
-        thisInstance.setState({
+        setState({
           saved: true,
           modalOpen: modal,
         })
-        const { hostUrl } = routerStore.browserConfig
-        const { roundsIdWithPdfVersion = {} } = routerStore.usedRounds
-        const { activeSemester, courseCode, language: langIndex } = routerStore
+        const { hostUrl } = store.browserConfig
+        const { roundsIdWithPdfVersion = {} } = store.usedRounds
+        const { activeSemester, courseCode, language: langIndex } = store
         let publishType = 'pub'
-        const chosenRoundsList = this.filterChosenRoundsList()
-        const courseOfferings = this.getCourseOfferingsNames(chosenRoundsList)
+        const chosenRoundsList = filterChosenRoundsList()
+        const courseOfferings = getCourseOfferingsNames(chosenRoundsList)
         const versions = chosenRoundsList
           .map(({ roundId }) => {
             const prevFile = roundsIdWithPdfVersion[roundId]
@@ -296,10 +293,9 @@ class AdminPage extends Component {
   //* *********************** OTHER **************************** */
   //* ********************************************************** */
 
-  editMode(semester, rounds, tempData, usedRoundSelected) {
-    const thisAdminPage = this
-    const newMemoList = this.props.routerStore.createMemoData(semester, rounds)
-    thisAdminPage.setState({
+  function editMode(semester, rounds, tempData, usedRoundSelected) {
+    const newMemoList = store.createMemoData(semester, rounds)
+    setState({
       progress: 'edit',
       isPreviewMode: false,
       memoFile: tempData !== null ? tempData.memoFile : '',
@@ -310,40 +306,40 @@ class AdminPage extends Component {
     })
   }
 
-  toggleModal(event) {
-    const { modalOpen } = this.state
+  function toggleModal(event) {
+    const { modalOpen } = state
     modalOpen[event.target.id] = !modalOpen[event.target.id]
-    this.setState({
+    setState({
       modalOpen,
     })
   }
 
-  handleInputChange(event) {
-    this.setState({
+  function handleInputChange(event) {
+    setState({
       pdfMemoDate: event.target.value,
       notValid: [],
       alertError: '',
     })
   }
 
-  validateData() {
+  function validateData() {
     const invalidList = []
-    if (this.state.memoFile.length === 0) {
+    if (state.memoFile.length === 0) {
       invalidList.push('memoFile')
     }
     return invalidList
   }
 
-  getTempData() {
-    if (this.state.progress === 'back_new') {
-      const { memoFile, roundIdList, pdfMemoDate, usedRoundSelected } = this.state
+  function getTempData() {
+    if (state.progress === 'back_new') {
+      const { memoFile, roundIdList, pdfMemoDate, usedRoundSelected } = state
       return { roundIdList, memoFile, pdfMemoDate, usedRoundSelected }
     }
     return null
   }
 
   // eslint-disable-next-line class-methods-use-this
-  handleTemporaryData(tempData) {
+  function handleTemporaryData(tempData) {
     const returnObject = {
       files: {
         memoFile: '',
@@ -355,292 +351,264 @@ class AdminPage extends Component {
     return returnObject
   }
 
-  render() {
-    const { routerStore } = this.props
-    const { fileProgress, roundIdList } = this.state
-    const { activeSemester, courseCode, language: langIndex, roundData } = routerStore
+  if (store.newMemoList.length === 0 || state.progress === 'back_new')
+    return (
+      <div className="kip-container">
+        {store.errorMessage.length === 0 ? (
+          <>
+            <Title
+              title={store.courseTitle}
+              language={langIndex}
+              courseCode={courseCode}
+              progress={1}
+              header={translate.header_main}
+              showProgressBar={true}
+            />
 
-    const translate = i18n.messages[langIndex].messages
-
-    const chosenRoundsList = this.filterChosenRoundsList()
-    const courseOfferings = this.getCourseOfferingsNames(chosenRoundsList)
-
-    const semesterName = activeSemester
-      ? `${translate.course_short_semester[activeSemester.toString().match(/.{1,4}/g)[1]]} ${
-          activeSemester.toString().match(/.{1,4}/g)[0]
-        }`
-      : ''
-    if (routerStore.newMemoList.length === 0 || this.state.progress === 'back_new')
-      return (
-        <div ref={this.divTop} className="kip-container">
-          {routerStore.errorMessage.length === 0 ? (
-            <>
-              <Title
-                title={routerStore.courseTitle}
-                language={langIndex}
-                courseCode={courseCode}
-                progress={1}
-                header={translate.header_main}
-                showProgressBar={true}
+            {/* ************************************************************************************ */}
+            {/*                               PAGE1: MEMO MENU                             */}
+            {/* ************************************************************************************ */}
+            {store.semesters.length === 0 ? (
+              <Row key="no-rounds" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="info"> {translate.alert_no_rounds_selected} </Alert>
+              </Row>
+            ) : (
+              <MemoMenu
+                editMode={editMode}
+                semesterList={store.semesters}
+                roundList={store.roundData}
+                progress={state.progress}
+                activeSemester={activeSemester}
+                firstVisit={store.newMemoList.length === 0}
+                status={store.status}
+                tempData={/*state.saved ? {} : */ getTempData()}
+                saved={false}
+                handleRemoveFile={handleRemoveFile}
               />
-
-              {/* ************************************************************************************ */}
-              {/*                               PAGE1: MEMO MENU                             */}
-              {/* ************************************************************************************ */}
-              {routerStore.semesters.length === 0 ? (
-                <Row key="no-rounds" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="info"> {translate.alert_no_rounds_selected} </Alert>
-                </Row>
-              ) : (
-                <MemoMenu
-                  editMode={this.editMode}
-                  semesterList={routerStore.semesters}
-                  roundList={routerStore.roundData}
-                  progress={this.state.progress}
-                  activeSemester={activeSemester}
-                  firstVisit={routerStore.newMemoList.length === 0}
-                  status={routerStore.status}
-                  tempData={/*this.state.saved ? {} : */ this.getTempData()}
-                  saved={false}
-                  handleRemoveFile={this.handleRemoveFile}
-                />
-              )}
-            </>
-          ) : (
-            <Row key="error-message" className="w-100 my-0 mx-auto upper-alert">
-              <Alert color="info"> {routerStore.errorMessage}</Alert>
-            </Row>
-          )}
-        </div>
-      )
-    else
-      return (
-        <div
-          key="kurs-pm-form-container"
-          className="kip-container"
-          id="kurs-pm-form-container"
-          ref={ref => (this._div = ref)}
-        >
-          {/************************************************************************************* */}
-          {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
-          {/************************************************************************************* */}
-          {(routerStore.errorMessage.length > 0 && (
-            <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
-              <Alert color="info">{routerStore.errorMessage}</Alert>
-            </Row>
-          )) || (
-            <div>
-              <Title
-                title={routerStore.courseTitle}
-                language={langIndex}
-                courseCode={courseCode}
-                progress={this.state.progress === 'edit' ? 2 : 3}
-                header={translate.header_main}
-                showProgressBar={routerStore.status !== 'preview'}
-              />
-              <div className="page-header-wrapper">
-                {/* ---- Selected semester---- */}
-                <div className="page-header-container section-50">
-                  <h4>{translate.header_semester}</h4>
-                  <p className="no-wrap">{semesterName}</p>
-                </div>
-                {/* ---- Name of selected memo(s) ---- */}
-                <div className="page-header-container section-50">
-                  <h4>{translate.header_course_offering}</h4>
-                  <p>
-                    {chosenRoundsList.map(round => (
-                      <RoundLabel
-                        key={'round' + round.roundId}
-                        language={langIndex}
-                        round={round}
-                        semester={routerStore.activeSemester}
-                        usedRounds={routerStore.usedRounds.usedRoundsIdList}
-                        showAccessInfo={false}
-                      />
-                    ))}
-                  </p>
-                </div>
+            )}
+          </>
+        ) : (
+          <Row key="error-message" className="w-100 my-0 mx-auto upper-alert">
+            <Alert color="info"> {store.errorMessage}</Alert>
+          </Row>
+        )}
+      </div>
+    )
+  else
+    return (
+      <div
+        key="kurs-pm-form-container"
+        className="kip-container"
+        id="kurs-pm-form-container"
+        ref={ref => (this._div = ref)}
+      >
+        {/************************************************************************************* */}
+        {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
+        {/************************************************************************************* */}
+        {(store.errorMessage.length > 0 && (
+          <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
+            <Alert color="info">{store.errorMessage}</Alert>
+          </Row>
+        )) || (
+          <div>
+            <Title
+              title={store.courseTitle}
+              language={langIndex}
+              courseCode={courseCode}
+              progress={state.progress === 'edit' ? 2 : 3}
+              header={translate.header_main}
+              showProgressBar={store.status !== 'preview'}
+            />
+            <div className="page-header-wrapper">
+              {/* ---- Selected semester---- */}
+              <div className="page-header-container section-50">
+                <h4>{translate.header_semester}</h4>
+                <p className="no-wrap">{semesterName}</p>
               </div>
+              {/* ---- Name of selected memo(s) ---- */}
+              <div className="page-header-container section-50">
+                <h4>{translate.header_course_offering}</h4>
+                <p>
+                  {chosenRoundsList.map(round => (
+                    <RoundLabel
+                      key={'round' + round.roundId}
+                      language={langIndex}
+                      round={round}
+                      semester={store.activeSemester}
+                      usedRounds={store.usedRounds.usedRoundsIdList}
+                      showAccessInfo={false}
+                    />
+                  ))}
+                </p>
+              </div>
+            </div>
 
-              {/* Existing PDF memo alert */}
-              {this.state.usedRoundSelected > 0 && (
-                <Row key="have-published-memo-message-alert" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="info"> {translate.alert_have_published_memo}</Alert>
-                </Row>
-              )}
-              {/* Accessability alert */}
-              {this.state.progress === 'edit' && (
-                <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="info">
-                    {`${translate.alert_accessability_link_before} `}
-                    <a href={ACCESSABILITY_INTRANET_LINK[langIndex]} rel="noreferrer" target="_blank">
-                      {translate.alert_label_accessability_link}
-                    </a>
-                    {` ${translate.alert_accessability_link_after} `}
-                    {this.state.usedRoundSelected < 1 && (
-                      <>
-                        {` ${translate.alert_web_memo_support} `}
-                        <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                          {translate.label_link_web_based_draft_memo}
-                        </a>
-                        {`.`}
-                      </>
-                    )}
-                  </Alert>
-                </Row>
-              )}
-              {/* ----- ALERTS ----- */}
-
-              {this.state.alert.length > 0 && (
-                <Row key="dynamic-alert-message" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="info">{this.state.alert} </Alert>
-                </Row>
-              )}
-              {this.state.alertSuccess.length > 0 && (
-                <Row key="success-alert" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="success">{this.state.alertSuccess} </Alert>
-                </Row>
-              )}
-              {this.state.alertError.length > 0 && (
-                <Row key="error-alert" className="w-100 my-0 mx-auto upper-alert">
-                  <Alert color="danger">{this.state.alertError} </Alert>
-                </Row>
-              )}
-              {/************************************************************************************* */}
-              {/*                                   PREVIEW                                           */}
-              {/************************************************************************************* */}
-              {routerStore.newMemoList.length > 0 && this.state.isPreviewMode && (
-                <Row className="preview-form">
-                  <Col>
-                    <h2 className="section-50">{translate.header_preview}</h2>
-                    <h3>{translate.subheader_preview}</h3>
-
-                    <a
-                      className="pdf-link"
-                      href={`${routerStore.browserConfig.storageUri}${this.state.memoFile}`}
-                      target="_blank"
-                    >
-                      {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
-                    </a>
-                  </Col>
-                </Row>
-              )}
-
-              {/* ----- FORM ----- */}
-
-              <Row key="form" id="form-container">
-                <Col sm="12" lg="12">
-                  {/************************************************************************************* */}
-                  {/*                                 EDIT FORM                                               */}
-                  {/************************************************************************************* */}
-
-                  {routerStore.newMemoList.length > 0 && !this.state.isPreviewMode && (
-                    <Form className="admin-form">
-                      {/* FORM - FIRST COLUMN */}
-                      <Row className="form-group">
-                        <Col sm="6">
-                          <h2 className="section-50">{translate.header_upload_memo}</h2>
-                          <FormHeaderAndInfo
-                            translate={translate}
-                            headerId={'header_upload'}
-                            infoId={'info_upload_course_memo'}
-                          />
-                          <p>
-                            <Label>{translate.header_upload_file_pm}</Label>
-                          </p>
-                          {/** ------- PM-FILE UPLOAD --------- */}
-
-                          <UpLoad
-                            id="pm"
-                            key="pm"
-                            handleUpload={this.handleUploadFile}
-                            progress={fileProgress.pm}
-                            path={routerStore.browserConfig.proxyPrefixPath.uri}
-                            file={this.state.memoFile}
-                            notValid={this.state.notValid}
-                            handleRemoveFile={this.handleRemoveFile}
-                            type="memoFile"
-                          />
-                          <br />
-                          <br />
-                        </Col>
-
-                        <Col sm="4"></Col>
-                      </Row>
-                    </Form>
+            {/* Existing PDF memo alert */}
+            {state.usedRoundSelected > 0 && (
+              <Row key="have-published-memo-message-alert" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="info"> {translate.alert_have_published_memo}</Alert>
+              </Row>
+            )}
+            {/* Accessability alert */}
+            {state.progress === 'edit' && (
+              <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="info">
+                  {`${translate.alert_accessability_link_before} `}
+                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]} rel="noreferrer" target="_blank">
+                    {translate.alert_label_accessability_link}
+                  </a>
+                  {` ${translate.alert_accessability_link_after} `}
+                  {state.usedRoundSelected < 1 && (
+                    <>
+                      {` ${translate.alert_web_memo_support} `}
+                      <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                        {translate.label_link_web_based_draft_memo}
+                      </a>
+                      {`.`}
+                    </>
                   )}
-                  {/************************************************************************************* */}
-                  {/*                                BUTTONS FOR PAG 2 AND 3                              */}
-                  {/* In case user can edit, othervise only preview is avalilable without control button  */}
-                  {/************************************************************************************* */}
-                  {routerStore.status !== 'preview' && (
-                    <Row className="button-container text-center">
-                      <Col sm="4" className="align-left-sm-center">
-                        <Button className="back" color="secondary" id="back" key="back" onClick={this.handleBack}>
-                          {this.state.isPreviewMode ? translate.btn_back_edit : translate.btn_back}
-                        </Button>
-                      </Col>
-                      <Col sm="3" className="align-right-sm-center">
-                        <Button color="secondary" id="cancel" key="cancel" onClick={this.toggleModal}>
-                          {translate.btn_cancel}
-                        </Button>
-                      </Col>
-                      <Col sm="3"></Col>
-                      <Col sm="2">
-                        <span>
-                          {(this.state.isPreviewMode && (
-                            <Button color="success" id="publish" key="publish" onClick={this.toggleModal}>
-                              {translate.btn_publish}
-                            </Button>
-                          )) || (
-                            <Button
-                              className="next"
-                              color="success"
-                              id="preview"
-                              key="preview"
-                              onClick={this.handlePreview}
-                            >
-                              {translate.btn_preview}
-                            </Button>
-                          )}
-                        </span>
-                      </Col>
-                    </Row>
-                  )}
+                </Alert>
+              </Row>
+            )}
+            {/* ----- ALERTS ----- */}
+
+            {state.alert.length > 0 && (
+              <Row key="dynamic-alert-message" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="info">{state.alert} </Alert>
+              </Row>
+            )}
+            {alertSuccess.length > 0 && (
+              <Row key="success-alert" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="success">{alertSuccess} </Alert>
+              </Row>
+            )}
+            {state.alertError.length > 0 && (
+              <Row key="error-alert" className="w-100 my-0 mx-auto upper-alert">
+                <Alert color="danger">{state.alertError} </Alert>
+              </Row>
+            )}
+            {/************************************************************************************* */}
+            {/*                                   PREVIEW                                           */}
+            {/************************************************************************************* */}
+            {store.newMemoList.length > 0 && state.isPreviewMode && (
+              <Row className="preview-form">
+                <Col>
+                  <h2 className="section-50">{translate.header_preview}</h2>
+                  <h3>{translate.subheader_preview}</h3>
+
+                  <a className="pdf-link" href={`${store.browserConfig.storageUri}${state.memoFile}`} target="_blank">
+                    {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
+                  </a>
                 </Col>
               </Row>
-              {/************************************************************************************* */}
-              {/*                               MODALS FOR PUBLISH AND CANCEL                         */}
-              {/************************************************************************************* */}
-              <InfoModal
-                type="publish"
-                toggle={this.toggleModal}
-                isOpen={this.state.modalOpen.publish}
-                id={'publish'}
-                handleConfirm={this.handlePublish}
-                infoText={
-                  this.state.usedRoundSelected > 0
-                    ? translate.info_publish_new_version
-                    : translate.info_publish_first_time
-                }
-                langIndex={langIndex}
-                courseCode={courseCode}
-                semester={semesterName}
-                courseOfferings={courseOfferings}
-              />
-              <InfoModal
-                type="cancel"
-                toggle={this.toggleModal}
-                isOpen={this.state.modalOpen.cancel}
-                id={'cancel'}
-                handleConfirm={this.handleCancel}
-                infoText={translate.info_cancel}
-              />
-            </div>
-          )}
-        </div>
-      )
-  }
+            )}
+
+            {/* ----- FORM ----- */}
+
+            <Row key="form" id="form-container">
+              <Col sm="12" lg="12">
+                {/************************************************************************************* */}
+                {/*                                 EDIT FORM                                               */}
+                {/************************************************************************************* */}
+
+                {store.newMemoList.length > 0 && !state.isPreviewMode && (
+                  <Form className="admin-form">
+                    {/* FORM - FIRST COLUMN */}
+                    <Row className="form-group">
+                      <Col sm="6">
+                        <h2 className="section-50">{translate.header_upload_memo}</h2>
+                        <FormHeaderAndInfo
+                          translate={translate}
+                          headerId={'header_upload'}
+                          infoId={'info_upload_course_memo'}
+                        />
+                        <p>
+                          <Label>{translate.header_upload_file_pm}</Label>
+                        </p>
+                        {/** ------- PM-FILE UPLOAD --------- */}
+
+                        <UpLoad
+                          id="pm"
+                          key="pm"
+                          handleUpload={handleUploadFile}
+                          progress={fileProgress.pm}
+                          path={store.browserConfig.proxyPrefixPath.uri}
+                          file={state.memoFile}
+                          notValid={state.notValid}
+                          handleRemoveFile={handleRemoveFile}
+                          type="memoFile"
+                        />
+                        <br />
+                        <br />
+                      </Col>
+
+                      <Col sm="4"></Col>
+                    </Row>
+                  </Form>
+                )}
+                {/************************************************************************************* */}
+                {/*                                BUTTONS FOR PAG 2 AND 3                              */}
+                {/* In case user can edit, othervise only preview is avalilable without control button  */}
+                {/************************************************************************************* */}
+                {store.status !== 'preview' && (
+                  <Row className="button-container text-center">
+                    <Col sm="4" className="align-left-sm-center">
+                      <Button className="back" color="secondary" id="back" key="back" onClick={handleBack}>
+                        {state.isPreviewMode ? translate.btn_back_edit : translate.btn_back}
+                      </Button>
+                    </Col>
+                    <Col sm="3" className="align-right-sm-center">
+                      <Button color="secondary" id="cancel" key="cancel" onClick={toggleModal}>
+                        {translate.btn_cancel}
+                      </Button>
+                    </Col>
+                    <Col sm="3"></Col>
+                    <Col sm="2">
+                      <span>
+                        {(state.isPreviewMode && (
+                          <Button color="success" id="publish" key="publish" onClick={toggleModal}>
+                            {translate.btn_publish}
+                          </Button>
+                        )) || (
+                          <Button className="next" color="success" id="preview" key="preview" onClick={handlePreview}>
+                            {translate.btn_preview}
+                          </Button>
+                        )}
+                      </span>
+                    </Col>
+                  </Row>
+                )}
+              </Col>
+            </Row>
+            {/************************************************************************************* */}
+            {/*                               MODALS FOR PUBLISH AND CANCEL                         */}
+            {/************************************************************************************* */}
+            <InfoModal
+              type="publish"
+              toggle={toggleModal}
+              isOpen={state.modalOpen.publish}
+              id={'publish'}
+              handleConfirm={handlePublish}
+              infoText={
+                state.usedRoundSelected > 0 ? translate.info_publish_new_version : translate.info_publish_first_time
+              }
+              langIndex={langIndex}
+              courseCode={courseCode}
+              semester={semesterName}
+              courseOfferings={courseOfferings}
+            />
+            <InfoModal
+              type="cancel"
+              toggle={toggleModal}
+              isOpen={state.modalOpen.cancel}
+              id={'cancel'}
+              handleConfirm={handleCancel}
+              infoText={translate.info_cancel}
+            />
+          </div>
+        )}
+      </div>
+    )
 }
 
 export default AdminPage

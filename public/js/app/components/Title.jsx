@@ -6,7 +6,7 @@ import { Alert, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { ADMIN_COURSE_PM_DATA } from '../util/constants'
 
-const showInfoKTHrecommendation = (courseCode, langIndex) => {
+const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
   const langAbbr = langIndex === 0 ? 'en' : 'sv'
   const linkLocale = langAbbr === 'en' ? 'en/' : ''
   const {
@@ -55,7 +55,7 @@ const Title = ({ courseCode, header, title, language: langIndex, progress, showP
   return (
     <div>
       <PageHeading subHeading={courseCode && courseName}>{header}</PageHeading>
-      {progress === 1 && showInfoKTHrecommendation(courseCode, langIndex)}
+      {progress === 1 && <ShowInfoKTHrecommendation courseCode={courseCode} langIndex={langIndex} />}
       {showProgressBar && <ProgressBar active={progress} pages={i18n.messages[langIndex].messages.pagesProgressBar} />}
     </div>
   )

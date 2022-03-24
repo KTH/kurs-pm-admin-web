@@ -2,45 +2,49 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Component } from 'react'
-import { Provider, inject } from 'mobx-react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
-import { configure } from 'mobx'
-
-import { IMobxStore } from './interfaces/utils'
-import { StaticRouter } from 'react-router'
-import RouterStore from './stores/RouterStore'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+// Store
+import { MobxStoreProvider, uncompressStoreInPlaceFromDocument } from './mobx'
+import createApplicationStore from './stores/createApplicationStore'
 import AdminPage from './views/AdminPage'
 import '../../css/memo-admin.scss'
 
-function staticFactory() {
-  return <StaticRouter>{appFactory()}</StaticRouter>
+export default appFactory
+
+function _renderOnClientSide() {
+  const isClientSide = typeof window !== 'undefined'
+  console.log('1111')
+
+  if (!isClientSide) {
+    return
+  }
+  console.log('2222')
+
+  const basename = window.config.proxyPrefixPath.uri
+  const applicationStore = createApplicationStore()
+  uncompressStoreInPlaceFromDocument(applicationStore)
+  console.log('3333')
+
+  // Removed basename because it is causing empty string basename={basename}
+  const app = <BrowserRouter>{appFactory(applicationStore)}</BrowserRouter>
+  const domElement = document.getElementById('app')
+  console.log('domElement', domElement)
+  ReactDOM.render(app, domElement)
+  // ReactDOM.render(<BrowserRouter>{appFactory(applicationStore)}</BrowserRouter>, domElement)
 }
 
-function appFactory() {
-  if (process.env['NODE_ENV'] !== 'production') {
-    configure({
-      isolateGlobalState: true,
-    })
-  }
+_renderOnClientSide()
 
-  const routerStore = new RouterStore()
-
-  if (typeof window !== 'undefined') {
-    routerStore.initializeStore('routerStore')
-  }
-
+function appFactory(applicationStore) {
   return (
-    <Provider routerStore={routerStore}>
-      <Switch>
+    <MobxStoreProvider initCallback={() => applicationStore}>
+      <Routes>
+        {/* <AdminPage /> */}
+
+        {/* <Route exact path="/kursinfoadmin/pm/:id" component={Hello} /> */}
         <Route path="/kursinfoadmin/pm" component={AdminPage} />
-      </Switch>
-    </Provider>
+        {/* <Route path="/kursinfoadmin/pm" component={AdminPage} /> */}
+      </Routes>
+    </MobxStoreProvider>
   )
 }
-
-if (typeof window !== 'undefined') {
-  ReactDOM.render(<BrowserRouter>{appFactory()}</BrowserRouter>, document.getElementById('kth-kurs-pm-admin'))
-}
-
-export { staticFactory }
