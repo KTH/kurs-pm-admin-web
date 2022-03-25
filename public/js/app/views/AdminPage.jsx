@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer } from 'react'
-import { inject, observer } from 'mobx-react'
+// import { inject, observer } from 'mobx-react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
-import { useStore } from '../mobx'
+import { useWebContext } from '../context/WebContext'
 import { useNavigate } from 'react-router-dom'
 
 // Components
@@ -21,7 +21,8 @@ import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function AdminPage(props) {
-  const store = useStore()
+  console.log('AdminPage', JSON.stringify(props))
+  const [store] = useWebContext()
   const history = useNavigate()
 
   const [state, setState] = useReducer(paramsReducer, {

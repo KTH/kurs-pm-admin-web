@@ -4,37 +4,28 @@
 
 import React from 'react'
 import { StaticRouter } from 'react-router-dom/server'
-import { enableStaticRendering } from 'mobx-react'
-import ReactDOMServer from 'react-dom/server'
 
-import { compressStoreIntoJavascriptCode } from './mobx'
-import createApplicationStore from './stores/createApplicationStore'
+import ReactDOMServer from 'react-dom/server'
+import { compressData } from './context/compress'
 
 import appFactory from './app'
 
-function getServerSideFunctions() {
-  return {
-    createStore() {
-      return createApplicationStore()
-    },
+export default _getServerSideFunctions()
 
-    getCompressedStoreCode(store) {
-      const code = compressStoreIntoJavascriptCode(store)
+function _getServerSideFunctions() {
+  return {
+    getCompressedData(data, dataId) {
+      const code = compressData(data, dataId)
       return code
     },
-
-    renderStaticPage({ applicationStore, location, basename }) {
-      enableStaticRendering(true)
+    renderStaticPage({ applicationStore, location, basename, context }) {
       const app = (
         <StaticRouter basename={basename} location={location}>
-          {appFactory(applicationStore)}
+          {appFactory(applicationStore, context)}
         </StaticRouter>
       )
-      const html = ReactDOMServer.renderToString(app)
 
-      return html
+      return ReactDOMServer.renderToString(app)
     },
   }
 }
-
-export default getServerSideFunctions()

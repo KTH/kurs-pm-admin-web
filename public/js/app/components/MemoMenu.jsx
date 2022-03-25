@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { observer } from 'mobx-react'
+// import { observer } from 'mobx-react'
 import {
   Alert,
   Form,
@@ -22,12 +22,13 @@ import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
-import { useStore } from '../mobx'
+import { useWebContext } from '../context/WebContext'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function MemoMenu(props) {
-  const store = useStore()
+  const [store] = useWebContext()
+  console.log('JSON STORE', JSON.stringify(store))
   const [state, setState] = useReducer(paramsReducer, {
     alert: '',
     firstVisit: props.firstVisit,

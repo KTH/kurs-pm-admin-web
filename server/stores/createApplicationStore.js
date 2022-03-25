@@ -3,12 +3,33 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-import { observable } from 'mobx'
+// import { observable } from 'mobx'
 
-import { action } from 'mobx'
-import axios from 'axios'
-import { getAccess } from '../util/helpers'
+// import { action } from 'mobx'
+const axios = require('axios')
 
+const SUPERUSER_PART = 'kursinfo-admins'
+
+const getAccess = (memberOf, round, courseCode, semester) => {
+  if (
+    memberOf.toString().indexOf(courseCode.toUpperCase() + '.examiner') > -1 ||
+    memberOf.toString().indexOf(SUPERUSER_PART) > -1
+  ) {
+    return true
+  }
+
+  if (
+    memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.courseresponsible`) > -1
+  ) {
+    return true
+  }
+
+  if (memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.teachers`) > -1) {
+    return true
+  }
+
+  return false
+}
 const paramRegex = /\/(:[^\/\s]*)/g
 
 function _paramReplace(path, params) {
@@ -282,18 +303,18 @@ function createApplicationStore() {
     activeSemester: '',
     buildApiUrl,
     getMemberOf,
-    createMemoData: action(createMemoData),
-    deleteFileInStorage: action(deleteFileInStorage),
-    getCourseInformation: action(getCourseInformation),
-    getUsedRounds: action(getUsedRounds),
-    handleCourseData: action(handleCourseData),
-    postMemoData: action(postMemoData),
-    putMemoData: action(putMemoData),
-    setBrowserConfig: action(setBrowserConfig),
+    createMemoData,
+    deleteFileInStorage,
+    getCourseInformation,
+    getUsedRounds,
+    handleCourseData,
+    postMemoData,
+    putMemoData,
+    setBrowserConfig,
     setLanguage,
-    updateFileInStorage: action(updateFileInStorage),
+    updateFileInStorage,
   }
   return store
 }
 
-export default createApplicationStore
+module.exports = { createApplicationStore }

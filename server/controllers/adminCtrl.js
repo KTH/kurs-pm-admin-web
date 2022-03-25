@@ -8,7 +8,7 @@ const paths = require('../server').getPaths()
 const browserConfig = require('../configuration').browser
 const serverConfig = require('../configuration').server
 const { getServerSideFunctions } = require('../utils/serverSideRendering')
-
+const { createApplicationStore } = require('../stores/createApplicationStore')
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
@@ -123,37 +123,37 @@ async function getIndex(req, res, next) {
 
   try {
     const context = {}
-    const { createStore, getCompressedStoreCode, renderStaticPage } = getServerSideFunctions()
-    const applicationStore = createStore()
+    const { getCompressedData, renderStaticPage } = getServerSideFunctions()
+    const webContext = { lang, proxyPrefixPath: serverConfig.proxyPrefixPath, ...createApplicationStore() }
 
     /* ------- Settings ------- */
-    applicationStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
-    applicationStore.setLanguage(lang)
-    await applicationStore.getMemberOf(
-      memberOf,
-      req.params.id.toUpperCase(),
-      username,
-      serverConfig.auth.superuserGroup
-    )
+    webContext.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
+    webContext.setLanguage(lang)
+    await webContext.getMemberOf(memberOf, req.params.id.toUpperCase(), username, serverConfig.auth.superuserGroup)
     if (req.params.id.length <= 7) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ' + req.params.id)
       const apiResponse = await koppsCourseData.getKoppsCourseData(req.params.id.toUpperCase(), lang)
       if (apiResponse.statusCode >= 400) {
-        applicationStore.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
+        webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
       } else {
-        await applicationStore.handleCourseData(apiResponse.body, req.params.id.toUpperCase(), username, lang)
+        await webContext.handleCourseData(apiResponse.body, req.params.id.toUpperCase(), username, lang)
       }
     }
-    const compressedStoreCode = getCompressedStoreCode(applicationStore)
+    const compressedData = getCompressedData(webContext)
 
     const { uri: proxyPrefix } = serverConfig.proxyPrefixPath
     console.log('proxyPrefix', proxyPrefix)
 
-    const html = renderStaticPage({ applicationStore, location: req.url, basename: proxyPrefix })
+    const html = renderStaticPage({
+      applicationStore: {},
+      location: req.url,
+      basename: proxyPrefix,
+      context: webContext,
+    })
 
     res.render('admin/index', {
-      compressedStoreCode,
+      compressedData,
       debug: 'debug' in req.query,
       instrumentationKey: serverConfig.appInsights.instrumentationKey,
       html,

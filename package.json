@@ -18,7 +18,7 @@
     "prepare": "husky install",
     "preinstall": "npx npm-force-resolutions",
     "start": "bash -c 'cat /KTH_NODEJS; NODE_ENV=production node app.js'",
-    "start-dev": "bash -c 'NODE_ENV=development concurrently --kill-others -n build,app \"npm run build-dev\" \"nodemon app.js\"'",
+    "start-dev": "bash -c 'NODE_ENV=development concurrently --kill-others -n build,app \"yarn run build-dev\" \"nodemon app.js\"'",
     "test": "NODE_ENV=test jest test/unit/*/*.js --passWithNoTests",
     "vendor": "parcel build ./public/js/vendor.js"
   },
@@ -77,8 +77,7 @@
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",
     "@types/jest": "^27.4.1",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^27.5.1",
+    "ansi-regex": "^6.0.1",
     "babel-loader": "^8.2.3",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",

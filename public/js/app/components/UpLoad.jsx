@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Spinner } from 'reactstrap'
 
 const styles = {
@@ -7,53 +7,44 @@ const styles = {
   display: 'flex',
 }
 
-class UpLoad extends React.Component {
-  constructor() {
-    super()
-    this.onChange = this.onChange.bind(this)
-    this.removeFile = this.removeFile.bind(this)
-    this.state = {
-      files: [],
-    }
+function UpLoad(props) {
+  const [files, setFiles] = useState([])
+  const { id, path, progress, file, notValid, type } = props
+
+  function onChange(event) {
+    props.handleUpload(event.target.id, event.target.files, event)
   }
 
-  onChange(event) {
-    this.props.handleUpload(event.target.id, event.target.files, event)
+  function removeFile(event) {
+    props.handleRemoveFile(event)
   }
 
-  removeFile(event) {
-    this.props.handleRemoveFile(event)
-  }
-
-  render() {
-    //* --- Shows uploded file if file exists otherwise upload button --- */
-    const { id, path, progress, file, notValid, type } = this.props
-    return (
-      <div className={notValid.indexOf(type) > -1 ? 'not-valid' : ''}>
-        {file && file.length > 0 ? (
-          <span>
-            <br />
-            <div className="inline-flex">
-              <p className="upload-text"> {file} </p>
-              <div className="iconContainer icon-trash-can" id={'remove_' + id} onClick={this.removeFile}></div>
-            </div>
-          </span>
-        ) : (
-          <label className="custom-file-upload">
-            <input type="file" id={id} onChange={this.onChange} />
-            {progress > 0 && (
-              <>
-                <Spinner size="sm" color="primary" />
-                <div className="file-progress-bar">
-                  <div className="file-progress" style={{ width: progress + '%' }}></div>
-                </div>
-              </>
-            )}
-          </label>
-        )}
-      </div>
-    )
-  }
+  //* --- Shows uploded file if file exists otherwise upload button --- */
+  return (
+    <div className={notValid.indexOf(type) > -1 ? 'not-valid' : ''}>
+      {file && file.length > 0 ? (
+        <span>
+          <br />
+          <div className="inline-flex">
+            <p className="upload-text"> {file} </p>
+            <div className="iconContainer icon-trash-can" id={'remove_' + id} onClick={this.removeFile}></div>
+          </div>
+        </span>
+      ) : (
+        <label className="custom-file-upload">
+          <input type="file" id={id} onChange={this.onChange} />
+          {progress > 0 && (
+            <>
+              <Spinner size="sm" color="primary" />
+              <div className="file-progress-bar">
+                <div className="file-progress" style={{ width: progress + '%' }}></div>
+              </div>
+            </>
+          )}
+        </label>
+      )}
+    </div>
+  )
 }
 
 export default UpLoad

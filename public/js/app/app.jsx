@@ -4,47 +4,45 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 // Store
-import { MobxStoreProvider, uncompressStoreInPlaceFromDocument } from './mobx'
-import createApplicationStore from './stores/createApplicationStore'
+import { WebContextProvider } from './context/WebContext'
+import { uncompressData } from './context/compress'
+
 import AdminPage from './views/AdminPage'
 import '../../css/memo-admin.scss'
 
 export default appFactory
 
+_renderOnClientSide()
+
 function _renderOnClientSide() {
   const isClientSide = typeof window !== 'undefined'
-  console.log('1111')
-
   if (!isClientSide) {
     return
   }
-  console.log('2222')
 
-  const basename = window.config.proxyPrefixPath.uri
-  const applicationStore = createApplicationStore()
-  uncompressStoreInPlaceFromDocument(applicationStore)
-  console.log('3333')
+  const webContext = {}
+  uncompressData(webContext)
 
-  // Removed basename because it is causing empty string basename={basename}
-  const app = <BrowserRouter>{appFactory(applicationStore)}</BrowserRouter>
+  const basename = webContext.proxyPrefixPath.uri
+
+  const app = <BrowserRouter basename={basename}>{appFactory({}, webContext)}</BrowserRouter>
+
   const domElement = document.getElementById('app')
-  console.log('domElement', domElement)
-  ReactDOM.render(app, domElement)
-  // ReactDOM.render(<BrowserRouter>{appFactory(applicationStore)}</BrowserRouter>, domElement)
+  ReactDOM.hydrate(app, domElement)
 }
 
-_renderOnClientSide()
-
-function appFactory(applicationStore) {
+function appFactory(applicationStore, context) {
   return (
-    <MobxStoreProvider initCallback={() => applicationStore}>
+    <WebContextProvider configIn={context}>
       <Routes>
         {/* <AdminPage /> */}
 
-        {/* <Route exact path="/kursinfoadmin/pm/:id" component={Hello} /> */}
-        <Route path="/kursinfoadmin/pm" component={AdminPage} />
+        <Route exact path="/:id" element={<AdminPage />} />
+        <Route exact path="/" element={<p>hello</p>} />
+
+        {/* <Route path="/kursinfoadmin/pm" component={AdminPage} /> */}
         {/* <Route path="/kursinfoadmin/pm" component={AdminPage} /> */}
       </Routes>
-    </MobxStoreProvider>
+    </WebContextProvider>
   )
 }
