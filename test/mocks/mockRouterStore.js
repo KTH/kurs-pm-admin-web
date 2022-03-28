@@ -1,6 +1,6 @@
-import RouterStore from '../../public/js/app/stores/RouterStore'
+import { createStoreClientFunctions } from '../../public/js/app/stores/createStoreClientFunctions'
 
-const realRouterStore = new RouterStore()
+const storeFunctions = createStoreClientFunctions()
 const usedRounds = {
   roundIdList: ['2'],
   roundsIdWithWebVersion: {},
@@ -14,7 +14,8 @@ const usedRounds = {
 }
 const mockRouterStore = (userLang = 'en') => {
   const routerWithData = {
-    ...realRouterStore,
+    ...storeFunctions,
+    language: 1,
     courseData: { courseCode: 'EF1111', gradeScale: { PF: 'P, F' }, semesterObjectList: {} },
     courseTitle: { name: 'Project in Plasma Physics', credits: '9.0' },
     browserConfig: {

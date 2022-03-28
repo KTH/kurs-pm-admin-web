@@ -12,7 +12,7 @@ const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
   const rS = mockRouterStore(userLang, status)
   return (
     <MemoMenu
-      routerStore={rS}
+      store={rS}
       {...rest}
       semesterList={rS.semesters}
       roundList={rS.roundData}
