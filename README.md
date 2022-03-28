@@ -109,14 +109,6 @@ These settings are also available in an `env.in` file.
 
 ### Install
 
-First time you might need to use options `--ignore-scripts` because of npm resolutions:
-
-```sh
-npm install --ignore-scripts
-```
-
-or
-
 ```sh
 npm install
 
@@ -128,6 +120,8 @@ You might need to install as well:
 npm install cross-env
 npm install concurrently
 ```
+
+- `mini-css-extract-plugin` requires installation by `yarn` therefore it's added in `postinstall` step
 
 ### Usage
 
