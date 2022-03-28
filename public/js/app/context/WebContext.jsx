@@ -1,7 +1,7 @@
 import React from 'react'
 
 const WebContext = React.createContext()
-const defaultConfig = {
+const defaultConfig = () => ({
   lang: 'sv',
   isAdmin: false,
   basicBreadcrumbs: [
@@ -10,11 +10,11 @@ const defaultConfig = {
   ],
   proxyPrefixPath: { uri: 'node' },
   message: 'howdi',
-}
+})
 
 export const WebContextProvider = props => {
   const { configIn = {} } = props
-  const config = { ...defaultConfig }
+  const config = { ...defaultConfig() }
   for (const k in configIn) {
     if (Object.prototype.hasOwnProperty.call(configIn, k)) {
       if (typeof configIn[k] === 'object') {

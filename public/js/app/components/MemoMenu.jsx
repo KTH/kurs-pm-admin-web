@@ -27,8 +27,8 @@ import { useWebContext } from '../context/WebContext'
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function MemoMenu(props) {
-  const [store] = useWebContext()
-  console.log('JSON STORE', JSON.stringify(store))
+  const { store: rawStore } = props
+  const store = React.useMemo(() => rawStore, [rawStore])
   const [state, setState] = useReducer(paramsReducer, {
     alert: '',
     firstVisit: props.firstVisit,
@@ -48,26 +48,25 @@ function MemoMenu(props) {
     newSemester: false,
     usedRoundSelected: props.tempData ? props.tempData.usedRoundSelected : 0,
   })
-  console.log('state', JSON.stringify(state))
 
-  function _componentWillMount() {
-    const { progress } = props
-    const { lastSelected, semester } = state
+  // function _componentWillMount() {
+  //   const { progress } = props
+  //   const { lastSelected, semester } = state
 
-    if (store.usedRounds.usedRoundsIdList || store.hasChangedStatus) {
-      getUsedRounds(semester)
-    } else if (progress === 'new_back') {
-      setState({
-        semester,
-        usedRounds: store.usedRounds.usedRoundsIdList || [],
-        usedRoundsWithWebVer: store.usedRounds.roundsIdWithWebVersion || {},
-        lastSelected: lastSelected,
-        alert: '',
-      })
-    }
-  }
+  //   if (store.usedRounds.usedRoundsIdList || store.hasChangedStatus) {
+  //     getUsedRounds(semester)
+  //   } else if (progress === 'new_back') {
+  //     setState({
+  //       semester,
+  //       usedRounds: store.usedRounds.usedRoundsIdList || [],
+  //       usedRoundsWithWebVer: store.usedRounds.roundsIdWithWebVersion || {},
+  //       lastSelected: lastSelected,
+  //       alert: '',
+  //     })
+  //   }
+  // }
 
-  _componentWillMount()
+  // _componentWillMount()
 
   // ******************************* SEMESTER DROPDOWN ******************************* */
   // ********************************************************************************** */
@@ -142,7 +141,6 @@ function MemoMenu(props) {
   }
 
   function toggleModal(event) {
-    console.log('modal')
     const { modalOpen } = state
     modalOpen[event.target.id] = !modalOpen[event.target.id]
     setState({

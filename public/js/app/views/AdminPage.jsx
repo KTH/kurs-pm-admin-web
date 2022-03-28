@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react'
-// import { inject, observer } from 'mobx-react'
+import { observer } from 'mobx-react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
 import { useNavigate } from 'react-router-dom'
@@ -17,12 +17,13 @@ import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '
 import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
+import { createStoreFunctions } from '../stores/createStoreFunctions'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function AdminPage(props) {
-  console.log('AdminPage', JSON.stringify(props))
-  const [store] = useWebContext()
+  const [rawStore] = useWebContext()
+  const store = { ...rawStore, ...createStoreFunctions() }
   const history = useNavigate()
 
   const [state, setState] = useReducer(paramsReducer, {
@@ -47,6 +48,8 @@ function AdminPage(props) {
     roundIdList: [],
     usedRoundSelected: 0,
   })
+
+  const { progress, isPreviewMode } = state
   const { alertSuccess, fileProgress, roundIdList } = state
 
   const { activeSemester, courseCode, language: langIndex, roundData } = store
@@ -123,7 +126,6 @@ function AdminPage(props) {
       req.upload.addEventListener('progress', event => {
         if (event.lengthComputable) {
           fileProgress[id] = (event.loaded / event.total) * 100
-          //console.log(fileProgress[id])
           setState({ fileProgress: fileProgress })
         }
       })
@@ -199,7 +201,7 @@ function AdminPage(props) {
 
   function handleBack(event) {
     event.preventDefault()
-    if (state.progress === 'edit') {
+    if (progress === 'edit') {
       history.push(store.browserConfig.proxyPrefixPath.uri + '/' + store.courseCode)
       if (store.semesters.length === 0) {
         return store.getCourseInformation(store.courseCode, store.user, store.language).then(courseData =>
@@ -282,7 +284,6 @@ function AdminPage(props) {
         )
       })
       .catch(err => {
-        console.log('err', err)
         // this.setAlarm("danger", "errWhileSaving");
         if (err.response) {
           throw new Error(err.message)
@@ -296,6 +297,7 @@ function AdminPage(props) {
 
   function editMode(semester, rounds, tempData, usedRoundSelected) {
     const newMemoList = store.createMemoData(semester, rounds)
+
     setState({
       progress: 'edit',
       isPreviewMode: false,
@@ -332,7 +334,7 @@ function AdminPage(props) {
   }
 
   function getTempData() {
-    if (state.progress === 'back_new') {
+    if (progress === 'back_new') {
       const { memoFile, roundIdList, pdfMemoDate, usedRoundSelected } = state
       return { roundIdList, memoFile, pdfMemoDate, usedRoundSelected }
     }
@@ -352,7 +354,7 @@ function AdminPage(props) {
     return returnObject
   }
 
-  if (store.newMemoList.length === 0 || state.progress === 'back_new')
+  if (store.newMemoList.length === 0 || progress === 'back_new')
     return (
       <div className="kip-container">
         {store.errorMessage.length === 0 ? (
@@ -378,13 +380,14 @@ function AdminPage(props) {
                 editMode={editMode}
                 semesterList={store.semesters}
                 roundList={store.roundData}
-                progress={state.progress}
+                progress={progress}
                 activeSemester={activeSemester}
                 firstVisit={store.newMemoList.length === 0}
                 status={store.status}
                 tempData={/*state.saved ? {} : */ getTempData()}
                 saved={false}
                 handleRemoveFile={handleRemoveFile}
+                store={store}
               />
             )}
           </>
@@ -416,7 +419,7 @@ function AdminPage(props) {
               title={store.courseTitle}
               language={langIndex}
               courseCode={courseCode}
-              progress={state.progress === 'edit' ? 2 : 3}
+              progress={progress === 'edit' ? 2 : 3}
               header={translate.header_main}
               showProgressBar={store.status !== 'preview'}
             />
@@ -451,7 +454,7 @@ function AdminPage(props) {
               </Row>
             )}
             {/* Accessability alert */}
-            {state.progress === 'edit' && (
+            {progress === 'edit' && (
               <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
                 <Alert color="info">
                   {`${translate.alert_accessability_link_before} `}

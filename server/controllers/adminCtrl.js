@@ -143,7 +143,6 @@ async function getIndex(req, res, next) {
     const compressedData = getCompressedData(webContext)
 
     const { uri: proxyPrefix } = serverConfig.proxyPrefixPath
-    console.log('proxyPrefix', proxyPrefix)
 
     const html = renderStaticPage({
       applicationStore: {},

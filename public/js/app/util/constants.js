@@ -22,6 +22,7 @@ export const LANGUAGE = {
     svenska: 'svenska',
   },
 }
+export const SUPERUSER_PART = 'kursinfo-admins'
 export const ADMIN_COURSE_PM_DATA = '/kursinfoadmin/kurs-pm-data/'
 
 // en = 0, sv = 1
