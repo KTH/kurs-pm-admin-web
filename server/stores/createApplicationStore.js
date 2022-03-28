@@ -3,9 +3,7 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-// import { observable } from 'mobx'
 
-// import { action } from 'mobx'
 const axios = require('axios')
 
 const SUPERUSER_PART = 'kursinfo-admins'

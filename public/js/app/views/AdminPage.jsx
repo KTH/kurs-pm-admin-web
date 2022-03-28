@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react'
-import { observer } from 'mobx-react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
 import { useNavigate } from 'react-router-dom'

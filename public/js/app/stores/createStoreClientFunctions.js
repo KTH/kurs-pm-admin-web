@@ -3,9 +3,6 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-import { observable } from 'mobx'
-
-import { action } from 'mobx'
 import axios from 'axios'
 import { getAccess } from '../util/helpers'
 
