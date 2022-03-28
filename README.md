@@ -1,6 +1,6 @@
 # Welcome to kurs-pm-admin-web
 
-![Prerequisite](https://img.shields.io/badge/node-14.2.0-blue.svg)
+![Prerequisite](https://img.shields.io/badge/node-16-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 ## Introduction
@@ -52,7 +52,7 @@ We must try to make changes that affect the template projects in the template pr
 
 ## Prerequisites
 
-- node 14.2.0
+- node 16
 
 Because OICD library is compatible only with node 12.0.0 or > 14.2.0
 
