@@ -1,6 +1,6 @@
 # Welcome to kurs-pm-admin-web
 
-![Prerequisite](https://img.shields.io/badge/node-14.2.0-blue.svg)
+![Prerequisite](https://img.shields.io/badge/node-16-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
 ## Introduction
@@ -52,7 +52,7 @@ We must try to make changes that affect the template projects in the template pr
 
 ## Prerequisites
 
-- node 14.2.0
+- node 16
 
 Because OICD library is compatible only with node 12.0.0 or > 14.2.0
 
@@ -110,15 +110,18 @@ These settings are also available in an `env.in` file.
 ### Install
 
 First time you might need to use options `--ignore-scripts` because of npm resolutions:
+
 ```sh
 npm install --ignore-scripts
 ```
-or 
+
+or
 
 ```sh
 npm install
 
 ```
+
 You might need to install as well:
 
 ```sh
@@ -134,44 +137,48 @@ Start the service on [http://localhost:3000/kursinfoadmin/pm/:courseCode](http:/
 npm run start-dev
 ```
 
-
 ### Debug in Visual Studio Code
+
 It's possible to use debugging options available in Visual Studio Code
 Add a file `launch.json` to `.vscode` directory :
-- *Microsoft*
+
+- _Microsoft_
+
 ```json
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",           
-            "request": "launch",
-            "name": "Debug kurs-pm-admin-web",
-            "program": "${workspaceFolder}\\app.js",
-            "envFile": "${workspaceFolder}\\.env",
-            "env": {
-              "NODE_ENV": "development"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug kurs-pm-admin-web",
+      "program": "${workspaceFolder}\\app.js",
+      "envFile": "${workspaceFolder}\\.env",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
 }
 ```
+
 - _Mac, Unix and so on_
+
 ```json
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",           
-            "request": "launch",
-            "name": "Debug kurs-pm-admin-web",
-            "program": "${workspaceFolder}/app.js",
-            "envFile": "${workspaceFolder}/.env",
-            "env": {
-              "NODE_ENV": "development"
-            }
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug kurs-pm-admin-web",
+      "program": "${workspaceFolder}/app.js",
+      "envFile": "${workspaceFolder}/.env",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
 }
 ```
 

@@ -9,6 +9,7 @@
   <meta name="description" content="{{description}}">
   <link rel="shortcut icon" href="//www.kth.se/polopoly_fs/1.871948.1550155901!/favicon.ico">
   <!--link rel="shortcut icon" id="favicon" href="//www.kth.se/img/icon/favicon.ico"-->
+  <link rel="shortcut icon" id="favicon" href="/kursinfoadmin/pm/static/icon/favicon">
 
   {{#if canonicalUrl}}
   <link href="{{canonicalUrl}}" rel="canonical">
@@ -26,11 +27,8 @@
   <!--script src="//www.kth.se/social/toolbar/widget.js"></script-->
   {{/extend}}
 
-  {{#if debug}}
-  {{prefixScript '/static/js/lib/firebug-lite/build/firebug-lite.js' 'head-scripts'}}
-  {{/if}}
-
   {{{render 'head-scripts'}}}
+  {{#if instrumentationKey}}
   <script type="text/javascript">
     var appInsights = window.appInsights || function (a) {
       function b(a) {
@@ -43,13 +41,14 @@
       }); try {c.cookie = d.cookie} catch (a) {} c.queue = []; for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;)b("track" + f.pop()); if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) {f = "onerror", b("_" + f); var g = e[f]; e[f] = function (a, b, d, e, h) {var i = g && g(a, b, d, e, h); return !0 !== i && c["_" + f](a, b, d, e, h), i}} return c
     }({instrumentationKey: "{{{instrumentationKey}}}"}); window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView(); 
   </script>
+  {{/if}}
 </head>
 
 <body>
   {{> kthHeader }}
   <div class="container start main">
     <div class="row">
-      {{{body}}}
+        {{{body}}}
     </div>
   </div>
   {{> kthFooter }}
