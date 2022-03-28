@@ -17,14 +17,11 @@ import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '
 import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
-import { createStoreFunctions } from '../stores/createStoreFunctions'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function AdminPage(props) {
-  const [rawStore] = useWebContext()
-  const store = { ...rawStore, ...createStoreFunctions() }
-  const history = useNavigate()
+  const [store] = useWebContext()
 
   const [state, setState] = useReducer(paramsReducer, {
     saved: false, //TO DELETE
@@ -202,7 +199,6 @@ function AdminPage(props) {
   function handleBack(event) {
     event.preventDefault()
     if (progress === 'edit') {
-      history.push(store.browserConfig.proxyPrefixPath.uri + '/' + store.courseCode)
       if (store.semesters.length === 0) {
         return store.getCourseInformation(store.courseCode, store.user, store.language).then(courseData =>
           setState({
@@ -400,12 +396,7 @@ function AdminPage(props) {
     )
   else
     return (
-      <div
-        key="kurs-pm-form-container"
-        className="kip-container"
-        id="kurs-pm-form-container"
-        ref={ref => (this._div = ref)}
-      >
+      <div key="kurs-pm-form-container" className="kip-container" id="kurs-pm-form-container">
         {/************************************************************************************* */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
         {/************************************************************************************* */}

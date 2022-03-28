@@ -34,13 +34,7 @@ function appFactory(applicationStore, context) {
   return (
     <WebContextProvider configIn={context}>
       <Routes>
-        {/* <AdminPage /> */}
-
         <Route exact path="/:id" element={<AdminPage />} />
-        <Route exact path="/" element={<p>hello</p>} />
-
-        {/* <Route path="/kursinfoadmin/pm" component={AdminPage} /> */}
-        {/* <Route path="/kursinfoadmin/pm" component={AdminPage} /> */}
       </Routes>
     </WebContextProvider>
   )

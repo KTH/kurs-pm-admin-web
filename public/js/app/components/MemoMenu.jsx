@@ -282,9 +282,9 @@ function MemoMenu(props) {
       <Row className="button-container text-center">
         <Col sm="12" lg="4" />
         <Col sm="12" lg="4">
-          <button className="alert alert-secondary" id="cancel" key="cancel" onClick={toggleModal}>
+          <Button className="alert alert-secondary" id="cancel" key="cancel" onClick={toggleModal}>
             {translate.btn_cancel}
-          </button>
+          </Button>
         </Col>
         <Col sm="12" lg="4">
           {!firstVisit && !canOnlyPreview && (
