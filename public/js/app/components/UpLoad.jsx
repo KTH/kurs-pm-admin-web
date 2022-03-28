@@ -27,12 +27,12 @@ function UpLoad(props) {
           <br />
           <div className="inline-flex">
             <p className="upload-text"> {file} </p>
-            <div className="iconContainer icon-trash-can" id={'remove_' + id} onClick={this.removeFile}></div>
+            <div className="iconContainer icon-trash-can" id={'remove_' + id} onClick={removeFile}></div>
           </div>
         </span>
       ) : (
         <label className="custom-file-upload">
-          <input type="file" id={id} onChange={this.onChange} />
+          <input type="file" id={id} onChange={onChange} />
           {progress > 0 && (
             <>
               <Spinner size="sm" color="primary" />
