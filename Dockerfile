@@ -17,6 +17,8 @@ COPY ["package-lock.json", "package-lock.json"]
 # Copy source files, so changes does not trigger gulp.
 COPY ["app.js", "app.js"]
 COPY ["server", "server"]
+COPY ["build.sh", "build.sh"]
+COPY ["webpack.config.js", "webpack.config.js"]
 
 RUN apk stats && \
     chmod a+rx build.sh && \

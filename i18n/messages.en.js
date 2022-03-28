@@ -15,6 +15,7 @@ module.exports = {
      */
     service_name: 'kurs ',
     title: 'Course memo administration',
+    skip_to_main_content: 'Skip to main content',
 
     lang_block_id: '1.272446',
     locale_text: 'This page in English',

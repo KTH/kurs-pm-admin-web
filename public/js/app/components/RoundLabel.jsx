@@ -72,25 +72,25 @@ const RoundLabel = ({
 
   if (showAccessInfo && !hasAccess)
     return (
-      <div key={'round-' + roundId}>
+      <span key={'round-' + roundId}>
         {roundInputLabel}
         <span className="no-access">
           <NotAuthorizedPublishMessage languageIndex={language} />
         </span>{' '}
-      </div>
+      </span>
     )
 
   if (showAccessInfo && hasPublishedPdf)
     return (
-      <div key={'round-' + roundId}>
+      <span key={'round-' + roundId}>
         {roundInputLabel}
         <span className="no-access">{` ${translate.has_published_memo}`}</span>{' '}
-      </div>
+      </span>
     )
 
   if (hasWebVersion)
     return (
-      <div key={'round-' + roundId}>
+      <span key={'round-' + roundId}>
         {roundInputLabel}
         <WebBasedMemoLabelAndLink
           courseCode={courseCode}
@@ -100,9 +100,9 @@ const RoundLabel = ({
           status={webVersionInfo.status}
           version={webVersionInfo.version}
         />
-      </div>
+      </span>
     )
-  return <div key={'round-' + roundId}>{roundInputLabel}</div>
+  return <span key={'round-' + roundId}>{roundInputLabel}</span>
 }
 
 export default RoundLabel

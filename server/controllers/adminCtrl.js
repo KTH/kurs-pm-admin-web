@@ -2,29 +2,19 @@
 
 const log = require('@kth/log')
 const language = require('@kth/kth-node-web-common/lib/language')
-const { toJS } = require('mobx')
 const httpResponse = require('@kth/kth-node-response')
 const paths = require('../server').getPaths()
-const ReactDOMServer = require('react-dom/server')
 
 const browserConfig = require('../configuration').browser
 const serverConfig = require('../configuration').server
-
+const { getServerSideFunctions } = require('../utils/serverSideRendering')
+const { createApplicationStore } = require('../stores/createApplicationStore')
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
 const koppsCourseData = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 
-function _staticRender(context, location) {
-  if (process.env.NODE_ENV === 'development') {
-    delete require.cache[require.resolve('../../dist/app.js')]
-  }
-
-  const { staticFactory } = require('../../dist/app.js')
-
-  return staticFactory(context, location)
-}
 module.exports = {
   getIndex: getIndex,
   postMemoData: _postMemoData,
@@ -132,57 +122,47 @@ async function getIndex(req, res, next) {
   const { memberOf } = loggedInUser
 
   try {
-    const renderProps = _staticRender({}, req.url)
+    const context = {}
+    const { getCompressedData, renderStaticPage } = getServerSideFunctions()
+    const webContext = { lang, proxyPrefixPath: serverConfig.proxyPrefixPath, ...createApplicationStore() }
+
     /* ------- Settings ------- */
-    renderProps.props.children.props.routerStore.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
-    renderProps.props.children.props.routerStore.setLanguage(lang)
-    await renderProps.props.children.props.routerStore.getMemberOf(
-      memberOf,
-      req.params.id.toUpperCase(),
-      username,
-      serverConfig.auth.superuserGroup
-    )
+    webContext.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
+    webContext.setLanguage(lang)
+    await webContext.getMemberOf(memberOf, req.params.id.toUpperCase(), username, serverConfig.auth.superuserGroup)
     if (req.params.id.length <= 7) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ' + req.params.id)
       const apiResponse = await koppsCourseData.getKoppsCourseData(req.params.id.toUpperCase(), lang)
       if (apiResponse.statusCode >= 400) {
-        renderProps.props.children.props.routerStore.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
+        webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
       } else {
-        await renderProps.props.children.props.routerStore.handleCourseData(
-          apiResponse.body,
-          req.params.id.toUpperCase(),
-          username,
-          lang
-        )
+        await webContext.handleCourseData(apiResponse.body, req.params.id.toUpperCase(), username, lang)
       }
     }
+    const compressedData = getCompressedData(webContext)
 
-    const html = ReactDOMServer.renderToString(renderProps)
+    const { uri: proxyPrefix } = serverConfig.proxyPrefixPath
+
+    const html = renderStaticPage({
+      applicationStore: {},
+      location: req.url,
+      basename: proxyPrefix,
+      context: webContext,
+    })
 
     res.render('admin/index', {
+      compressedData,
       debug: 'debug' in req.query,
       instrumentationKey: serverConfig.appInsights.instrumentationKey,
       html,
       title: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
-      initialState: JSON.stringify(hydrateStores(renderProps)),
       lang,
+      proxyPrefix,
       description: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
     })
   } catch (err) {
     log.error('Error in getIndex', { error: err })
     next(err)
   }
-}
-
-function hydrateStores(renderProps) {
-  // This assumes that all stores are specified in a root element called Provider
-  const props = renderProps.props.children.props
-  const outp = {}
-  for (let key in props) {
-    if (typeof props[key].initializeStore === 'function') {
-      outp[key] = encodeURIComponent(JSON.stringify(toJS(props[key], true)))
-    }
-  }
-  return outp
 }

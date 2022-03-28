@@ -440,24 +440,8 @@ span.right-links {
   }
 }
 
-//Kursplan, kurspm, kursanalys links
-.pdf-link {
-  &:before {
-    background: url(https://app.kth.se/style/static/kth-style/img/kth-style/icons/file-pdf-fa-regular.svg) no-repeat;
-    content: '';
-    display: inline-block;
-    height: 1.3em;
-    width: 1.3em;
-    margin: 0.5em 0.4em 0.6em 0.4em;
-    vertical-align: middle;
-  }
-}
-
 // ------- HELPERS ------- //
-// .alert-margin {
-//   margin-top: 40px !important;
-//   margin-bottom: 40px !important;
-// }
+
 .inline-flex {
   display: inline-flex;
 }
@@ -497,7 +481,7 @@ span.right-links {
 }
 
 .icon-trash-can {
-  background-image: url('https://app.kth.se/style/static/kth-style/img/kth-style/icons/trash-can-blue.svg');
+  background-image: url('https://app.kth.se/style/static/kth-style/img/kth-style/icons/delete-blue.svg');
   cursor: pointer;
   width: 20px;
   height: 20px;
@@ -560,7 +544,7 @@ span.right-links {
   opacity: 0.5;
 }
 
-button.close {
+button.btn-close {
   display: none;
 }
 

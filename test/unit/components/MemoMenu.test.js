@@ -1,9 +1,8 @@
 import React from 'react'
-import { Provider } from 'mobx-react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 import i18n from '../../../i18n'
-import { StaticRouter } from 'react-router'
+import { StaticRouter } from 'react-router-dom/server'
 import MemoMenu from '../../../public/js/app/components/MemoMenu'
 import mockRouterStore from '../../mocks/mockRouterStore'
 const { getAllByRole, getAllByTestId, getAllByText, getByTestId, getByText } = screen
@@ -12,7 +11,7 @@ const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
   const rS = mockRouterStore(userLang, status)
   return (
     <MemoMenu
-      routerStore={rS}
+      store={rS}
       {...rest}
       semesterList={rS.semesters}
       roundList={rS.roundData}
