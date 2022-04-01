@@ -20,12 +20,12 @@ import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function AdminPage(props) {
-  const [store] = useWebContext()
+  const [webContext] = useWebContext()
 
   const [state, setState] = useReducer(paramsReducer, {
     saved: false, //TO DELETE
-    progress: store.status === 'new' ? 'new' : 'edit',
-    isPreviewMode: store.status === 'preview',
+    progress: webContext.status === 'new' ? 'new' : 'edit',
+    isPreviewMode: webContext.status === 'preview',
     modalOpen: {
       publish: false,
       cancel: false,
@@ -48,7 +48,7 @@ function AdminPage(props) {
   const { progress, isPreviewMode } = state
   const { alertSuccess, fileProgress, roundIdList } = state
 
-  const { activeSemester, courseCode, language: langIndex, roundData } = store
+  const { activeSemester, courseCode, language: langIndex, roundData } = webContext
 
   const translate = i18n.messages[langIndex].messages
 
@@ -74,7 +74,7 @@ function AdminPage(props) {
   // *********************************  Helpers  ********************************* */
   // ********************************************************************************** */
   function filterChosenRoundsList() {
-    const { activeSemester, language: langIndex, roundData } = store
+    const { activeSemester, language: langIndex, roundData } = webContext
     const { roundIdList } = state
 
     const chosenRoundsList = activeSemester
@@ -86,7 +86,7 @@ function AdminPage(props) {
   function getCourseOfferingsNames(chosenRoundsList) {
     if (!chosenRoundsList) return ''
 
-    const { activeSemester, language: langIndex } = store
+    const { activeSemester, language: langIndex } = webContext
 
     const courseOfferings = chosenRoundsList.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
     return courseOfferings
@@ -96,7 +96,7 @@ function AdminPage(props) {
   // ********************************************************************************** */
 
   async function handleUploadFile(id, file, e) {
-    const { language: langIndex } = store
+    const { language: langIndex } = webContext
     if (e.target.files[0].type === 'application/pdf') {
       try {
         const response = await sendRequest(id, file, e)
@@ -132,7 +132,7 @@ function AdminPage(props) {
           setState({
             memoFile: this.responseText,
             pdfMemoDate: getTodayDate(),
-            alertSuccess: i18n.messages[store.language].messages.alert_uploaded_file,
+            alertSuccess: i18n.messages[webContext.language].messages.alert_uploaded_file,
             notValid: [],
             alertError: '',
           })
@@ -148,9 +148,9 @@ function AdminPage(props) {
       formData.append('koppsRoundIds', data.koppsRoundIds)
       req.open(
         'POST',
-        `${store.browserConfig.hostUrl}${store.paths.storage.saveFile.uri.split(':')[0]}${store.activeSemester}/${
-          store.courseCode
-        }/${state.rounds}`
+        `${webContext.browserConfig.hostUrl}${webContext.paths.storage.saveFile.uri.split(':')[0]}${
+          webContext.activeSemester
+        }/${webContext.courseCode}/${state.rounds}`
       )
       req.send(formData)
     })
@@ -158,7 +158,7 @@ function AdminPage(props) {
 
   function getMetadata(status) {
     return {
-      courseCode: store.courseCode,
+      courseCode: webContext.courseCode,
       pm: state.memoFile,
       status,
       koppsRoundIds: state.roundIdList.toString(),
@@ -167,7 +167,7 @@ function AdminPage(props) {
 
   function handleRemoveFile(fileName = '') {
     if (fileName.length > 0 || state.memoFile.length > 0) {
-      store.deleteFileInStorage(state.memoFile).then(result => {
+      webContext.deleteFileInStorage(state.memoFile).then(result => {
         setState({ memoFile: '', hasNewUploadedFilePM: false })
       })
     }
@@ -182,7 +182,7 @@ function AdminPage(props) {
     if (invalidList.length > 0) {
       setState({
         notValid: invalidList,
-        alertError: i18n.messages[store.language].messages.alert_empty_fields,
+        alertError: i18n.messages[webContext.language].messages.alert_empty_fields,
       })
     } else {
       setState({
@@ -198,14 +198,16 @@ function AdminPage(props) {
   function handleBack(event) {
     event.preventDefault()
     if (progress === 'edit') {
-      if (store.semesters.length === 0) {
-        return store.getCourseInformation(store.courseCode, store.user, store.language).then(courseData =>
-          setState({
-            isPreviewMode: false,
-            progress: 'back_new',
-            alert: '',
-          })
-        )
+      if (webContext.semesters.length === 0) {
+        return webContext
+          .getCourseInformation(webContext.courseCode, webContext.user, webContext.language)
+          .then(courseData =>
+            setState({
+              isPreviewMode: false,
+              progress: 'back_new',
+              alert: '',
+            })
+          )
       }
       setState({
         isPreviewMode: false,
@@ -231,7 +233,7 @@ function AdminPage(props) {
     const { modalOpen: modal } = state
     modal.cancel = false
     setState({ modalOpen: modal })
-    window.location = `${SERVICE_URL.admin}${store.courseCode}?serv=pm&event=cancel`
+    window.location = `${SERVICE_URL.admin}${webContext.courseCode}?serv=pm&event=cancel`
   }
 
   function handlePublish(event, fromModal = false) {
@@ -241,10 +243,10 @@ function AdminPage(props) {
     const { memoFile, pdfMemoDate } = state
     const { modalOpen: modal } = state
     const metadata = getMetadata('published')
-    store.updateFileInStorage(memoFile, metadata)
+    webContext.updateFileInStorage(memoFile, metadata)
 
-    return store
-      .postMemoData(store.newMemoList, memoFile, pdfMemoDate)
+    return webContext
+      .postMemoData(webContext.newMemoList, memoFile, pdfMemoDate)
       .then(response => {
         modal.publish = false
         if (response.status >= 400 || response === undefined || response.message) {
@@ -259,9 +261,9 @@ function AdminPage(props) {
           saved: true,
           modalOpen: modal,
         })
-        const { hostUrl } = store.browserConfig
-        const { roundsIdWithPdfVersion = {} } = store.usedRounds
-        const { activeSemester, courseCode, language: langIndex } = store
+        const { hostUrl } = webContext.browserConfig
+        const { roundsIdWithPdfVersion = {} } = webContext.usedRounds
+        const { activeSemester, courseCode, language: langIndex } = webContext
         let publishType = 'pub'
         const chosenRoundsList = filterChosenRoundsList()
         const courseOfferings = getCourseOfferingsNames(chosenRoundsList)
@@ -291,7 +293,7 @@ function AdminPage(props) {
   //* ********************************************************** */
 
   function editMode(semester, rounds, tempData, usedRoundSelected) {
-    const newMemoList = store.createMemoData(semester, rounds)
+    const newMemoList = webContext.createMemoData(semester, rounds)
 
     setState({
       progress: 'edit',
@@ -349,13 +351,13 @@ function AdminPage(props) {
     return returnObject
   }
 
-  if (store.newMemoList.length === 0 || progress === 'back_new')
+  if (webContext.newMemoList.length === 0 || progress === 'back_new')
     return (
       <div className="kip-container">
-        {store.errorMessage.length === 0 ? (
+        {webContext.errorMessage.length === 0 ? (
           <>
             <Title
-              title={store.courseTitle}
+              title={webContext.courseTitle}
               language={langIndex}
               courseCode={courseCode}
               progress={1}
@@ -366,29 +368,29 @@ function AdminPage(props) {
             {/* ************************************************************************************ */}
             {/*                               PAGE1: MEMO MENU                             */}
             {/* ************************************************************************************ */}
-            {store.semesters.length === 0 ? (
+            {webContext.semesters.length === 0 ? (
               <Row key="no-rounds" className="w-100 my-0 mx-auto upper-alert">
                 <Alert color="info"> {translate.alert_no_rounds_selected} </Alert>
               </Row>
             ) : (
               <MemoMenu
                 editMode={editMode}
-                semesterList={store.semesters}
-                roundList={store.roundData}
+                semesterList={webContext.semesters}
+                roundList={webContext.roundData}
                 progress={progress}
                 activeSemester={activeSemester}
-                firstVisit={store.newMemoList.length === 0}
-                status={store.status}
+                firstVisit={webContext.newMemoList.length === 0}
+                status={webContext.status}
                 tempData={/*state.saved ? {} : */ getTempData()}
                 saved={false}
                 handleRemoveFile={handleRemoveFile}
-                store={store}
+                context={webContext}
               />
             )}
           </>
         ) : (
           <Row key="error-message" className="w-100 my-0 mx-auto upper-alert">
-            <Alert color="info"> {store.errorMessage}</Alert>
+            <Alert color="info"> {webContext.errorMessage}</Alert>
           </Row>
         )}
       </div>
@@ -399,19 +401,19 @@ function AdminPage(props) {
         {/************************************************************************************* */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
         {/************************************************************************************* */}
-        {(store.errorMessage.length > 0 && (
+        {(webContext.errorMessage.length > 0 && (
           <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
-            <Alert color="info">{store.errorMessage}</Alert>
+            <Alert color="info">{webContext.errorMessage}</Alert>
           </Row>
         )) || (
           <div>
             <Title
-              title={store.courseTitle}
+              title={webContext.courseTitle}
               language={langIndex}
               courseCode={courseCode}
               progress={progress === 'edit' ? 2 : 3}
               header={translate.header_main}
-              showProgressBar={store.status !== 'preview'}
+              showProgressBar={webContext.status !== 'preview'}
             />
             <div className="page-header-wrapper">
               {/* ---- Selected semester---- */}
@@ -428,8 +430,8 @@ function AdminPage(props) {
                       key={'round' + round.roundId}
                       language={langIndex}
                       round={round}
-                      semester={store.activeSemester}
-                      usedRounds={store.usedRounds.usedRoundsIdList}
+                      semester={webContext.activeSemester}
+                      usedRounds={webContext.usedRounds.usedRoundsIdList}
                       showAccessInfo={false}
                     />
                   ))}
@@ -484,13 +486,17 @@ function AdminPage(props) {
             {/************************************************************************************* */}
             {/*                                   PREVIEW                                           */}
             {/************************************************************************************* */}
-            {store.newMemoList.length > 0 && state.isPreviewMode && (
+            {webContext.newMemoList.length > 0 && state.isPreviewMode && (
               <Row className="preview-form">
                 <Col>
                   <h2 className="section-50">{translate.header_preview}</h2>
                   <h3>{translate.subheader_preview}</h3>
 
-                  <a className="pdf-link" href={`${store.browserConfig.storageUri}${state.memoFile}`} target="_blank">
+                  <a
+                    className="pdf-link"
+                    href={`${webContext.browserConfig.storageUri}${state.memoFile}`}
+                    target="_blank"
+                  >
                     {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
                   </a>
                 </Col>
@@ -505,7 +511,7 @@ function AdminPage(props) {
                 {/*                                 EDIT FORM                                               */}
                 {/************************************************************************************* */}
 
-                {store.newMemoList.length > 0 && !state.isPreviewMode && (
+                {webContext.newMemoList.length > 0 && !state.isPreviewMode && (
                   <Form className="admin-form">
                     {/* FORM - FIRST COLUMN */}
                     <Row className="form-group">
@@ -526,7 +532,7 @@ function AdminPage(props) {
                           key="pm"
                           handleUpload={handleUploadFile}
                           progress={fileProgress.pm}
-                          path={store.browserConfig.proxyPrefixPath.uri}
+                          path={webContext.browserConfig.proxyPrefixPath.uri}
                           file={state.memoFile}
                           notValid={state.notValid}
                           handleRemoveFile={handleRemoveFile}
@@ -544,7 +550,7 @@ function AdminPage(props) {
                 {/*                                BUTTONS FOR PAG 2 AND 3                              */}
                 {/* In case user can edit, othervise only preview is avalilable without control button  */}
                 {/************************************************************************************* */}
-                {store.status !== 'preview' && (
+                {webContext.status !== 'preview' && (
                   <Row className="button-container text-center">
                     <Col sm="4" className="align-left-sm-center">
                       <Button className="back" color="secondary" id="back" key="back" onClick={handleBack}>

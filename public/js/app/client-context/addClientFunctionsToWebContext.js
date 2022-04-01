@@ -222,7 +222,7 @@ function getMemberOf(memberOf = [], id, userName, superUser) {
   this.user = userName
 }
 
-function createStoreClientFunctions() {
+function addClientFunctionsToWebContext() {
   const functions = {
     buildApiUrl,
     createMemoData,
@@ -235,4 +235,4 @@ function createStoreClientFunctions() {
   return functions
 }
 
-export { createStoreClientFunctions }
+export { addClientFunctionsToWebContext }

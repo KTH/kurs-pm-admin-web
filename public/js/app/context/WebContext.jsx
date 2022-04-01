@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStoreClientFunctions } from '../stores/createStoreClientFunctions'
+import { addClientFunctionsToWebContext } from '../client-context/addClientFunctionsToWebContext'
 
 const WebContext = React.createContext()
 const defaultConfig = () => ({
@@ -26,7 +26,7 @@ export const WebContextProvider = props => {
     }
   }
   //OBS! deviation from NODE-WEB to make functions working
-  const [currentConfig, setConfig] = React.useState({ ...config, ...createStoreClientFunctions() })
+  const [currentConfig, setConfig] = React.useState({ ...config, ...addClientFunctionsToWebContext() })
   const value = [currentConfig, setConfig]
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <WebContext.Provider value={value} {...props} />

@@ -1,6 +1,6 @@
-import { createStoreClientFunctions } from '../../public/js/app/stores/createStoreClientFunctions'
+import { addClientFunctionsToWebContext } from '../../public/js/app/client-context/addClientFunctionsToWebContext'
 
-const storeFunctions = createStoreClientFunctions()
+const storeFunctions = addClientFunctionsToWebContext()
 const usedRounds = {
   roundIdList: ['2'],
   roundsIdWithWebVersion: {},
@@ -12,7 +12,7 @@ const usedRounds = {
     },
   ],
 }
-const mockRouterStore = (userLang = 'en') => {
+const mockWebContext = (userLang = 'en') => {
   const routerWithData = {
     ...storeFunctions,
     language: 1,
@@ -127,4 +127,4 @@ const mockRouterStore = (userLang = 'en') => {
   return routerWithData
 }
 
-export default mockRouterStore
+export default mockWebContext

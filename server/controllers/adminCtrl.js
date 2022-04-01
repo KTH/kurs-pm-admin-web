@@ -8,7 +8,7 @@ const paths = require('../server').getPaths()
 const browserConfig = require('../configuration').browser
 const serverConfig = require('../configuration').server
 const { getServerSideFunctions } = require('../utils/serverSideRendering')
-const { createApplicationStore } = require('../stores/createApplicationStore')
+const { createServerSideContext } = require('../ssr-context/createServerSideContext')
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
@@ -124,7 +124,7 @@ async function getIndex(req, res, next) {
   try {
     const context = {}
     const { getCompressedData, renderStaticPage } = getServerSideFunctions()
-    const webContext = { lang, proxyPrefixPath: serverConfig.proxyPrefixPath, ...createApplicationStore() }
+    const webContext = { lang, proxyPrefixPath: serverConfig.proxyPrefixPath, ...createServerSideContext() }
 
     /* ------- Settings ------- */
     webContext.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)

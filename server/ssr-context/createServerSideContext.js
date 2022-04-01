@@ -165,8 +165,8 @@ function setBrowserConfig(config, paths, apiHost, profileBaseUrl) {
   this.profileBaseUrl = profileBaseUrl
 }
 
-function createApplicationStore() {
-  const store = {
+function createServerSideContext() {
+  const context = {
     roundData: {},
     courseData: {},
     semesters: [],
@@ -189,7 +189,7 @@ function createApplicationStore() {
     setBrowserConfig,
     setLanguage,
   }
-  return store
+  return context
 }
 
-module.exports = { createApplicationStore }
+module.exports = { createServerSideContext }

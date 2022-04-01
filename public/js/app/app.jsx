@@ -3,7 +3,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-// Store
 import { WebContextProvider } from './context/WebContext'
 import { uncompressData } from './context/compress'
 import AdminPage from './views/AdminPage'

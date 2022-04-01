@@ -26,8 +26,8 @@ import { useWebContext } from '../context/WebContext'
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function MemoMenu(props) {
-  const { store: rawStore } = props
-  const store = React.useMemo(() => rawStore, [rawStore])
+  const { context: rawContext } = props
+  const context = React.useMemo(() => rawContext, [rawContext])
   const [state, setState] = useReducer(paramsReducer, {
     alert: '',
     firstVisit: props.firstVisit,
@@ -40,32 +40,13 @@ function MemoMenu(props) {
     },
     semester: props.activeSemester && props.activeSemester.length > 0 ? props.activeSemester : '', //props.semesterList[0],
     rounds: props.tempData ? props.tempData.roundIdList : [],
-    usedRounds: store.usedRounds.usedRoundsIdList || [],
-    usedRoundsWithWebVer: store.usedRounds.roundsIdWithWebVersion || {},
+    usedRounds: context.usedRounds.usedRoundsIdList || [],
+    usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
 
     temporaryData: props.tempData,
     newSemester: false,
     usedRoundSelected: props.tempData ? props.tempData.usedRoundSelected : 0,
   })
-
-  // function _componentWillMount() {
-  //   const { progress } = props
-  //   const { lastSelected, semester } = state
-
-  //   if (store.usedRounds.usedRoundsIdList || store.hasChangedStatus) {
-  //     getUsedRounds(semester)
-  //   } else if (progress === 'new_back') {
-  //     setState({
-  //       semester,
-  //       usedRounds: store.usedRounds.usedRoundsIdList || [],
-  //       usedRoundsWithWebVer: store.usedRounds.roundsIdWithWebVersion || {},
-  //       lastSelected: lastSelected,
-  //       alert: '',
-  //     })
-  //   }
-  // }
-
-  // _componentWillMount()
 
   // ******************************* SEMESTER DROPDOWN ******************************* */
   // ********************************************************************************** */
@@ -123,7 +104,7 @@ function MemoMenu(props) {
       props.editMode(semester, rounds, temporaryData, usedRoundSelected)
     } else {
       setState({
-        alert: i18n.messages[store.language].messages.alert_no_rounds_selected,
+        alert: i18n.messages[context.language].messages.alert_no_rounds_selected,
       })
     }
   }
@@ -136,7 +117,7 @@ function MemoMenu(props) {
     const { modalOpen: modal } = state
     modal.cancel = false
     setState({ modalOpen: modal })
-    window.location = `${SERVICE_URL.admin}${store.courseCode}?serv=pm&event=cancel`
+    window.location = `${SERVICE_URL.admin}${context.courseCode}?serv=pm&event=cancel`
   }
 
   function toggleModal(event) {
@@ -150,11 +131,11 @@ function MemoMenu(props) {
   // ** **************************** OTHER ******************************* */
 
   function getUsedRounds(semester) {
-    return store.getUsedRounds(store.courseData.courseCode, semester).then(result => {
+    return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
       setState({
         semester,
-        usedRounds: store.usedRounds.usedRoundsIdList || [],
-        usedRoundsWithWebVer: store.usedRounds.roundsIdWithWebVersion || {},
+        usedRounds: context.usedRounds.usedRoundsIdList || [],
+        usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
         lastSelected: state.lastSelected,
         alert: '',
       })
@@ -162,7 +143,7 @@ function MemoMenu(props) {
   }
 
   const { semesterList, roundList } = props
-  const translate = i18n.messages[store.language].messages
+  const translate = i18n.messages[context.language].messages
   const { select_semester: selectSemester } = translate
   const {
     alert,
@@ -254,7 +235,7 @@ function MemoMenu(props) {
                               />
                               <RoundLabel
                                 key={'round' + roundId}
-                                language={store.language}
+                                language={context.language}
                                 round={round}
                                 semester={semester}
                                 hasPublishedPdf={hasPublishedPdf}
