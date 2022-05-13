@@ -1,7 +1,9 @@
 'use strict'
 
+const { BasicAPI } = require('@kth/api-call')
+const log = require('@kth/log')
+
 const config = require('../configuration').server
-const BasicAPI = require('@kth/api-call').BasicAPI
 
 const koppsApi = new BasicAPI({
   hostname: config.koppsApi.host,
@@ -12,15 +14,32 @@ const koppsApi = new BasicAPI({
   defaultTimeout: 10000, // config.koppsApi.defaultTimeout
 })
 
-module.exports = {
-  getKoppsCourseData: getKoppsCourseData,
-}
-
-async function getKoppsCourseData(courseCode, lang = 'sv') {
+async function getKoppsCourseData(courseCode) {
   try {
     return await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
   } catch (err) {
-    console.log('getKoppsCourseData has an error:' + err)
+    log.debug('api call to getKoppsCourseData has failed:', { message: err })
     return err
   }
+}
+
+async function getCourseSchool(courseCode) {
+  try {
+    const { body: course, statusCode } = await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}`)
+    if (!course || statusCode !== 200) return 'kopps_get_fails'
+
+    const { school } = course
+    if (!school) return 'missing_school_code'
+    const { code } = school
+    if (!code) return 'missing_school_code'
+    return code
+  } catch (err) {
+    log.debug('api call to getCourseSchool has failed:', { message: err })
+
+    return err
+  }
+}
+module.exports = {
+  getCourseSchool,
+  getKoppsCourseData,
 }
