@@ -14,16 +14,7 @@ const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
 const koppsCourseData = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
-
-module.exports = {
-  getIndex: getIndex,
-  postMemoData: _postMemoData,
-  getUsedRounds: _getUsedRounds,
-  getKoppsCourseData: _getKoppsCourseData,
-  saveFileToStorage: _saveFileToStorage,
-  updateFileInStorage: _updateFileInStorage,
-  deleteFileInStorage: _deleteFileInStorage,
-}
+const { parseCourseCode } = require('../utils/courseCodeParser')
 
 // ------- MEMO FROM PM-API: POST, GET USED ROUNDS ------- /
 
@@ -55,10 +46,10 @@ async function _getUsedRounds(req, res, next) {
 
 // ------- COURSE DATA FROM KOPPS-API   ------- /
 async function _getKoppsCourseData(req, res, next) {
-  const { courseCode, language = 'sv' } = req.params
+  const { courseCode } = req.params
   log.info('_getKoppsCourseData with code:' + courseCode)
   try {
-    const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, language)
+    const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode)
     return httpResponse.json(res, apiResponse.body)
   } catch (err) {
     log.error('Exception from koppsAPI ', { error: err })
@@ -70,7 +61,7 @@ async function _getKoppsCourseData(req, res, next) {
 async function _saveFileToStorage(req, res, next) {
   log.info(' Saving uploaded file for course ' + req.params.courseCode)
   log.info(' Saving uploaded file to storage ' + req.files.file)
-  let file = req.files.file
+  let { file } = req.files
   try {
     const fileName = await runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
     log.info(' fileName ' + fileName)
@@ -106,8 +97,6 @@ async function _deleteFileInStorage(res, req, next) {
 }
 
 async function getIndex(req, res, next) {
-  // console.log(api.memoApi)
-
   /** ------- CHECK OF CONNECTION TO API ------- */
   if (api.memoApi.connected === false) {
     log.error('No connection to kurs-pm-api', api.memoApi)
@@ -118,33 +107,36 @@ async function getIndex(req, res, next) {
 
   const lang = language.getLanguage(res) || 'sv'
   const { user: loggedInUser } = req.session.passport
+
   const username = loggedInUser ? loggedInUser.username : 'null'
-  const { memberOf } = loggedInUser
+  const { id: thisId } = req.params
+
+  const memoId = thisId.length <= 7 ? '' : thisId.toUpperCase()
+  const courseCode = parseCourseCode(thisId.toUpperCase())
 
   try {
-    const context = {}
     const { getCompressedData, renderStaticPage } = getServerSideFunctions()
     const webContext = { lang, proxyPrefixPath: serverConfig.proxyPrefixPath, ...createServerSideContext() }
 
     /* ------- Settings ------- */
     webContext.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
     webContext.setLanguage(lang)
-    await webContext.getMemberOf(memberOf, req.params.id.toUpperCase(), username, serverConfig.auth.superuserGroup)
-    if (req.params.id.length <= 7) {
+    await webContext.setMemberInfo(loggedInUser, courseCode, username)
+    if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
-      log.debug(' getIndex, get course data for : ' + req.params.id)
-      const apiResponse = await koppsCourseData.getKoppsCourseData(req.params.id.toUpperCase(), lang)
+      log.debug(' getIndex, get course data for : ', { id: thisId })
+      const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, lang)
       if (apiResponse.statusCode >= 400) {
         webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
       } else {
-        await webContext.handleCourseData(apiResponse.body, req.params.id.toUpperCase(), username, lang)
+        await webContext.handleCourseData(apiResponse.body, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)
 
     const { uri: proxyPrefix } = serverConfig.proxyPrefixPath
 
-    const html = renderStaticPage({
+    const view = renderStaticPage({
       applicationStore: {},
       location: req.url,
       basename: proxyPrefix,
@@ -155,7 +147,7 @@ async function getIndex(req, res, next) {
       compressedData,
       debug: 'debug' in req.query,
       instrumentationKey: serverConfig.appInsights.instrumentationKey,
-      html,
+      html: view,
       title: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
       lang,
       proxyPrefix,
@@ -165,4 +157,14 @@ async function getIndex(req, res, next) {
     log.error('Error in getIndex', { error: err })
     next(err)
   }
+}
+
+module.exports = {
+  getIndex,
+  postMemoData: _postMemoData,
+  getUsedRounds: _getUsedRounds,
+  getKoppsCourseData: _getKoppsCourseData,
+  saveFileToStorage: _saveFileToStorage,
+  updateFileInStorage: _updateFileInStorage,
+  deleteFileInStorage: _deleteFileInStorage,
 }
