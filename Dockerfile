@@ -7,6 +7,7 @@ ENV NODE_PATH /application
 ENV TZ Europe/Stockholm
 # Copy files used by Gulp.
 COPY ["config", "config"]
+COPY ["common-context", "common-context"]
 COPY ["public", "public"]
 COPY ["i18n", "i18n"]
 COPY [".babelrc", ".babelrc"]
