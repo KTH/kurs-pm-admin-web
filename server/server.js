@@ -161,7 +161,7 @@ passport.deserializeUser((user, done) => {
   }
 })
 
-const { OpenIDConnect, hasGroup } = require('@kth/kth-node-passport-oidc')
+const { OpenIDConnect } = require('@kth/kth-node-passport-oidc')
 
 const oidc = new OpenIDConnect(server, passport, {
   ...config.oidc,
@@ -175,10 +175,10 @@ const oidc = new OpenIDConnect(server, passport, {
     const { username, memberOf } = claims
     // eslint-disable-next-line no-param-reassign
     user.username = username
-    // eslint-disable-next-line no-param-reassign
-    user.isSuperUser = hasGroup(config.auth.superuserGroup, user)
-    // eslint-disable-next-line no-param-reassign
-    user.memberOf = memberOf
+    user.isSuperUser = memberOf.includes(config.auth.superuserGroup)
+    user.isKursinfoAdmin = memberOf.includes(config.auth.kursinfoAdmins)
+
+    user.memberOf = typeof memberOf === 'string' ? [memberOf] : memberOf
   },
 })
 
@@ -246,14 +246,28 @@ appRoute.get(
   'system.index',
   _addProxy('/:id'),
   oidc.login,
-  requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'),
+  requireRole(
+    'isCourseResponsible',
+    'isExaminator',
+    'isKursinfoAdmin',
+    'isSuperUser',
+    'isCourseTeacher',
+    'isSchoolAdmin'
+  ),
   Admin.getIndex
 )
 appRoute.get(
   'system.gateway',
   _addProxy('/silent'),
   oidc.silentLogin,
-  requireRole('isCourseResponsible', 'isExaminator', 'isSuperUser', 'isCourseTeacher'),
+  requireRole(
+    'isCourseResponsible',
+    'isExaminator',
+    'isKursinfoAdmin',
+    'isSuperUser',
+    'isCourseTeacher',
+    'isSchoolAdmin'
+  ),
   Admin.getIndex
 )
 

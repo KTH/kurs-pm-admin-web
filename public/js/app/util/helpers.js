@@ -1,7 +1,6 @@
 'use strict'
 
 import i18n from '../../../../i18n/index'
-import { SUPERUSER_PART } from './constants'
 
 const getDateFormat = (date, language) => {
   if (language === 'Svenska' || language === 'Engelska' || language === 1 || language === 'sv') {
@@ -31,51 +30,6 @@ const isValidDate = date => {
   return regex.test(date)
 }
 
-const noAccessToRoundsList = (memberOf, rounds, courseCode, semester) => {
-  let roundIds = []
-  if (memberOf.toString().indexOf(courseCode + '.examiner') > 0) {
-    return roundIds
-  }
-  roundIds = rounds.filter(round => {
-    if (memberOf.toString().indexOf(`${courseCode}.${semester}.${round.roundId}.courseresponsible`) < 0) {
-      return round.roundId
-    }
-  })
-  return roundIds
-}
-
-const getAccess = (memberOf, round, courseCode, semester) => {
-  if (
-    memberOf.toString().indexOf(courseCode.toUpperCase() + '.examiner') > -1 ||
-    memberOf.toString().indexOf(SUPERUSER_PART) > -1
-  ) {
-    return true
-  }
-
-  if (
-    memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.courseresponsible`) > -1
-  ) {
-    return true
-  }
-
-  if (memberOf.toString().indexOf(`${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.teachers`) > -1) {
-    return true
-  }
-
-  return false
-}
-
-const getValueFromObjectList = (objectList, value, key, returnKey) => {
-  let object
-  for (let index = 0; index < objectList.length; index++) {
-    object = objectList[index]
-    if (object[key] === value) {
-      return object[returnKey]
-    }
-  }
-  return null
-}
-
 const formatRoundName = (language, shortName, semester, roundId) => {
   const translate = i18n.messages[language].messages
   return shortName
@@ -85,13 +39,4 @@ const formatRoundName = (language, shortName, semester, roundId) => {
       }-${roundId}`
 }
 
-export {
-  getAccess,
-  noAccessToRoundsList,
-  formatDate,
-  getTodayDate,
-  getDateFormat,
-  getValueFromObjectList,
-  isValidDate,
-  formatRoundName,
-}
+export { formatDate, getTodayDate, getDateFormat, isValidDate, formatRoundName }

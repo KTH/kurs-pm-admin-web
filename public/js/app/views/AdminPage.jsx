@@ -199,7 +199,7 @@ function AdminPage() {
     if (progress === 'edit') {
       if (webContext.semesters.length === 0) {
         return webContext
-          .getCourseInformation(webContext.courseCode, webContext.user, webContext.language)
+          .getCourseInformation(webContext.courseCode, webContext.username, webContext.language)
           .then(courseData =>
             setState({
               isPreviewMode: false,
