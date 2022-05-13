@@ -6,7 +6,6 @@ import {
   FormGroup,
   Label,
   Input,
-  Collapse,
   DropdownToggle,
   DropdownItem,
   DropdownMenu,
@@ -14,56 +13,74 @@ import {
   Row,
   Col,
 } from 'reactstrap'
-
+import i18n from '../../../../i18n/index'
+import { SERVICE_URL } from '../util/constants'
 // Custom components
 import InfoModal from './InfoModal'
 import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
-import i18n from '../../../../i18n/index'
-import { SERVICE_URL } from '../util/constants'
-import { useWebContext } from '../context/WebContext'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
 function MemoMenu(props) {
-  const { context: rawContext } = props
+  const {
+    context: rawContext,
+    firstVisit: initfirstVisit,
+    progress: initProgress,
+    activeSemester: initSemester,
+    tempData: initTempData,
+    editMode,
+    handleRemoveFile,
+  } = props
   const context = React.useMemo(() => rawContext, [rawContext])
   const [state, setState] = useReducer(paramsReducer, {
-    alert: '',
-    firstVisit: props.firstVisit,
+    alertMsg: '',
+    firstVisit: initfirstVisit,
     dropdownOpen: false,
-    collapseOpen: props.progress === 'back_new',
+    collapseOpen: initProgress === 'back_new',
     modalOpen: {
       delete: false,
       info: false,
       cancel: false,
     },
-    semester: props.activeSemester && props.activeSemester.length > 0 ? props.activeSemester : '', //props.semesterList[0],
-    rounds: props.tempData ? props.tempData.roundIdList : [],
+    semester: initSemester && initSemester.length > 0 ? initSemester : '',
+    rounds: initTempData ? initTempData.roundIdList : [],
     usedRounds: context.usedRounds.usedRoundsIdList || [],
     usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
 
-    temporaryData: props.tempData,
+    temporaryData: initTempData,
     newSemester: false,
-    usedRoundSelected: props.tempData ? props.tempData.usedRoundSelected : 0,
+    usedRoundSelected: initTempData ? initTempData.usedRoundSelected : 0,
   })
 
   // ******************************* SEMESTER DROPDOWN ******************************* */
   // ********************************************************************************** */
   // eslint-disable-next-line react/sort-comp
-  function toggleDropdown(event) {
-    event.preventDefault()
+  function toggleDropdown(ev) {
+    ev.preventDefault()
     const { dropdownOpen } = state
     setState({
       dropdownOpen: !dropdownOpen,
     })
   }
 
-  function handleSelectedSemester(event) {
-    event.preventDefault()
-    getUsedRounds(event.target.id)
+  function getUsedRounds(semester) {
+    return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
+      setState({
+        semester,
+        usedRounds: context.usedRounds.usedRoundsIdList || [],
+        usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
+        lastSelected: state.lastSelected,
+        alertMsg: '',
+      })
+    })
+  }
+
+  function handleSelectedSemester(ev) {
+    ev.preventDefault()
+    getUsedRounds(ev.target.id)
     setState({
-      semester: event.target.id,
+      semester: ev.target.id,
       collapseOpen: true,
       firstVisit: false,
       rounds: [],
@@ -73,22 +90,22 @@ function MemoMenu(props) {
 
   // ** ********************** CHECKBOXES AND RADIO BUTTONS **************************** */
   // ** ******************************************************************************** */
-  function handleRoundCheckbox(event) {
-    event.persist()
-    let prevState = { ...state }
-    const { alert, rounds } = state
+  function handleRoundCheckbox(ev) {
+    ev.persist()
+    const prevState = { ...state }
+    const { alertMsg, rounds } = state
 
-    if (alert.length > 0) {
-      prevState.alert = ''
+    if (alertMsg.length > 0) {
+      prevState.alertMsg = ''
     }
 
-    if (event.target.checked) {
-      prevState.rounds.push(event.target.id)
-      event.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected++ : prevState.usedRoundSelected
+    if (ev.target.checked) {
+      prevState.rounds.push(ev.target.id)
+      ev.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected++ : prevState.usedRoundSelected
       setState(prevState)
     } else {
-      prevState.rounds.splice(rounds.indexOf(event.target.id), 1)
-      event.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected-- : prevState.usedRoundSelected
+      prevState.rounds.splice(rounds.indexOf(ev.target.id), 1)
+      ev.target.getAttribute('data-hasfile') === 'true' ? prevState.usedRoundSelected-- : prevState.usedRoundSelected
       setState(prevState)
     }
   }
@@ -96,15 +113,15 @@ function MemoMenu(props) {
   // ** ********************** SUBMIT BUTTONS **************************** */
   // ** ****************************************************************** */
 
-  function goToEditMode(event) {
-    event.preventDefault()
+  function goToEditMode(ev) {
+    ev.preventDefault()
     const { rounds, semester, temporaryData, usedRoundSelected } = state
 
     if (rounds.length > 0) {
-      props.editMode(semester, rounds, temporaryData, usedRoundSelected)
+      editMode(semester, rounds, temporaryData, usedRoundSelected)
     } else {
       setState({
-        alert: i18n.messages[context.language].messages.alert_no_rounds_selected,
+        alertMsg: i18n.messages[context.language].messages.alert_no_rounds_selected,
       })
     }
   }
@@ -112,7 +129,7 @@ function MemoMenu(props) {
   function handleCancel() {
     const { temporaryData } = state
     if (temporaryData !== null && temporaryData.memoFile.length > 0) {
-      props.handleRemoveFile(temporaryData.memoFile)
+      handleRemoveFile(temporaryData.memoFile)
     }
     const { modalOpen: modal } = state
     modal.cancel = false
@@ -120,9 +137,9 @@ function MemoMenu(props) {
     window.location = `${SERVICE_URL.admin}${context.courseCode}?serv=pm&event=cancel`
   }
 
-  function toggleModal(event) {
+  function toggleModal(ev) {
     const { modalOpen } = state
-    modalOpen[event.target.id] = !modalOpen[event.target.id]
+    modalOpen[ev.target.id] = !modalOpen[ev.target.id]
     setState({
       modalOpen,
     })
@@ -130,23 +147,11 @@ function MemoMenu(props) {
   // ** ****************************************************************** */
   // ** **************************** OTHER ******************************* */
 
-  function getUsedRounds(semester) {
-    return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
-      setState({
-        semester,
-        usedRounds: context.usedRounds.usedRoundsIdList || [],
-        usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
-        lastSelected: state.lastSelected,
-        alert: '',
-      })
-    })
-  }
-
   const { semesterList, roundList } = props
   const translate = i18n.messages[context.language].messages
   const { select_semester: selectSemester } = translate
   const {
-    alert,
+    alertMsg,
     canOnlyPreview,
     collapseOpen,
     dropdownOpen,
@@ -188,9 +193,9 @@ function MemoMenu(props) {
             ))}
         </DropdownMenu>
       </Dropdown>
-      {alert.length > 0 && (
+      {alertMsg.length > 0 && (
         <Row key="smth-wrong" className="w-100 my-0 mx-auto upper-alert">
-          <Alert color="danger">{` ${alert}`}</Alert>
+          <Alert color="danger">{` ${alertMsg}`}</Alert>
         </Row>
       )}
 
@@ -212,44 +217,41 @@ function MemoMenu(props) {
                 {/*                           ROUND LIST FOR SELECTED SEMESTER                          */}
                 {/** *********************************************************************************** */}
                 {roundList[semester].length > 0 && (
-                  <FormGroup id="rounds">
+                  <>
                     <p>{translate.intro_new}</p>
-                    <ul className="no-padding-left">
-                      {roundList[semester].map(round => {
-                        const { hasAccess, roundId } = round
-                        const hasBeenUsed = usedRounds.includes(roundId) || false
-                        const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(roundId) || false
-                        const hasPublishedPdf = hasBeenUsed && !hasWebVersion
-                        return (
-                          <li className="select-list" key={roundId}>
-                            <Label key={'Label' + roundId} for={roundId}>
-                              <Input
-                                type="checkbox"
-                                id={roundId}
-                                key={'checkbox' + roundId}
-                                onChange={handleRoundCheckbox}
-                                checked={rounds.includes(roundId)}
-                                name={roundId}
-                                disabled={!hasAccess || hasWebVersion}
-                                data-hasfile={hasPublishedPdf}
-                              />
-                              <RoundLabel
-                                key={'round' + roundId}
-                                language={context.language}
-                                round={round}
-                                semester={semester}
-                                hasPublishedPdf={hasPublishedPdf}
-                                hasWebVersion={hasWebVersion}
-                                webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[roundId] : {}}
-                                showAccessInfo
-                              />
-                            </Label>
-                            <br />
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  </FormGroup>
+                    {roundList[semester].map(round => {
+                      const { hasAccess, roundId } = round
+                      const hasBeenUsed = usedRounds.includes(roundId) || false
+                      const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(roundId) || false
+                      const hasPublishedPdf = hasBeenUsed && !hasWebVersion
+                      return (
+                        <FormGroup className="form-check" id="rounds" key={roundId}>
+                          <Input
+                            type="checkbox"
+                            id={roundId}
+                            key={'checkbox' + roundId}
+                            onChange={handleRoundCheckbox}
+                            checked={rounds.includes(roundId)}
+                            name={roundId}
+                            disabled={!hasAccess || hasWebVersion}
+                            data-hasfile={hasPublishedPdf}
+                          />
+                          <Label key={'Label' + roundId} for={roundId}>
+                            <RoundLabel
+                              key={'round' + roundId}
+                              language={context.language}
+                              round={round}
+                              semester={semester}
+                              hasPublishedPdf={hasPublishedPdf}
+                              hasWebVersion={hasWebVersion}
+                              webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[roundId] : {}}
+                              showAccessInfo
+                            />
+                          </Label>
+                        </FormGroup>
+                      )
+                    })}
+                  </>
                 )}
               </div>
             </Form>
