@@ -67,11 +67,11 @@ const RoundLabel = ({
   webVersionInfo, // if web-based memo exist then provide memoEndPoint to display in the link
 }) => {
   const translate = i18n.messages[language].messages
-  const { courseCode, roundId, hasAccess } = round
+  const { courseCode, roundId, canBeAccessedByUser } = round
 
   const roundInputLabel = roundFullName(language, semester, round)
 
-  if (showAccessInfo && !hasAccess)
+  if (showAccessInfo && !canBeAccessedByUser)
     return (
       <span key={'round-' + roundId}>
         {roundInputLabel}
