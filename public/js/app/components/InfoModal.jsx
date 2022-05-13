@@ -17,11 +17,12 @@ function InfoModal(props) {
     semester,
     courseOfferings,
     langIndex = 0,
+    handleConfirm,
   } = props
   const fadeModal = fade || true
 
   const { header_course, header_semester, header_course_offering } = i18n.messages[langIndex].messages
-  function handleConfirm(ev) {
+  function _handleConfirmToParent(ev) {
     ev.preventDefault()
     handleConfirm(id, true)
   }
@@ -44,7 +45,7 @@ function InfoModal(props) {
             {infoText.btnCancel}
           </Button>
           {infoText.btnConfirm && (
-            <Button color="secondary" onClick={handleConfirm}>
+            <Button color="secondary" onClick={_handleConfirmToParent}>
               {infoText.btnConfirm}
             </Button>
           )}
