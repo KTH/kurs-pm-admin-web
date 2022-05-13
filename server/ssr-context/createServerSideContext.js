@@ -4,8 +4,6 @@
 
 // eslint-disable-next-line no-unused-vars
 
-const axios = require('axios')
-
 const SUPERUSER_PART = 'kursinfo-admins'
 
 const getAccess = (memberOf, round, courseCode, semester) => {
@@ -57,31 +55,6 @@ function buildApiUrl(path, params) {
 /** ***************************************************************************************************************************************** */
 /*                                                       FILE STORAGE ACTIONS                                                      */
 /** ***************************************************************************************************************************************** */
-function updateFileInStorage(fileName, metadata) {
-  return axios
-    .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: { metadata } })
-    .then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        return 'ERROR-' + apiResponse.statusCode
-      }
-      return apiResponse.data
-    })
-    .catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
-}
-
-function deleteFileInStorage(fileName) {
-  return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName })).then(apiResponse => {
-    if (apiResponse.statusCode >= 400) {
-      return 'ERROR-' + apiResponse.statusCode
-    }
-    return apiResponse.data
-  })
-}
 
 /** ***************************************************************************************************************************************** */
 /*                                                     HANDLE DATA FROM API                                                                  */
