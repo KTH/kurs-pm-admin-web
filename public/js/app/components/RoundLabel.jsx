@@ -2,6 +2,7 @@ import React from 'react'
 // Helpers
 import i18n from '../../../../i18n/index'
 import { getDateFormat, formatRoundName } from '../util/helpers'
+
 const FIRST_VERSION = 1
 
 const NotAuthorizedPublishMessage = ({ languageIndex }) => {
@@ -19,12 +20,12 @@ const NotAuthorizedPublishMessage = ({ languageIndex }) => {
     </>
   )
 }
-const WebBasedMemoLabelAndLink = ({ courseCode, translate, status, memoEndPoint, roundInputLabel, version }) => {
-  const hasMemoInfo = memoEndPoint && version && status && courseCode
+const WebBasedMemoLabelAndLink = ({ courseCode, translate, memoStatus, memoEndPoint, roundInputLabel, version }) => {
+  const hasMemoInfo = memoEndPoint && version && memoStatus && courseCode
 
   if (!hasMemoInfo) return <span className="no-access">{` ${translate.has_web_based_memo}`}</span>
 
-  const wasEverPublished = (status === 'draft' && version > FIRST_VERSION) || status === 'published'
+  const wasEverPublished = (memoStatus === 'draft' && version > FIRST_VERSION) || memoStatus === 'published'
 
   const labelLink = wasEverPublished
     ? translate.label_link_web_based_published_memo
@@ -49,7 +50,7 @@ const WebBasedMemoLabelAndLink = ({ courseCode, translate, status, memoEndPoint,
 export function roundFullName(langIndex, semester, round) {
   const { label_start_date } = i18n.messages[langIndex].messages
 
-  const { courseCode, roundId, shortName, startDate, language: roundLang } = round
+  const { roundId, shortName, startDate, language: roundLang } = round
 
   const roundName = formatRoundName(langIndex, shortName, semester, roundId)
   const roundInputLabel = `${roundName} (${label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang})`
@@ -97,7 +98,7 @@ const RoundLabel = ({
           memoEndPoint={webVersionInfo.memoEndPoint}
           translate={translate}
           roundInputLabel={roundInputLabel}
-          status={webVersionInfo.status}
+          memoStatus={webVersionInfo.status}
           version={webVersionInfo.version}
         />
       </span>

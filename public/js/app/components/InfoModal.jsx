@@ -1,19 +1,10 @@
-import React, { useReducer } from 'react'
+import React from 'react'
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap'
 import i18n from '../../../../i18n/index'
-
-const paramsReducer = (state, action) => ({ ...state, ...action })
 
 // Custom components
 
 function InfoModal(props) {
-  const [state, setState] = useReducer(paramsReducer, { modal: props.isOpen })
-
-  function handleConfirm(event) {
-    event.preventDefault()
-    props.handleConfirm(props.id, true)
-  }
-
   const {
     fade,
     isOpen,
@@ -30,6 +21,10 @@ function InfoModal(props) {
   const fadeModal = fade || true
 
   const { header_course, header_semester, header_course_offering } = i18n.messages[langIndex].messages
+  function handleConfirm(ev) {
+    ev.preventDefault()
+    handleConfirm(id, true)
+  }
 
   return (
     <div>

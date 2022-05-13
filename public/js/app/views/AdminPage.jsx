@@ -1,7 +1,6 @@
 import React, { useEffect, useReducer } from 'react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
-import { useNavigate } from 'react-router-dom'
 
 // Components
 import Title from '../components/Title'
@@ -9,7 +8,6 @@ import MemoMenu from '../components/MemoMenu'
 import InfoModal from '../components/InfoModal'
 import UpLoad from '../components/UpLoad'
 import RoundLabel, { roundFullName } from '../components/RoundLabel'
-import { ActionModalButton } from '@kth/kth-reactstrap/dist/components/utbildningsinfo'
 
 // Helpers
 import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '../util/constants'
@@ -19,11 +17,11 @@ import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
-function AdminPage(props) {
+function AdminPage() {
   const [webContext] = useWebContext()
 
   const [state, setState] = useReducer(paramsReducer, {
-    saved: false, //TO DELETE
+    saved: false, // TO DELETE
     progress: webContext.status === 'new' ? 'new' : 'edit',
     isPreviewMode: webContext.status === 'preview',
     modalOpen: {
@@ -52,8 +50,24 @@ function AdminPage(props) {
 
   const translate = i18n.messages[langIndex].messages
 
-  const chosenRoundsList = filterChosenRoundsList()
-  const courseOfferings = getCourseOfferingsNames(chosenRoundsList)
+  // *********************************  Helpers  ********************************* */
+  // ********************************************************************************** */
+  function _filterChosenRoundsList() {
+    const filteredChosenRoundsList = activeSemester
+      ? roundData[activeSemester].filter(({ roundId }) => roundIdList.indexOf(roundId) > -1)
+      : []
+    return filteredChosenRoundsList
+  }
+
+  function _getCourseOfferingsNames(list) {
+    if (!list) return ''
+
+    const courseOfferingsNames = list.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
+    return courseOfferingsNames
+  }
+
+  const chosenRoundsList = _filterChosenRoundsList()
+  const courseOfferings = _getCourseOfferingsNames(chosenRoundsList)
 
   const semesterName = activeSemester
     ? `${translate.course_short_semester[activeSemester.toString().match(/.{1,4}/g)[1]]} ${
@@ -71,58 +85,25 @@ function AdminPage(props) {
     return () => (isMounted = false)
   }, [alertSuccess])
 
-  // *********************************  Helpers  ********************************* */
-  // ********************************************************************************** */
-  function filterChosenRoundsList() {
-    const { activeSemester, language: langIndex, roundData } = webContext
-    const { roundIdList } = state
-
-    const chosenRoundsList = activeSemester
-      ? roundData[activeSemester].filter(({ roundId }) => roundIdList.indexOf(roundId) > -1)
-      : []
-    return chosenRoundsList
-  }
-
-  function getCourseOfferingsNames(chosenRoundsList) {
-    if (!chosenRoundsList) return ''
-
-    const { activeSemester, language: langIndex } = webContext
-
-    const courseOfferings = chosenRoundsList.map(round => roundFullName(langIndex, activeSemester, round)).join(', ')
-    return courseOfferings
-  }
-
   // *********************************  FILE UPLOAD  ********************************* */
   // ********************************************************************************** */
 
-  async function handleUploadFile(id, file, e) {
-    const { language: langIndex } = webContext
-    if (e.target.files[0].type === 'application/pdf') {
-      try {
-        const response = await sendRequest(id, file, e)
-      } catch (err) {
-        setState({
-          notValid: ['savingToStorage'],
-          alertError: i18n.messages[langIndex].messages.alert_storage_error,
-        })
-      }
-    } else {
-      const notValid = ['memoFile']
-      setState({
-        notValid,
-        alertError: i18n.messages[langIndex].messages.alert_not_pdf,
-      })
+  function getMetadata(docStatus) {
+    return {
+      courseCode: webContext.courseCode,
+      pm: state.memoFile,
+      status: docStatus,
+      koppsRoundIds: state.roundIdList.toString(),
     }
   }
 
   function sendRequest(id, file, e) {
-    const { fileProgress } = state
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest()
-      req.upload.addEventListener('progress', event => {
-        if (event.lengthComputable) {
-          fileProgress[id] = (event.loaded / event.total) * 100
-          setState({ fileProgress: fileProgress })
+      req.upload.addEventListener('progress', fileEvent => {
+        if (fileEvent.lengthComputable) {
+          fileProgress[id] = (fileEvent.loaded / fileEvent.total) * 100
+          setState({ fileProgress })
         }
       })
 
@@ -156,12 +137,22 @@ function AdminPage(props) {
     })
   }
 
-  function getMetadata(status) {
-    return {
-      courseCode: webContext.courseCode,
-      pm: state.memoFile,
-      status,
-      koppsRoundIds: state.roundIdList.toString(),
+  async function handleUploadFile(id, file, e) {
+    if (e.target.files[0].type === 'application/pdf') {
+      try {
+        const response = await sendRequest(id, file, e)
+      } catch (err) {
+        setState({
+          notValid: ['savingToStorage'],
+          alertError: i18n.messages[langIndex].messages.alert_storage_error,
+        })
+      }
+    } else {
+      const notValid = ['memoFile']
+      setState({
+        notValid,
+        alertError: i18n.messages[langIndex].messages.alert_not_pdf,
+      })
     }
   }
 
@@ -173,8 +164,16 @@ function AdminPage(props) {
     }
   }
 
-  //***************************** BUTTON CLICK HANDLERS ****************************** */
-  //********************************************************************************** */
+  // ***************************** BUTTON CLICK HANDLERS ****************************** */
+  // ********************************************************************************** */
+
+  function validateData() {
+    const invalidList = []
+    if (state.memoFile.length === 0) {
+      invalidList.push('memoFile')
+    }
+    return invalidList
+  }
 
   function handlePreview(event) {
     event.preventDefault()
@@ -195,8 +194,8 @@ function AdminPage(props) {
     }
   }
 
-  function handleBack(event) {
-    event.preventDefault()
+  function handleBack(ev) {
+    ev.preventDefault()
     if (progress === 'edit') {
       if (webContext.semesters.length === 0) {
         return webContext
@@ -215,7 +214,7 @@ function AdminPage(props) {
         alert: '',
       })
     }
-    if (state.isPreviewMode) {
+    if (isPreviewMode) {
       setState({
         isPreviewMode: false,
         progress: 'edit',
@@ -224,7 +223,7 @@ function AdminPage(props) {
     }
   }
 
-  function handleCancel(event) {
+  function handleCancel(ev) {
     const { memoFile } = state
     if (memoFile.length > 0) {
       handleRemoveFile()
@@ -236,9 +235,9 @@ function AdminPage(props) {
     window.location = `${SERVICE_URL.admin}${webContext.courseCode}?serv=pm&event=cancel`
   }
 
-  function handlePublish(event, fromModal = false) {
+  function handlePublish(ev, fromModal = false) {
     if (!fromModal) {
-      event.preventDefault()
+      ev.preventDefault()
     }
     const { memoFile, pdfMemoDate } = state
     const { modalOpen: modal } = state
@@ -263,11 +262,10 @@ function AdminPage(props) {
         })
         const { hostUrl } = webContext.browserConfig
         const { roundsIdWithPdfVersion = {} } = webContext.usedRounds
-        const { activeSemester, courseCode, language: langIndex } = webContext
         let publishType = 'pub'
-        const chosenRoundsList = filterChosenRoundsList()
-        const courseOfferings = getCourseOfferingsNames(chosenRoundsList)
-        const versions = chosenRoundsList
+        const filteredChosenRoundsById = _filterChosenRoundsList()
+        const courseOfferingsNames = _getCourseOfferingsNames(filteredChosenRoundsById)
+        const versions = filteredChosenRoundsById
           .map(({ roundId }) => {
             const prevFile = roundsIdWithPdfVersion[roundId]
             const { version: prevVersion = 0 } = prevFile ? prevFile : {}
@@ -277,7 +275,7 @@ function AdminPage(props) {
           })
           .join(', ')
         window.location = encodeURI(
-          `${hostUrl}${SERVICE_URL.admin}${courseCode}?serv=pm&name=${courseOfferings}&term=${activeSemester}&event=${publishType}&ver=${versions}`
+          `${hostUrl}${SERVICE_URL.admin}${courseCode}?serv=pm&name=${courseOfferingsNames}&term=${activeSemester}&event=${publishType}&ver=${versions}`
         )
       })
       .catch(err => {
@@ -293,7 +291,7 @@ function AdminPage(props) {
   //* ********************************************************** */
 
   function editMode(semester, rounds, tempData, usedRoundSelected) {
-    const newMemoList = webContext.createMemoData(semester, rounds)
+    webContext.createMemoData(semester, rounds)
 
     setState({
       progress: 'edit',
@@ -306,49 +304,20 @@ function AdminPage(props) {
     })
   }
 
-  function toggleModal(event) {
+  function toggleModal(ev) {
     const { modalOpen } = state
-    modalOpen[event.target.id] = !modalOpen[event.target.id]
+    modalOpen[ev.target.id] = !modalOpen[ev.target.id]
     setState({
       modalOpen,
     })
   }
 
-  function handleInputChange(event) {
-    setState({
-      pdfMemoDate: event.target.value,
-      notValid: [],
-      alertError: '',
-    })
-  }
-
-  function validateData() {
-    const invalidList = []
-    if (state.memoFile.length === 0) {
-      invalidList.push('memoFile')
-    }
-    return invalidList
-  }
-
   function getTempData() {
     if (progress === 'back_new') {
-      const { memoFile, roundIdList, pdfMemoDate, usedRoundSelected } = state
+      const { memoFile, pdfMemoDate, usedRoundSelected } = state
       return { roundIdList, memoFile, pdfMemoDate, usedRoundSelected }
     }
     return null
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  function handleTemporaryData(tempData) {
-    const returnObject = {
-      files: {
-        memoFile: '',
-      },
-    }
-    if (tempData) {
-      returnObject.files.memoFile = tempData.memoFile
-    }
-    return returnObject
   }
 
   if (webContext.newMemoList.length === 0 || progress === 'back_new')
@@ -381,7 +350,7 @@ function AdminPage(props) {
                 activeSemester={activeSemester}
                 firstVisit={webContext.newMemoList.length === 0}
                 status={webContext.status}
-                tempData={/*state.saved ? {} : */ getTempData()}
+                tempData={getTempData()}
                 saved={false}
                 handleRemoveFile={handleRemoveFile}
                 context={webContext}
@@ -398,9 +367,9 @@ function AdminPage(props) {
   else
     return (
       <div key="kurs-pm-form-container" className="kip-container" id="kurs-pm-form-container">
-        {/************************************************************************************* */}
+        {/* ************************************************************************************ */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
-        {/************************************************************************************* */}
+        {/* ************************************************************************************ */}
         {(webContext.errorMessage.length > 0 && (
           <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
             <Alert color="info">{webContext.errorMessage}</Alert>
@@ -483,10 +452,10 @@ function AdminPage(props) {
                 <Alert color="danger">{state.alertError} </Alert>
               </Row>
             )}
-            {/************************************************************************************* */}
+            {/* ************************************************************************************ */}
             {/*                                   PREVIEW                                           */}
-            {/************************************************************************************* */}
-            {webContext.newMemoList.length > 0 && state.isPreviewMode && (
+            {/* ************************************************************************************ */}
+            {webContext.newMemoList.length > 0 && isPreviewMode && (
               <Row className="preview-form">
                 <Col>
                   <h2 className="section-50">{translate.header_preview}</h2>
@@ -496,6 +465,7 @@ function AdminPage(props) {
                     className="pdf-link"
                     href={`${webContext.browserConfig.storageUri}${state.memoFile}`}
                     target="_blank"
+                    rel="noreferrer"
                   >
                     {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
                   </a>
@@ -507,11 +477,11 @@ function AdminPage(props) {
 
             <Row key="form" id="form-container">
               <Col sm="12" lg="12">
-                {/************************************************************************************* */}
+                {/* ************************************************************************************ */}
                 {/*                                 EDIT FORM                                               */}
-                {/************************************************************************************* */}
+                {/* ************************************************************************************ */}
 
-                {webContext.newMemoList.length > 0 && !state.isPreviewMode && (
+                {webContext.newMemoList.length > 0 && !isPreviewMode && (
                   <Form className="admin-form">
                     {/* FORM - FIRST COLUMN */}
                     <Row className="form-group">
@@ -546,15 +516,15 @@ function AdminPage(props) {
                     </Row>
                   </Form>
                 )}
-                {/************************************************************************************* */}
+                {/* ************************************************************************************ */}
                 {/*                                BUTTONS FOR PAG 2 AND 3                              */}
                 {/* In case user can edit, othervise only preview is avalilable without control button  */}
-                {/************************************************************************************* */}
+                {/* ************************************************************************************ */}
                 {webContext.status !== 'preview' && (
                   <Row className="button-container text-center">
                     <Col sm="4" className="align-left-sm-center">
                       <Button className="back" color="secondary" id="back" key="back" onClick={handleBack}>
-                        {state.isPreviewMode ? translate.btn_back_edit : translate.btn_back}
+                        {isPreviewMode ? translate.btn_back_edit : translate.btn_back}
                       </Button>
                     </Col>
                     <Col sm="3" className="align-right-sm-center">
@@ -565,7 +535,7 @@ function AdminPage(props) {
                     <Col sm="3"></Col>
                     <Col sm="2">
                       <span>
-                        {(state.isPreviewMode && (
+                        {(isPreviewMode && (
                           <Button color="success" id="publish" key="publish" onClick={toggleModal}>
                             {translate.btn_publish}
                           </Button>
@@ -580,9 +550,9 @@ function AdminPage(props) {
                 )}
               </Col>
             </Row>
-            {/************************************************************************************* */}
+            {/* ************************************************************************************ */}
             {/*                               MODALS FOR PUBLISH AND CANCEL                         */}
-            {/************************************************************************************* */}
+            {/* ************************************************************************************ */}
             <InfoModal
               type="publish"
               toggle={toggleModal}

@@ -8,10 +8,15 @@ import { uncompressData } from './context/compress'
 import AdminPage from './views/AdminPage'
 import '../../css/memo-admin.scss'
 
-export default appFactory
-
-_renderOnClientSide()
-
+function appFactory(applicationStore, context) {
+  return (
+    <WebContextProvider configIn={context}>
+      <Routes>
+        <Route exact path="/:id" element={<AdminPage />} />
+      </Routes>
+    </WebContextProvider>
+  )
+}
 function _renderOnClientSide() {
   const isClientSide = typeof window !== 'undefined'
   if (!isClientSide) {
@@ -29,12 +34,6 @@ function _renderOnClientSide() {
   ReactDOM.hydrate(app, domElement)
 }
 
-function appFactory(applicationStore, context) {
-  return (
-    <WebContextProvider configIn={context}>
-      <Routes>
-        <Route exact path="/:id" element={<AdminPage />} />
-      </Routes>
-    </WebContextProvider>
-  )
-}
+_renderOnClientSide()
+
+export default appFactory

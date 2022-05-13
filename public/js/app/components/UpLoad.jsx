@@ -1,22 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Spinner } from 'reactstrap'
 
-const styles = {
-  fontFamily: 'sans-serif',
-  textAlign: 'center',
-  display: 'flex',
-}
-
 function UpLoad(props) {
-  const [files, setFiles] = useState([])
-  const { id, path, progress, file, notValid, type } = props
+  const { id, handleUpload, handleRemoveFile, progress, file, notValid, type } = props
 
-  function onChange(event) {
-    props.handleUpload(event.target.id, event.target.files, event)
+  function onChange(ev) {
+    handleUpload(ev.target.id, ev.target.files, ev)
   }
 
-  function removeFile(event) {
-    props.handleRemoveFile(event)
+  function removeFile(ev) {
+    handleRemoveFile(ev)
   }
 
   //* --- Shows uploded file if file exists otherwise upload button --- */
@@ -27,7 +20,14 @@ function UpLoad(props) {
           <br />
           <div className="inline-flex">
             <p className="upload-text"> {file} </p>
-            <div className="iconContainer icon-trash-can" id={'remove_' + id} onClick={removeFile}></div>
+            <div
+              role="button"
+              tabIndex={0}
+              className="iconContainer icon-trash-can"
+              id={'remove_' + id}
+              onClick={removeFile}
+              onKeyPress={removeFile}
+            ></div>
           </div>
         </span>
       ) : (

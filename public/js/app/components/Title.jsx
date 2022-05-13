@@ -16,7 +16,6 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
     before_create_memo_link: labelBeforeCreateMemoLink,
     label_create_memo_link: labelCreateMemoLink,
     label_control_info_link: labelControlInfoLink,
-    label_kurs_pm_web_link: labelCourseMemoWebLink,
     label_course_memo_guide_link: labelCourseMemoGuideLink,
   } = i18n.messages[langIndex].messages.alert_recommendation
 
