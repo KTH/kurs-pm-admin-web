@@ -1,4 +1,5 @@
 'use strict'
+
 const { hasGroup } = require('@kth/kth-node-passport-oidc')
 const language = require('@kth/kth-node-web-common/lib/language')
 const log = require('@kth/log')
@@ -88,7 +89,6 @@ function _hasThisTypeGroup(courseCode, courseInitials, user, employeeType) {
 
 const messageHaveNotRights = lang => ({
   status: 403,
-  showMessage: true,
   message: i18n.message('message_have_not_rights', lang),
 })
 
