@@ -36,7 +36,7 @@ module.exports = {
      * Message keys
      */
     service_name: 'kurs ',
-    title: 'Administrera kurs-PM',
+    title: 'Administrera Om kursen',
 
     lang_block_id: '1.272446',
     locale_text: 'Denna sida på svenska',

@@ -14,7 +14,7 @@ module.exports = {
      * Message keys
      */
     service_name: 'kurs ',
-    title: 'Course memo administration',
+    title: 'Administer About course',
     skip_to_main_content: 'Skip to main content',
 
     lang_block_id: '1.272446',
