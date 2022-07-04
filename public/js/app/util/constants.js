@@ -9,7 +9,6 @@ export const SEMESTER = [
   },
 ]
 export const EMPTY = ['No information added', 'Ingen information tillagd']
-export const ADMIN_URL = '/kursinfoadmin/kurser/kurs/'
 export const KURSUTVECKLING_URL = '/kursutveckling/'
 export const SERVICE_URL = {
   admin: '/kursinfoadmin/kurser/kurs/',
