@@ -31,7 +31,7 @@
     "@kth/kth-node-web-common": "^7.0.12",
     "@kth/kth-reactstrap": "^0.4.54",
     "@kth/log": "^4.0.5",
-    "@kth/monitor": "^3.0.24",
+    "@kth/monitor": "^3.0.25",
     "@kth/server": "^4.0.3",
     "@kth/session": "^3.0.4",
     "@opentelemetry/api": "^1.1.0",
@@ -100,7 +100,7 @@
     "sass-loader": "^13.0.2",
     "set-value": "^4.1.0",
     "terser-webpack-plugin": "^5.3.3",
-    "webpack": "^5.73.0",
+    "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
   },
   "engines": {
