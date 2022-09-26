@@ -49,40 +49,41 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
 
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
 function handleCourseData(courseObject, courseCode, userName, language) {
-  if (courseObject === undefined) {
+  if (!courseObject) {
     this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
     return undefined
   }
   try {
+    const { course, formattedGradeScales, termsWithCourseRounds } = courseObject
+
     this.courseData = {
       courseCode,
-      gradeScale: courseObject.formattedGradeScales,
+      gradeScale: formattedGradeScales,
       semesterObjectList: {},
     }
     this.courseTitle = {
-      name: courseObject.course.title[this.language === 0 ? 'en' : 'sv'],
-      credits:
-        courseObject.course.credits.toString().indexOf('.') < 0
-          ? courseObject.course.credits + '.0'
-          : courseObject.course.credits,
+      name: course.title[this.language === 0 ? 'en' : 'sv'],
+      credits: course.credits.toString().indexOf('.') < 0 ? course.credits + '.0' : course.credits,
     }
 
-    for (let semester = 0; semester < courseObject.termsWithCourseRounds.length; semester++) {
-      this.courseData.semesterObjectList[courseObject.termsWithCourseRounds[semester].term] = {
-        rounds: courseObject.termsWithCourseRounds[semester].rounds,
+    for (let semesterIndex = 0; semesterIndex < courseObject.termsWithCourseRounds.length; semesterIndex++) {
+      const { term: roundSemester, rounds } = termsWithCourseRounds[semesterIndex]
+
+      this.courseData.semesterObjectList[roundSemester] = {
+        rounds,
       }
     }
 
     const thisStore = this
-    courseObject.termsWithCourseRounds.map(semester => {
-      if (thisStore.semesters.indexOf(semester.term) < 0) thisStore.semesters.push(semester.term)
+    courseObject.termsWithCourseRounds.map(({ term: semester, rounds: semesterRounds }) => {
+      if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(semester)
 
-      if (!thisStore.roundData.hasOwnProperty(semester.term)) {
-        thisStore.roundData[semester.term] = []
-        thisStore.roundAccess[semester.term] = {}
+      if (!thisStore.roundData.hasOwnProperty(semester)) {
+        thisStore.roundData[semester] = []
+        thisStore.roundAccess[semester] = {}
       }
 
-      thisStore.roundData[semester.term] = semester.rounds.map(round => {
+      thisStore.roundData[semester] = semesterRounds.map(round => {
         return (round.ladokRoundId = {
           courseCode: this.courseCode,
           roundId: round.ladokRoundId,
@@ -90,7 +91,7 @@ function handleCourseData(courseObject, courseCode, userName, language) {
           shortName: round.shortName,
           startDate: round.firstTuitionDate,
           ladokUID: round.ladokUID,
-          canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, semester.term),
+          canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, semester),
         })
       })
     })

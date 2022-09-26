@@ -46,7 +46,8 @@ function AdminPage() {
   const { progress, isPreviewMode } = state
   const { alertSuccess, fileProgress, roundIdList } = state
 
-  const { activeSemester, courseCode, language: langIndex, roundData } = webContext
+  const { activeSemester, browserConfig = {}, courseCode, language: langIndex, roundData } = webContext
+  const { hostUrl, proxyPrefixPath, storageUri } = browserConfig
 
   const translate = i18n.messages[langIndex].messages
 
@@ -77,10 +78,19 @@ function AdminPage() {
 
   useEffect(() => {
     let isMounted = true
-    if (isMounted && alertSuccess.length > 0) {
-      setTimeout(() => {
-        setState({ alertSuccess: '' })
-      }, 5000)
+    if (isMounted) {
+      if (alertSuccess.length > 0) {
+        setTimeout(() => {
+          setState({ alertSuccess: '' })
+        }, 5000)
+      }
+
+      const siteNameElement = document.querySelector('.block.siteName a')
+      if (siteNameElement) {
+        const languageParameter = langIndex === '0' ? '?l=en' : ''
+
+        siteNameElement.href = `${SERVICE_URL.admin}${courseCode}${languageParameter}`
+      }
     }
     return () => (isMounted = false)
   }, [alertSuccess])
@@ -90,7 +100,7 @@ function AdminPage() {
 
   function getMetadata(docStatus) {
     return {
-      courseCode: webContext.courseCode,
+      courseCode,
       pm: state.memoFile,
       status: docStatus,
       koppsRoundIds: state.roundIdList.toString(),
@@ -129,9 +139,9 @@ function AdminPage() {
       formData.append('koppsRoundIds', data.koppsRoundIds)
       req.open(
         'POST',
-        `${webContext.browserConfig.hostUrl}${webContext.paths.storage.saveFile.uri.split(':')[0]}${
-          webContext.activeSemester
-        }/${webContext.courseCode}/${state.rounds}`
+        `${hostUrl}${webContext.paths.storage.saveFile.uri.split(':')[0]}${activeSemester}/${courseCode}/${
+          state.rounds
+        }`
       )
       req.send(formData)
     })
@@ -198,15 +208,13 @@ function AdminPage() {
     ev.preventDefault()
     if (progress === 'edit') {
       if (webContext.semesters.length === 0) {
-        return webContext
-          .getCourseInformation(webContext.courseCode, webContext.username, webContext.language)
-          .then(courseData =>
-            setState({
-              isPreviewMode: false,
-              progress: 'back_new',
-              alert: '',
-            })
-          )
+        return webContext.getCourseInformation(courseCode, webContext.username, webContext.language).then(courseData =>
+          setState({
+            isPreviewMode: false,
+            progress: 'back_new',
+            alert: '',
+          })
+        )
       }
       setState({
         isPreviewMode: false,
@@ -232,7 +240,7 @@ function AdminPage() {
     const { modalOpen: modal } = state
     modal.cancel = false
     setState({ modalOpen: modal })
-    window.location = `${SERVICE_URL.admin}${webContext.courseCode}?serv=pm&event=cancel`
+    window.location = `${SERVICE_URL.admin}${courseCode}?serv=pm&event=cancel`
   }
 
   function handlePublish(ev, fromModal = false) {
@@ -260,7 +268,6 @@ function AdminPage() {
           saved: true,
           modalOpen: modal,
         })
-        const { hostUrl } = webContext.browserConfig
         const { roundsIdWithPdfVersion = {} } = webContext.usedRounds
         let publishType = 'pub'
         const filteredChosenRoundsById = _filterChosenRoundsList()
@@ -399,7 +406,7 @@ function AdminPage() {
                       key={'round' + round.roundId}
                       language={langIndex}
                       round={round}
-                      semester={webContext.activeSemester}
+                      semester={activeSemester}
                       usedRounds={webContext.usedRounds.usedRoundsIdList}
                       showAccessInfo={false}
                     />
@@ -461,12 +468,7 @@ function AdminPage() {
                   <h2 className="section-50">{translate.header_preview}</h2>
                   <h3>{translate.subheader_preview}</h3>
 
-                  <a
-                    className="pdf-link"
-                    href={`${webContext.browserConfig.storageUri}${state.memoFile}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
+                  <a className="pdf-link" href={`${storageUri}${state.memoFile}`} target="_blank" rel="noreferrer">
                     {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
                   </a>
                 </Col>
@@ -502,7 +504,7 @@ function AdminPage() {
                           key="pm"
                           handleUpload={handleUploadFile}
                           progress={fileProgress.pm}
-                          path={webContext.browserConfig.proxyPrefixPath.uri}
+                          path={proxyPrefixPath.uri}
                           file={state.memoFile}
                           notValid={state.notValid}
                           handleRemoveFile={handleRemoveFile}
