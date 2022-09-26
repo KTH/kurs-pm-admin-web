@@ -25,7 +25,7 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
         <h4>{alertHeader}</h4>
         <p>
           {`${accessibilityResponsibility} `}
-          <a href={`https://intra.kth.se/${linkLocale}styrning/styrdokument/regler/utbildning-overgripande`}>
+          <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/riktilinjer-1.1184855`}>
             {labelControlInfoLink}
           </a>
           .
