@@ -39,7 +39,7 @@
     "applicationinsights": "^2.3.5",
     "axios": "^0.27.2",
     "body-parser": "^1.20.0",
-    "cacheable-lookup": "^6.0.4",
+    "cacheable-lookup": "^7.0.0",
     "cheerio": "^1.0.0-rc.12",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.18.10",
-    "@babel/core": "^7.18.10",
+    "@babel/core": "^7.19.1",
     "@babel/eslint-parser": "^7.18.9",
     "@babel/plugin-proposal-decorators": "^7.18.10",
     "@babel/plugin-transform-runtime": "^7.19.1",
