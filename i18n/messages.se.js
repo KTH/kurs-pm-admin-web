@@ -51,7 +51,7 @@ module.exports = {
       2: 'HT ',
     },
 
-    header_main: 'Ladda upp eller ändra kurs-PM som PDF',
+    header_main: 'Ladda upp kurs-PM som PDF',
     header_upload_memo: 'Ladda upp kurs-PM',
     //* **** PROGRESS BAR  */
     pagesProgressBar: [

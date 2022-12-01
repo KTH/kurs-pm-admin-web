@@ -29,7 +29,7 @@ module.exports = {
       2: 'Autumn ',
     },
 
-    header_main: 'Upload or change course memo as PDF',
+    header_main: 'Upload course memo as PDF',
     header_upload_memo: 'Upload course memo',
 
     /**
