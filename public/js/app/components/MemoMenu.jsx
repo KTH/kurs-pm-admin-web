@@ -1,18 +1,5 @@
 import React, { useReducer } from 'react'
-import {
-  Alert,
-  Form,
-  Dropdown,
-  FormGroup,
-  Label,
-  Input,
-  DropdownToggle,
-  DropdownItem,
-  DropdownMenu,
-  Button,
-  Row,
-  Col,
-} from 'reactstrap'
+import { Alert, Form, FormGroup, Label, Input, Button, Row, Col } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
 // Custom components
@@ -36,7 +23,6 @@ function MemoMenu(props) {
   const [state, setState] = useReducer(paramsReducer, {
     alertMsg: '',
     firstVisit: initfirstVisit,
-    dropdownOpen: false,
     collapseOpen: initProgress === 'back_new',
     modalOpen: {
       delete: false,
@@ -56,13 +42,6 @@ function MemoMenu(props) {
   // ******************************* SEMESTER DROPDOWN ******************************* */
   // ********************************************************************************** */
   // eslint-disable-next-line react/sort-comp
-  function toggleDropdown(ev) {
-    ev.preventDefault()
-    const { dropdownOpen } = state
-    setState({
-      dropdownOpen: !dropdownOpen,
-    })
-  }
 
   function getUsedRounds(semester) {
     return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
@@ -78,9 +57,9 @@ function MemoMenu(props) {
 
   function handleSelectedSemester(ev) {
     ev.preventDefault()
-    getUsedRounds(ev.target.id)
+    getUsedRounds(ev.target.value)
     setState({
-      semester: ev.target.id,
+      semester: ev.target.value,
       collapseOpen: true,
       firstVisit: false,
       rounds: [],
@@ -154,7 +133,6 @@ function MemoMenu(props) {
     alertMsg,
     canOnlyPreview,
     collapseOpen,
-    dropdownOpen,
     firstVisit,
     modalOpen,
     semester,
@@ -167,32 +145,42 @@ function MemoMenu(props) {
       {/** *********************************************************************************** */}
       {/*                                  SEMESTER DROPDOWN                                  */}
       {/** *********************************************************************************** */}
-      <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} className="select-semester">
+
+      <div className="inline-flex flex-column padding-top-30">
         <h2 className="section-50">{translate.header_memo_menu}</h2>
-
         <FormHeaderAndInfo infoId="info_select_semester" header={selectSemester} translate={translate} />
+      </div>
+      <div className="col-4 nopadding">
+        <form>
+          <div className="form-group">
+            <div className="form-select">
+              <div className="select-wrapper">
+                <select
+                  className="form-control"
+                  id="semesterDropdownControl"
+                  aria-label={translate.select_semester}
+                  onChange={handleSelectedSemester}
+                  defaultValue={semester && semester > 0 && !firstVisit ? semester : translate.select_semester}
+                  key="no-chosen"
+                >
+                  <option value={translate.select_semester}>{selectSemester}</option>
 
-        <DropdownToggle>
-          <span>
-            {semester && semester > 0 && !firstVisit
-              ? `${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]} 
-                                    ${semester.toString().match(/.{1,4}/g)[0]}`
-              : selectSemester}
-          </span>
-          <span className="caretholder" id="_spanCaret" />
-        </DropdownToggle>
-        <DropdownMenu>
-          {semesterList &&
-            semesterList.map(sem => (
-              <DropdownItem id={sem} key={sem} onClick={handleSelectedSemester}>
-                {`
-                  ${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
-                  ${sem.toString().match(/.{1,4}/g)[0]}
-                `}
-              </DropdownItem>
-            ))}
-        </DropdownMenu>
-      </Dropdown>
+                  {semesterList &&
+                    semesterList.map(sem => (
+                      <option id={sem} key={sem} value={sem}>
+                        {`
+                    ${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
+                    ${sem.toString().match(/.{1,4}/g)[0]}
+                  `}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
       {alertMsg.length > 0 && (
         <Row key="smth-wrong" className="w-100 my-0 mx-auto upper-alert">
           <Alert color="danger">{` ${alertMsg}`}</Alert>
