@@ -162,7 +162,7 @@ function MemoMenu(props) {
                   onChange={handleSelectedSemester}
                   defaultValue={semester && semester > 0 && !firstVisit ? semester : translate.select_semester}
                 >
-                  <option value={translate.select_semester} key="no-chosen" disabled selected>
+                  <option value={translate.select_semester} key="no-chosen" disabled>
                     {selectSemester}
                   </option>
 
