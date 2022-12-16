@@ -161,17 +161,16 @@ function MemoMenu(props) {
                   aria-label={translate.select_semester}
                   onChange={handleSelectedSemester}
                   defaultValue={semester && semester > 0 && !firstVisit ? semester : translate.select_semester}
-                  key="no-chosen"
                 >
-                  <option value={translate.select_semester}>{selectSemester}</option>
+                  <option value={translate.select_semester} key="no-chosen" disabled selected>
+                    {selectSemester}
+                  </option>
 
                   {semesterList &&
                     semesterList.map(sem => (
                       <option id={sem} key={sem} value={sem}>
-                        {`
-                    ${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
-                    ${sem.toString().match(/.{1,4}/g)[0]}
-                  `}
+                        {`${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
+                        ${sem.toString().match(/.{1,4}/g)[0]}`}
                       </option>
                     ))}
                 </select>
