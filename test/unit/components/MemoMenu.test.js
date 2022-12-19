@@ -5,6 +5,7 @@ import i18n from '../../../i18n'
 import { StaticRouter } from 'react-router-dom/server'
 import MemoMenu from '../../../public/js/app/components/MemoMenu'
 import mockWebContext from '../../mocks/mockWebContext'
+import userEvent from '@testing-library/user-event'
 const { getAllByRole, getAllByTestId, getAllByText, getByTestId, getByText } = screen
 
 const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
@@ -39,12 +40,55 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
     expect(allH3Headers[0]).toHaveTextContent('Välj termin')
   })
 
-  test('renders buttons. English.', () => {
-    const buttons = getAllByRole('button')
-    expect(buttons.length).toBe(3)
-    expect(buttons[0]).toHaveTextContent('')
-    expect(buttons[1]).toHaveTextContent('Välj termin')
-    expect(buttons[2]).toHaveTextContent('Avbryt')
+  test('User event', () => {
+    const formControl = screen.getAllByRole('combobox')
+    expect(formControl).toMatchInlineSnapshot(`
+      [
+        <select
+          aria-label="Välj termin"
+          class="form-control"
+          id="semesterDropdownControl"
+        >
+          <option
+            disabled=""
+            selected=""
+            value="Välj termin"
+          >
+            Välj termin
+          </option>
+          <option
+            id="20211"
+            value="20211"
+          >
+            VT  
+                              2021
+          </option>
+          <option
+            id="20202"
+            value="20202"
+          >
+            HT  
+                              2020
+          </option>
+          <option
+            id="20201"
+            value="20201"
+          >
+            VT  
+                              2020
+          </option>
+          <option
+            id="20192"
+            value="20192"
+          >
+            HT  
+                              2019
+          </option>
+        </select>,
+      ]
+    `)
+
+    userEvent.selectOptions(screen.getByRole('combobox', { name: /Välj termin/i }), '20201')
   })
 
   xtest('renders checkbox for course offering which does not have a published course data', () => {
