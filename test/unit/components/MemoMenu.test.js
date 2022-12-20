@@ -6,6 +6,7 @@ import { StaticRouter } from 'react-router-dom/server'
 import MemoMenu from '../../../public/js/app/components/MemoMenu'
 import mockWebContext from '../../mocks/mockWebContext'
 import userEvent from '@testing-library/user-event'
+
 const { getAllByRole, getAllByTestId, getAllByText, getByTestId, getByText } = screen
 
 const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
@@ -40,7 +41,7 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
     expect(allH3Headers[0]).toHaveTextContent('Välj termin')
   })
 
-  test('User event', () => {
+  test('renders drop down menu and upload button', async () => {
     const formControl = screen.getAllByRole('combobox')
     expect(formControl).toMatchInlineSnapshot(`
       [
@@ -88,7 +89,14 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
       ]
     `)
 
-    userEvent.selectOptions(screen.getByRole('combobox', { name: /Välj termin/i }), '20201')
+    await userEvent.selectOptions(screen.getByRole('combobox', { name: /Välj termin/i }), '20201')
+    const uploadBtnAfter = screen.getByText('Ladda upp')
+    expect(uploadBtnAfter).toBeInTheDocument()
+  })
+
+  test('renders a cancel button', () => {
+    const label = screen.getByText('Avbryt')
+    expect(label).toBeInTheDocument()
   })
 
   xtest('renders checkbox for course offering which does not have a published course data', () => {

@@ -158,11 +158,11 @@ function MemoMenu(props) {
                 <select
                   className="form-control"
                   id="semesterDropdownControl"
-                  aria-label={translate.select_semester}
+                  aria-label={selectSemester}
                   onChange={handleSelectedSemester}
-                  defaultValue={semester && semester > 0 && !firstVisit ? semester : translate.select_semester}
+                  defaultValue={semester && semester > 0 && !firstVisit ? semester : selectSemester}
                 >
-                  <option value={translate.select_semester} key="no-chosen" disabled>
+                  <option value={selectSemester} key="no-chosen" disabled>
                     {selectSemester}
                   </option>
 
