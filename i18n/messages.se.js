@@ -51,7 +51,7 @@ module.exports = {
       2: 'HT ',
     },
 
-    header_main: 'Ladda upp eller ändra kurs-PM som PDF',
+    header_main: 'Ladda upp kurs-PM som PDF',
     header_upload_memo: 'Ladda upp kurs-PM',
     //* **** PROGRESS BAR  */
     pagesProgressBar: [
@@ -61,7 +61,7 @@ module.exports = {
           'Börja med att välja termin och kursomgång för det kurs-PM som ska publiceras/ändras (steg 1 av 3). I nästa steg (2 av 3) kommer du att kunna ladda upp kurs-PM som PDF. I sista steget (3 av 3) ges möjlighet att först granska ditt kurs-PM och sedan publicera det på sidan \u201DFörbereda och gå kurs/Kurs-PM\u201D. Finns det ett publicerat kurs-PM sedan tidigare kommer ditt kurs-PM versionshanteras.',
       },
       {
-        title: 'Ladda upp/ändra kurs-PM',
+        title: 'Ladda upp kurs-PM',
         intro: '',
       },
       {
