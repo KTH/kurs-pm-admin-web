@@ -2,12 +2,21 @@
 
 import i18n from '../../../../i18n/index'
 
+const formatToLocaleDate = date => {
+  if (date === '') return null
+  const timestamp = Date.parse(date)
+  const parsedDate = new Date(timestamp)
+  const options = { day: 'numeric', month: 'short', year: 'numeric' }
+  const languageTag = 'en-GB'
+
+  return parsedDate.toLocaleDateString(languageTag, options)
+}
+
 const getDateFormat = (date, language) => {
   if (language === 'Svenska' || language === 'Engelska' || language === 1 || language === 'sv') {
     return date
   }
-  const splitDate = date.split('-')
-  return `${splitDate[2]}/${splitDate[1]}/${splitDate[0]}`
+  return formatToLocaleDate(date)
 }
 
 const getTodayDate = (date = '') => {
