@@ -207,31 +207,31 @@ function MemoMenu(props) {
                   <>
                     <p>{translate.intro_new}</p>
                     {roundList[semester].map(round => {
-                      const { canBeAccessedByUser, roundId } = round
-                      const hasBeenUsed = usedRounds.includes(roundId) || false
-                      const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(roundId) || false
+                      const { canBeAccessedByUser, applicationCode } = round
+                      const hasBeenUsed = usedRounds.includes(applicationCode) || false
+                      const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(applicationCode) || false
                       const hasPublishedPdf = hasBeenUsed && !hasWebVersion
                       return (
-                        <FormGroup className="form-check" id="rounds" key={roundId}>
+                        <FormGroup className="form-check" id="rounds" key={applicationCode}>
                           <Input
                             type="checkbox"
-                            id={roundId}
-                            key={'checkbox' + roundId}
+                            id={applicationCode}
+                            key={'checkbox' + applicationCode}
                             onChange={handleRoundCheckbox}
-                            checked={rounds.includes(roundId)}
-                            name={roundId}
+                            checked={rounds.includes(applicationCode)}
+                            name={applicationCode}
                             disabled={!canBeAccessedByUser || hasWebVersion}
                             data-hasfile={hasPublishedPdf}
                           />
-                          <Label key={'Label' + roundId} for={roundId}>
+                          <Label key={'Label' + applicationCode} for={applicationCode}>
                             <RoundLabel
-                              key={'round' + roundId}
+                              key={'round' + applicationCode}
                               language={context.language}
                               round={round}
                               semester={semester}
                               hasPublishedPdf={hasPublishedPdf}
                               hasWebVersion={hasWebVersion}
-                              webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[roundId] : {}}
+                              webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[applicationCode] : {}}
                               showAccessInfo
                             />
                           </Label>

@@ -14,9 +14,42 @@ const koppsApi = new BasicAPI({
   defaultTimeout: 10000, // config.koppsApi.defaultTimeout
 })
 
+async function _getApplicationCodeFromLadokUID(ladokUID) {
+  try {
+    log.debug('Going to fetch application for ladokUID: ', ladokUID)
+    const res = await koppsApi.getAsync(`courses/offerings/roundnumber?ladokuid=${ladokUID}`)
+    const { body } = res
+    if (body) {
+      const { application_code } = body
+      return application_code
+    } else {
+      return ''
+    }
+  } catch (error) {
+    log.error('Kopps is not available', error)
+  }
+}
+
 async function getKoppsCourseData(courseCode) {
   try {
-    return await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
+    const res = await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
+    const { body } = res
+    if (body) {
+      const { termsWithCourseRounds } = body
+      if (termsWithCourseRounds && termsWithCourseRounds.length > 0) {
+        for await (const { rounds } of termsWithCourseRounds) {
+          for await (const round of rounds) {
+            const { ladokUID } = round
+            if (ladokUID && ladokUID !== '') {
+              round.applicationCode = await _getApplicationCodeFromLadokUID(ladokUID)
+            } else {
+              round.applicationCode = ''
+            }
+          }
+        }
+      }
+    }
+    return body
   } catch (err) {
     log.debug('api call to getKoppsCourseData has failed:', { message: err })
     return err

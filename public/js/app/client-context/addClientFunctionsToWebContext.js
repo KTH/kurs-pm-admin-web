@@ -118,6 +118,7 @@ function createMemoData(semester, rounds) {
       pdfMemoUploadDate: '',
       semester,
       koppsRoundId: rounds[round],
+      applicationCode: rounds[round],
     }
     this.newMemoList.push(newMemo)
   }

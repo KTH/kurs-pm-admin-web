@@ -39,13 +39,13 @@ const isValidDate = date => {
   return regex.test(date)
 }
 
-const formatRoundName = (language, shortName, semester, roundId) => {
+const formatRoundName = (language, shortName, semester, applicationCode) => {
   const translate = i18n.messages[language].messages
   return shortName
     ? shortName + ' '
     : `${translate.course_short_semester[semester.toString().match(/.{1,4}/g)[1]]}${
         semester.toString().match(/.{1,4}/g)[0]
-      }-${roundId}`
+      }-${applicationCode}`
 }
 
 export { formatDate, getTodayDate, getDateFormat, isValidDate, formatRoundName }
