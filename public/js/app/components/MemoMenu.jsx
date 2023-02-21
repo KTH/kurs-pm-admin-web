@@ -30,9 +30,9 @@ function MemoMenu(props) {
       cancel: false,
     },
     semester: initSemester && initSemester.length > 0 ? initSemester : '',
-    rounds: initTempData ? initTempData.roundIdList : [],
-    usedRounds: context.usedRounds.usedRoundsIdList || [],
-    usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
+    rounds: initTempData ? initTempData.applicationCodes : [],
+    usedRounds: context.usedRounds.usedRoundsApplicationCodeList || [],
+    usedRoundsWithWebVer: context.usedRounds.roundsApplicationCodeWithWebVersion || {},
 
     temporaryData: initTempData,
     newSemester: false,
@@ -47,8 +47,8 @@ function MemoMenu(props) {
     return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
       setState({
         semester,
-        usedRounds: context.usedRounds.usedRoundsIdList || [],
-        usedRoundsWithWebVer: context.usedRounds.roundsIdWithWebVersion || {},
+        usedRounds: context.usedRounds.usedRoundsApplicationCodeList || [],
+        usedRoundsWithWebVer: context.usedRounds.roundsApplicationCodeWithWebVersion || {},
         lastSelected: state.lastSelected,
         alertMsg: '',
       })

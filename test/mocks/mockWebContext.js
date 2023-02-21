@@ -2,8 +2,8 @@ import { addClientFunctionsToWebContext } from '../../public/js/app/client-conte
 
 const storeFunctions = addClientFunctionsToWebContext()
 const usedRounds = {
-  roundIdList: ['2'],
-  roundsIdWithWebVersion: {},
+  applicationCodes: ['2'],
+  roundsApplicationCodeWithWebVersion: {},
   memoList: [
     {
       courseMemoFileName: 'memo-EF1111HT2019_2.pdf',

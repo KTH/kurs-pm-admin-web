@@ -129,7 +129,7 @@ async function getIndex(req, res, next) {
       if (apiResponse.statusCode >= 400) {
         webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
       } else {
-        await webContext.handleCourseData(apiResponse.body, courseCode, username, lang)
+        await webContext.handleCourseData(apiResponse, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)
