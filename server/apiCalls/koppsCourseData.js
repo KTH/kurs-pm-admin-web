@@ -32,7 +32,7 @@ async function _getApplicationCodeFromLadokUID(ladokUID) {
 async function getKoppsCourseData(courseCode) {
   try {
     const res = await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
-    const { body } = res
+    const { body, statusCode, statusMessage } = res
     if (body) {
       const { termsWithCourseRounds } = body
       if (termsWithCourseRounds && termsWithCourseRounds.length > 0) {
@@ -48,7 +48,7 @@ async function getKoppsCourseData(courseCode) {
         }
       }
     }
-    return body
+    return { body, statusCode, statusMessage }
   } catch (err) {
     log.debug('api call to getKoppsCourseData has failed:', { message: err })
     return err

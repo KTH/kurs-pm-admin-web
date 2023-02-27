@@ -125,11 +125,11 @@ async function getIndex(req, res, next) {
     if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
-      const apiResponse = await getKoppsCourseData(courseCode, lang)
-      if (apiResponse.statusCode >= 400) {
-        webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
+      const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
+      if (statusCode >= 400) {
+        webContext.errorMessage = statusMessage // TODO: ERROR?????
       } else {
-        await webContext.handleCourseData(apiResponse, courseCode, username, lang)
+        await webContext.handleCourseData(body, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)
