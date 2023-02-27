@@ -17,8 +17,7 @@ const koppsApi = new BasicAPI({
 async function _getApplicationCodeFromLadokUID(ladokUID) {
   try {
     log.debug('Going to fetch application for ladokUID: ', ladokUID)
-    const res = await koppsApi.getAsync(`courses/offerings/roundnumber?ladokuid=${ladokUID}`)
-    const { body } = res
+    const { body } = await koppsApi.getAsync(`courses/offerings/roundnumber?ladokuid=${ladokUID}`)
     if (body) {
       const { application_code } = body
       return application_code
