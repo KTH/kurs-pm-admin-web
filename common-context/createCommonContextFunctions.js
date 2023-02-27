@@ -32,6 +32,7 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
   if (isExaminator || isKursinfoAdmin || isSchoolAdmin || isSuperUser) {
     return true
   }
+  // TODO: We are using ladokRoundId for now because UG Rest Api is not updated with application codes. Once the api is updated then we can use application code here
   const roundCourseResponsiblesGroup = `${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.courseresponsible`
 
   if (memberOfStr.includes(roundCourseResponsiblesGroup)) {
@@ -87,7 +88,6 @@ function handleCourseData(courseObject, courseCode, userName, language) {
         round =>
           (round.applicationCode = {
             courseCode: this.courseCode,
-            roundId: round.ladokRoundId,
             language: round.language[language],
             shortName: round.shortName,
             startDate: round.firstTuitionDate,
