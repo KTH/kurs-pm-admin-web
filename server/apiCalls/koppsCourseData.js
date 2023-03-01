@@ -34,9 +34,9 @@ async function getKoppsCourseData(courseCode) {
     const res = await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}/courseroundterms`)
     const { body, statusCode, statusMessage } = res
     if (body) {
-      const { termsWithCourseRounds } = body
+      const { termsWithCourseRounds = [] } = body
       if (termsWithCourseRounds && termsWithCourseRounds.length > 0) {
-        for await (const { rounds } of termsWithCourseRounds) {
+        for await (const { rounds = [] } of termsWithCourseRounds) {
           for await (const round of rounds) {
             const { ladokUID } = round
             if (ladokUID && ladokUID !== '') {
