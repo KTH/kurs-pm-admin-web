@@ -19,13 +19,13 @@ async function _getApplicationCodeFromLadokUID(ladokUID) {
     log.debug('Going to fetch application for ladokUID: ', ladokUID)
     const { body } = await koppsApi.getAsync(`courses/offerings/roundnumber?ladokuid=${ladokUID}`)
     if (body) {
-      const { application_code } = body
+      const { application_code = '' } = body
       return application_code
-    } else {
-      return ''
     }
+    return ''
   } catch (error) {
     log.error('Kopps is not available', error)
+    throw error
   }
 }
 
@@ -39,7 +39,7 @@ async function getKoppsCourseData(courseCode) {
         for await (const { rounds = [] } of termsWithCourseRounds) {
           for await (const round of rounds) {
             const { ladokUID } = round
-            if (ladokUID && ladokUID !== '') {
+            if (ladokUID) {
               round.applicationCode = await _getApplicationCodeFromLadokUID(ladokUID)
             } else {
               round.applicationCode = ''
