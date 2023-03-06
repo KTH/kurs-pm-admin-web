@@ -50,9 +50,9 @@ const WebBasedMemoLabelAndLink = ({ courseCode, translate, memoStatus, memoEndPo
 export function roundFullName(langIndex, semester, round) {
   const { label_start_date } = i18n.messages[langIndex].messages
 
-  const { roundId, shortName, startDate, language: roundLang } = round
+  const { applicationCode, shortName, startDate, language: roundLang } = round
 
-  const roundName = formatRoundName(langIndex, shortName, semester, roundId)
+  const roundName = formatRoundName(langIndex, shortName, semester, applicationCode)
   const roundInputLabel = `${roundName} (${label_start_date} ${getDateFormat(startDate, roundLang)}, ${roundLang})`
   return roundInputLabel
 }
@@ -67,13 +67,13 @@ const RoundLabel = ({
   webVersionInfo, // if web-based memo exist then provide memoEndPoint to display in the link
 }) => {
   const translate = i18n.messages[language].messages
-  const { courseCode, roundId, canBeAccessedByUser } = round
+  const { courseCode, applicationCode, canBeAccessedByUser } = round
 
   const roundInputLabel = roundFullName(language, semester, round)
 
   if (showAccessInfo && !canBeAccessedByUser)
     return (
-      <span key={'round-' + roundId}>
+      <span key={'round-' + applicationCode}>
         {roundInputLabel}
         <span className="no-access">
           <NotAuthorizedPublishMessage languageIndex={language} />
@@ -83,7 +83,7 @@ const RoundLabel = ({
 
   if (showAccessInfo && hasPublishedPdf)
     return (
-      <span key={'round-' + roundId}>
+      <span key={'round-' + applicationCode}>
         {roundInputLabel}
         <span className="no-access">{` ${translate.has_published_memo}`}</span>{' '}
       </span>
@@ -91,7 +91,7 @@ const RoundLabel = ({
 
   if (hasWebVersion)
     return (
-      <span key={'round-' + roundId}>
+      <span key={'round-' + applicationCode}>
         {roundInputLabel}
         <WebBasedMemoLabelAndLink
           courseCode={courseCode}
@@ -103,7 +103,7 @@ const RoundLabel = ({
         />
       </span>
     )
-  return <span key={'round-' + roundId}>{roundInputLabel}</span>
+  return <span key={'round-' + applicationCode}>{roundInputLabel}</span>
 }
 
 export default RoundLabel

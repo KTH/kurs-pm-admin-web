@@ -12,7 +12,7 @@ const { createServerSideContext } = require('../ssr-context/createServerSideCont
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
-const koppsCourseData = require('../apiCalls/koppsCourseData')
+const { getKoppsCourseData } = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 const { parseCourseCode } = require('../utils/courseCodeParser')
 
@@ -49,8 +49,8 @@ async function _getKoppsCourseData(req, res, next) {
   const { courseCode } = req.params
   log.info('_getKoppsCourseData with code:' + courseCode)
   try {
-    const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode)
-    return httpResponse.json(res, apiResponse.body)
+    const koppsCourseData = await getKoppsCourseData(courseCode)
+    return httpResponse.json(res, koppsCourseData)
   } catch (err) {
     log.error('Exception from koppsAPI ', { error: err })
     next(err)
@@ -61,7 +61,7 @@ async function _getKoppsCourseData(req, res, next) {
 async function _saveFileToStorage(req, res, next) {
   log.info(' Saving uploaded file for course ' + req.params.courseCode)
   log.info(' Saving uploaded file to storage ' + req.files.file)
-  let { file } = req.files
+  const { file } = req.files
   try {
     const fileName = await runBlobStorage(file, req.params.semester, req.params.courseCode, req.params.rounds, req.body)
     log.info(' fileName ' + fileName)
@@ -125,11 +125,11 @@ async function getIndex(req, res, next) {
     if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
-      const apiResponse = await koppsCourseData.getKoppsCourseData(courseCode, lang)
-      if (apiResponse.statusCode >= 400) {
-        webContext.errorMessage = apiResponse.statusMessage // TODO: ERROR?????
+      const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
+      if (statusCode >= 400) {
+        webContext.errorMessage = statusMessage // TODO: ERROR?????
       } else {
-        await webContext.handleCourseData(apiResponse.body, courseCode, username, lang)
+        await webContext.handleCourseData(body, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)

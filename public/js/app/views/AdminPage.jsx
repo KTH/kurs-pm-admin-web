@@ -39,12 +39,12 @@ function AdminPage() {
     fileProgress: {
       pm: 0,
     },
-    roundIdList: [],
+    applicationCodes: [],
     usedRoundSelected: 0,
   })
 
   const { progress, isPreviewMode } = state
-  const { alertSuccess, fileProgress, roundIdList } = state
+  const { alertSuccess, fileProgress, applicationCodes } = state
 
   const { activeSemester, browserConfig = {}, courseCode, language: langIndex, roundData } = webContext
   const { hostUrl, proxyPrefixPath, storageUri } = browserConfig
@@ -55,7 +55,7 @@ function AdminPage() {
   // ********************************************************************************** */
   function _filterChosenRoundsList() {
     const filteredChosenRoundsList = activeSemester
-      ? roundData[activeSemester].filter(({ roundId }) => roundIdList.indexOf(roundId) > -1)
+      ? roundData[activeSemester].filter(({ applicationCode }) => applicationCodes.indexOf(applicationCode) > -1)
       : []
     return filteredChosenRoundsList
   }
@@ -103,7 +103,7 @@ function AdminPage() {
       courseCode,
       pm: state.memoFile,
       status: docStatus,
-      koppsRoundIds: state.roundIdList.toString(),
+      applicationCodes: state.applicationCodes.toString(),
     }
   }
 
@@ -130,13 +130,13 @@ function AdminPage() {
         }
       }
 
-      let formData = new FormData()
+      const formData = new FormData()
       const data = getMetadata('published')
       formData.append('file', e.target.files[0], e.target.files[0].name)
       formData.append('courseCode', data.courseCode)
       formData.append('memo', data.pm)
       formData.append('status', data.status)
-      formData.append('koppsRoundIds', data.koppsRoundIds)
+      formData.append('applicationCodes', data.applicationCodes)
       req.open(
         'POST',
         `${hostUrl}${webContext.paths.storage.saveFile.uri.split(':')[0]}${activeSemester}/${courseCode}/${
@@ -150,7 +150,7 @@ function AdminPage() {
   async function handleUploadFile(id, file, e) {
     if (e.target.files[0].type === 'application/pdf') {
       try {
-        const response = await sendRequest(id, file, e)
+        await sendRequest(id, file, e)
       } catch (err) {
         setState({
           notValid: ['savingToStorage'],
@@ -187,7 +187,7 @@ function AdminPage() {
 
   function handlePreview(event) {
     event.preventDefault()
-    let invalidList = validateData()
+    const invalidList = validateData()
     if (invalidList.length > 0) {
       setState({
         notValid: invalidList,
@@ -268,13 +268,13 @@ function AdminPage() {
           saved: true,
           modalOpen: modal,
         })
-        const { roundsIdWithPdfVersion = {} } = webContext.usedRounds
+        const { roundsApplicationCodeWithPdfVersion = {} } = webContext.usedRounds
         let publishType = 'pub'
         const filteredChosenRoundsById = _filterChosenRoundsList()
         const courseOfferingsNames = _getCourseOfferingsNames(filteredChosenRoundsById)
         const versions = filteredChosenRoundsById
-          .map(({ roundId }) => {
-            const prevFile = roundsIdWithPdfVersion[roundId]
+          .map(({ applicationCode }) => {
+            const prevFile = roundsApplicationCodeWithPdfVersion[applicationCode]
             const { version: prevVersion = 0 } = prevFile ? prevFile : {}
             const newVersion = Number(prevVersion) + 1
             if (newVersion && newVersion > 1) publishType = 'pub_changed'
@@ -286,7 +286,6 @@ function AdminPage() {
         )
       })
       .catch(err => {
-        // this.setAlarm("danger", "errWhileSaving");
         if (err.response) {
           throw new Error(err.message)
         }
@@ -306,7 +305,7 @@ function AdminPage() {
       memoFile: tempData !== null ? tempData.memoFile : '',
       pdfMemoDate: tempData !== null ? tempData.pdfMemoDate : '',
       alert: '',
-      roundIdList: rounds,
+      applicationCodes: rounds,
       usedRoundSelected,
     })
   }
@@ -322,7 +321,7 @@ function AdminPage() {
   function getTempData() {
     if (progress === 'back_new') {
       const { memoFile, pdfMemoDate, usedRoundSelected } = state
-      return { roundIdList, memoFile, pdfMemoDate, usedRoundSelected }
+      return { applicationCodes, memoFile, pdfMemoDate, usedRoundSelected }
     }
     return null
   }
@@ -403,11 +402,11 @@ function AdminPage() {
                 <p>
                   {chosenRoundsList.map(round => (
                     <RoundLabel
-                      key={'round' + round.roundId}
+                      key={'round' + round.applicationCode}
                       language={langIndex}
                       round={round}
                       semester={activeSemester}
-                      usedRounds={webContext.usedRounds.usedRoundsIdList}
+                      usedRounds={webContext.usedRounds.usedRoundsApplicationCodeList}
                       showAccessInfo={false}
                     />
                   ))}
@@ -469,7 +468,7 @@ function AdminPage() {
                   <h3>{translate.subheader_preview}</h3>
 
                   <a className="pdf-link" href={`${storageUri}${state.memoFile}`} target="_blank" rel="noreferrer">
-                    {`${translate.link_pm} ${courseCode} ${semesterName}-${roundIdList.sort().join('-')}`}
+                    {`${translate.link_pm} ${courseCode} ${semesterName}-${applicationCodes.sort().join('-')}`}
                   </a>
                 </Col>
               </Row>
