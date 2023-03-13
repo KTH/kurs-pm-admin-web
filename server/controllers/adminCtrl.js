@@ -22,9 +22,8 @@ async function _postMemoData(req, res, next) {
   const sendObject = JSON.parse(req.body.params)
   log.debug('_postMemoData :' + req.body.params)
   try {
-    let apiResponse = {}
-    apiResponse = await memoApi.setMemoData('default', sendObject)
-    return httpResponse.json(res, apiResponse.body)
+    const { body } = await memoApi.setMemoData('default', sendObject)
+    return httpResponse.json(res, body)
   } catch (err) {
     log.error('Exception from _postMemoData ', { error: err })
     next(err)
@@ -35,9 +34,9 @@ async function _getUsedRounds(req, res, next) {
   const { courseCode, semester } = req.params
   log.debug('_getUsedRounds with course code: ' + courseCode + 'and semester: ' + semester)
   try {
-    const apiResponse = await memoApi.getUsedRounds(courseCode, semester)
-    log.debug('_getUsedRounds response: ', apiResponse.body)
-    return httpResponse.json(res, apiResponse.body)
+    const { body } = await memoApi.getUsedRounds(courseCode, semester)
+    log.debug('_getUsedRounds response: ', body)
+    return httpResponse.json(res, body)
   } catch (error) {
     log.error('Exception from _getUsedRounds ', { error })
     next(error)
