@@ -33,7 +33,7 @@
     "@kth/kth-reactstrap": "^0.4.64",
     "@kth/log": "^4.0.5",
     "@kth/monitor": "^3.0.29",
-    "@kth/server": "^4.0.3",
+    "@kth/server": "^4.0.4",
     "@kth/session": "^3.0.5",
     "@opentelemetry/api": "^1.1.0",
     "@opentelemetry/sdk-trace-base": "^1.8.0",
