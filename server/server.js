@@ -263,31 +263,42 @@ appRoute.get(
   'system.gateway',
   _addProxy('/silent'),
   oidc.silentLogin,
-  requireRole(
-    'isCourseResponsible',
-    'isExaminator',
-    'isKursinfoAdmin',
-    'isSuperUser',
-    'isCourseTeacher',
-    'isSchoolAdmin'
-  ),
+  requireRole('isCourseResponsible', 'isExaminator', 'isKursinfoAdmin', 'isSuperUser', 'isCourseTeacher'),
   Admin.getIndex
 )
 
-appRoute.all('api.memoPost', _addProxy('/apicall/postMemoData/:id'), Admin.postMemoData)
+appRoute.all('api.memoPost', _addProxy('/apicall/postMemoData/:id'), oidc.silentLogin, Admin.postMemoData)
 appRoute.get(
   'api.memoGetUsedRounds',
   _addProxy('/apicall/memoGetUsedRounds/:courseCode/:semester'),
+  oidc.silentLogin,
+
   Admin.getUsedRounds
 )
 appRoute.get(
   'api.koppsCourseData',
   _addProxy('/api/memo-admin/getKoppsCourseDataByCourse/:courseCode/:language'),
+  oidc.silentLogin,
   Admin.getKoppsCourseData
 )
-appRoute.post('storage.saveFile', _addProxy('/storage/saveFile/:semester/:courseCode/:rounds'), Admin.saveFileToStorage)
-appRoute.post('storage.updateFile', _addProxy('/storage/updateFile/:fileName/'), Admin.updateFileInStorage)
-appRoute.post('storage.deleteFile', _addProxy('/storage/deleteFile/:fileName'), Admin.deleteFileInStorage)
+appRoute.post(
+  'storage.saveFile',
+  _addProxy('/storage/saveFile/:semester/:courseCode/:rounds'),
+  oidc.silentLogin,
+  Admin.saveFileToStorage
+)
+appRoute.post(
+  'storage.updateFile',
+  _addProxy('/storage/updateFile/:fileName/'),
+  oidc.silentLogin,
+  Admin.updateFileInStorage
+)
+appRoute.delete(
+  'storage.deleteFile',
+  _addProxy('/storage/deleteFile/:fileName'),
+  oidc.silentLogin,
+  Admin.deleteFileInStorage
+)
 server.use('/', appRoute.getRouter())
 
 // Not found etc

@@ -12,11 +12,11 @@ import { createCommonContextFunctions } from '../../../../common-context/createC
 function updateFileInStorage(fileName, metadata) {
   return axios
     .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: { metadata } })
-    .then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        return 'ERROR-' + apiResponse.statusCode
+    .then(({ status, statusText, data }) => {
+      if (status >= 400) {
+        return 'ERROR-' + statusText
       }
-      return apiResponse.data
+      return data
     })
     .catch(err => {
       if (err.response) {
@@ -27,12 +27,14 @@ function updateFileInStorage(fileName, metadata) {
 }
 
 function deleteFileInStorage(fileName) {
-  return axios.post(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName })).then(apiResponse => {
-    if (apiResponse.statusCode >= 400) {
-      return 'ERROR-' + apiResponse.statusCode
-    }
-    return apiResponse.data
-  })
+  return axios
+    .delete(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName }))
+    .then(({ status, statusText, data }) => {
+      if (status >= 400) {
+        return 'ERROR-' + statusText
+      }
+      return data
+    })
 }
 
 /** ***************************************************************************************************************************************** */
@@ -46,12 +48,12 @@ function postMemoData(postObject, fileName, uploadDate) {
   }
   return axios
     .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), { params: JSON.stringify(postObject) })
-    .then(apiResponse => {
-      if (apiResponse.statusCode >= 400) {
-        this.errorMessage = apiResponse.statusText
-        return 'ERROR-' + apiResponse.statusCode
+    .then(({ status, statusText, data }) => {
+      if (status >= 400) {
+        this.errorMessage = statusText
+        return 'ERROR-' + status
       }
-      return apiResponse.data
+      return data
     })
     .catch(err => {
       if (err.response) {
@@ -66,11 +68,11 @@ function getUsedRounds(courseCode, semester) {
   this.courseCode = courseCode
   return axios
     .get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode, semester }))
-    .then(result => {
-      if (result.status >= 400) {
-        return 'ERROR-' + result.status
+    .then(({ status, data }) => {
+      if (status >= 400) {
+        return 'ERROR-' + status
       }
-      return (this.usedRounds = result.data)
+      return (this.usedRounds = data)
     })
     .catch(err => {
       if (err.response) {
@@ -86,13 +88,13 @@ function getCourseInformation(courseCode, userName, lang = 'sv') {
   this.courseCode = courseCode
   return axios
     .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode, language: lang }))
-    .then(result => {
-      if (result.status >= 400) {
-        this.errorMessage = result.statusText
-        return 'ERROR-' + result.status
+    .then(({ status, statusText, data }) => {
+      if (status >= 400) {
+        this.errorMessage = statusText
+        return 'ERROR-' + status
       }
-      this.handleCourseData(result.data, courseCode, userName, lang)
-      return result.body
+      this.handleCourseData(data, courseCode, userName, lang)
+      return data
     })
     .catch(err => {
       if (err.response) {
