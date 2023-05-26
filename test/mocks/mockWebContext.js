@@ -39,6 +39,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2019-08-26',
           targetGroup: [],
+          state: 'APPROVED',
         },
         {
           endDate: '2020-01-14',
@@ -49,6 +50,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2019-10-28',
           targetGroup: [],
+          state: 'APPROVED',
         },
       ],
       20201: [
@@ -61,6 +63,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2020-01-15',
           targetGroup: [],
+          state: 'APPROVED',
         },
         {
           endDate: '2020-06-01',
@@ -71,6 +74,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2020-03-16',
           targetGroup: [],
+          state: 'APPROVED',
         },
       ],
       20202: [
@@ -83,6 +87,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2020-08-24',
           targetGroup: [],
+          state: 'APPROVED',
         },
         {
           endDate: '2021-01-15',
@@ -93,6 +98,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2020-10-26',
           targetGroup: [],
+          state: 'APPROVED',
         },
       ],
       20211: [
@@ -105,6 +111,7 @@ const mockWebContext = (userLang = 'en') => {
           shortName: '',
           startDate: '2021-01-18',
           targetGroup: [],
+          state: 'APPROVED',
         },
         {
           endDate: '2021-06-08',
@@ -114,6 +121,7 @@ const mockWebContext = (userLang = 'en') => {
           applicationCode: '1',
           shortName: '',
           startDate: '2021-03-22',
+          state: 'APPROVED',
         },
       ],
     },

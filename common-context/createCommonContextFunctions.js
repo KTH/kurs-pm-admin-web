@@ -94,6 +94,7 @@ function handleCourseData(courseObject, courseCode, userName, language) {
             ladokUID: round.ladokUID,
             applicationCode: round.applicationCode,
             canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, semester),
+            state: round.state,
           })
       )
     })
