@@ -212,30 +212,32 @@ function MemoMenu(props) {
                       const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(applicationCode) || false
                       const hasPublishedPdf = hasBeenUsed && !hasWebVersion
                       return (
-                        <FormGroup className="form-check" id="rounds" key={applicationCode}>
-                          <Input
-                            type="checkbox"
-                            id={applicationCode}
-                            key={'checkbox' + applicationCode}
-                            onChange={handleRoundCheckbox}
-                            checked={rounds.includes(applicationCode)}
-                            name={applicationCode}
-                            disabled={!canBeAccessedByUser || hasWebVersion}
-                            data-hasfile={hasPublishedPdf}
-                          />
-                          <Label key={'Label' + applicationCode} for={applicationCode}>
-                            <RoundLabel
-                              key={'round' + applicationCode}
-                              language={context.language}
-                              round={round}
-                              semester={semester}
-                              hasPublishedPdf={hasPublishedPdf}
-                              hasWebVersion={hasWebVersion}
-                              webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[applicationCode] : {}}
-                              showAccessInfo
+                        (round.state === 'APPROVED' || round.state === 'FULL') && (
+                          <FormGroup className="form-check" id="rounds" key={applicationCode}>
+                            <Input
+                              type="checkbox"
+                              id={applicationCode}
+                              key={'checkbox' + applicationCode}
+                              onChange={handleRoundCheckbox}
+                              checked={rounds.includes(applicationCode)}
+                              name={applicationCode}
+                              disabled={!canBeAccessedByUser || hasWebVersion}
+                              data-hasfile={hasPublishedPdf}
                             />
-                          </Label>
-                        </FormGroup>
+                            <Label key={'Label' + applicationCode} for={applicationCode}>
+                              <RoundLabel
+                                key={'round' + applicationCode}
+                                language={context.language}
+                                round={round}
+                                semester={semester}
+                                hasPublishedPdf={hasPublishedPdf}
+                                hasWebVersion={hasWebVersion}
+                                webVersionInfo={hasWebVersion ? usedRoundsWithWebVer[applicationCode] : {}}
+                                showAccessInfo
+                              />
+                            </Label>
+                          </FormGroup>
+                        )
                       )
                     })}
                   </>
