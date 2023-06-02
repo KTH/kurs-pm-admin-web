@@ -95,28 +95,6 @@ async function _deleteFileInStorage(res, req, next) {
   }
 }
 
-const extendMiniKoppsObjWithRoundState = (courseDetailedinformationRounds, koppsCourseRoundTerms) => {
-  const { termsWithCourseRounds: lastTermsInfoArray } = koppsCourseRoundTerms
-
-  const extenedLastTermsInfoArray = lastTermsInfoArray.map(element => {
-    element.rounds.map(round => {
-      courseDetailedinformationRounds.map(r => {
-        const { applicationCode } = r.applicationCodes[0]
-        if (applicationCode === round.applicationCode) {
-          round.state = r.state
-        }
-        return r
-      })
-      return round
-    })
-    return element
-  })
-
-  const extenedMiniKoppsObj = { ...koppsCourseRoundTerms, termsWithCourseRounds: extenedLastTermsInfoArray }
-
-  return extenedMiniKoppsObj
-}
-
 async function getIndex(req, res, next) {
   /** ------- CHECK OF CONNECTION TO API ------- */
   if (api.memoApi.connected === false) {
@@ -146,13 +124,11 @@ async function getIndex(req, res, next) {
     if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
-      const courseDetailedinformationRounds = await getDetailedKoppsCourseRounds(courseCode, lang)
       const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
-      const extenedMiniKoppsObj = extendMiniKoppsObjWithRoundState(courseDetailedinformationRounds, body)
       if (statusCode >= 400) {
         webContext.errorMessage = statusMessage // TODO: ERROR?????
       } else {
-        await webContext.handleCourseData(extenedMiniKoppsObj, courseCode, username, lang)
+        await webContext.handleCourseData(body, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)
