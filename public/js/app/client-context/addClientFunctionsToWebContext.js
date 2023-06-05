@@ -5,6 +5,7 @@
 // eslint-disable-next-line no-unused-vars
 import axios from 'axios'
 import { createCommonContextFunctions } from '../../../../common-context/createCommonContextFunctions'
+import { HTTP_CODE_400, getResponseMessage } from '../../../../common/ErrorUtils'
 
 /** ***************************************************************************************************************************************** */
 /*                                                       FILE STORAGE ACTIONS                                                      */
@@ -13,7 +14,7 @@ function updateFileInStorage(fileName, metadata) {
   return axios
     .post(this.buildApiUrl(this.paths.storage.updateFile.uri, { fileName }), { params: { metadata } })
     .then(({ status, statusText, data }) => {
-      if (status >= 400) {
+      if (status >= HTTP_CODE_400) {
         return 'ERROR-' + statusText
       }
       return data
@@ -30,7 +31,7 @@ function deleteFileInStorage(fileName) {
   return axios
     .delete(this.buildApiUrl(this.paths.storage.deleteFile.uri, { fileName }))
     .then(({ status, statusText, data }) => {
-      if (status >= 400) {
+      if (status >= HTTP_CODE_400) {
         return 'ERROR-' + statusText
       }
       return data
@@ -48,17 +49,14 @@ function postMemoData(postObject, fileName, uploadDate) {
   }
   return axios
     .post(this.buildApiUrl(this.paths.api.memoPost.uri, { id: 'default' }), { params: JSON.stringify(postObject) })
-    .then(({ status, statusText, data }) => {
-      if (status >= 400) {
-        this.errorMessage = statusText
-        return 'ERROR-' + status
-      }
-      return data
-    })
+    .then(({ data }) => data)
     .catch(err => {
       if (err.response) {
+        if (err.response.data) {
+          this.errorMessage = getResponseMessage(err.response.data)
+          return err.response.data
+        }
         this.errorMessage = err.message
-        return err.message
       }
       throw err
     })
@@ -69,7 +67,7 @@ function getUsedRounds(courseCode, semester) {
   return axios
     .get(this.buildApiUrl(this.paths.api.memoGetUsedRounds.uri, { courseCode, semester }))
     .then(({ status, data }) => {
-      if (status >= 400) {
+      if (status >= HTTP_CODE_400) {
         return 'ERROR-' + status
       }
       return (this.usedRounds = data)
@@ -89,7 +87,7 @@ function getCourseInformation(courseCode, userName, lang = 'sv') {
   return axios
     .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode, language: lang }))
     .then(({ status, statusText, data }) => {
-      if (status >= 400) {
+      if (status >= HTTP_CODE_400) {
         this.errorMessage = statusText
         return 'ERROR-' + status
       }

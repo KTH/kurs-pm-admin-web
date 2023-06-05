@@ -1,5 +1,6 @@
 'use strict'
 
+const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
 const api = require('../api')
 
 async function _getMemoData(id) {
@@ -13,7 +14,16 @@ async function _setMemoData(id, sendObject) {
   const { memoApi } = api
   const { paths, client } = memoApi
   const uri = client.resolve(paths.postCourseMemoData.uri, { id })
-  return client.postAsync({ uri, body: sendObject })
+
+  return new Promise((resolve, reject) => {
+    client.postAsync({ uri, body: sendObject }).then(result => {
+      if (result.statusCode >= HTTP_CODE_400) {
+        reject(result)
+      } else {
+        resolve(result)
+      }
+    })
+  })
 }
 
 async function _deleteMemoData(id) {

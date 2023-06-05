@@ -17,6 +17,7 @@ const packageFile = require('../../package.json')
 
 const api = require('../api')
 const { server: config } = require('../configuration')
+const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
 
 /**
  * Adds a zero (0) to numbers less then ten (10)
@@ -54,7 +55,7 @@ function _notFound(req, res, next) {
 // !OBS adapted to this project, don't replace by new node-web
 function _getFriendlyErrorMessage(lang, statusCode) {
   switch (statusCode) {
-    case 400:
+    case HTTP_CODE_400:
       return i18n.message('error_bad_request', lang)
     case 403:
       return i18n.message('friendly_message_have_not_rights', lang)
@@ -110,6 +111,7 @@ function _final(err, req, res, next) {
         message: err.message,
         friendly: _getFriendlyErrorMessage(lang, statusCode),
         error: isProd ? null : err.stack,
+        status: statusCode,
       })
     },
 

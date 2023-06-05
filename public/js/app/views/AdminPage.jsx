@@ -14,6 +14,7 @@ import { SERVICE_URL, ACCESSABILITY_INTRANET_LINK, ADMIN_COURSE_PM_DATA } from '
 import { getTodayDate } from '../util/helpers'
 import i18n from '../../../../i18n/index'
 import FormHeaderAndInfo from '../components/FormHeaderAndInfo'
+import { HTTP_CODE_400, getResponseMessage } from '../../../../common/ErrorUtils'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
@@ -256,9 +257,15 @@ function AdminPage() {
       .postMemoData(webContext.newMemoList, memoFile, pdfMemoDate)
       .then(response => {
         modal.publish = false
-        if (response.status >= 400 || response === undefined || response.message) {
+        if (
+          response.status >= HTTP_CODE_400 ||
+          response.statusCode >= HTTP_CODE_400 ||
+          response.message ||
+          response.statusMessage
+        ) {
+          const alertMessage = getResponseMessage(response)
           setState({
-            alert: response.message ? response.message : 'No connection with data base',
+            alert: alertMessage,
             modalOpen: modal,
           })
           return 'ERROR-' + response.status
