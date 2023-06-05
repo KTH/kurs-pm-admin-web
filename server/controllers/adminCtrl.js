@@ -15,6 +15,7 @@ const memoApi = require('../apiCalls/memoApi')
 const { getKoppsCourseData, getDetailedKoppsCourseRounds } = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 const { parseCourseCode } = require('../utils/courseCodeParser')
+const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
 
 // ------- MEMO FROM PM-API: POST, GET USED ROUNDS ------- /
 
@@ -125,7 +126,7 @@ async function getIndex(req, res, next) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
       const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
-      if (statusCode >= 400) {
+      if (statusCode >= HTTP_CODE_400) {
         webContext.errorMessage = statusMessage // TODO: ERROR?????
       } else {
         await webContext.handleCourseData(body, courseCode, username, lang)
