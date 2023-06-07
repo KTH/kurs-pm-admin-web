@@ -7,4 +7,4 @@ function getResponseMessage(response) {
   return 'No connection with data base'
 }
 
-export { getResponseMessage, HTTP_CODE_400 }
+module.exports = { getResponseMessage, HTTP_CODE_400 }
