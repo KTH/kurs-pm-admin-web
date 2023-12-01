@@ -44,7 +44,7 @@ function MemoMenu(props) {
   // eslint-disable-next-line react/sort-comp
 
   function getUsedRounds(semester) {
-    return context.getUsedRounds(context.courseData.courseCode, semester).then(result => {
+    return context.getUsedRounds(context.courseData.courseCode, semester).then(() => {
       setState({
         semester,
         usedRounds: context.usedRounds.usedRoundsApplicationCodeList || [],
@@ -153,28 +153,26 @@ function MemoMenu(props) {
       <div className="col-4 nopadding">
         <form>
           <div className="form-group">
-            <div className="form-select">
-              <div className="select-wrapper">
-                <select
-                  className="form-control"
-                  id="semesterDropdownControl"
-                  aria-label={selectSemester}
-                  onChange={handleSelectedSemester}
-                  defaultValue={semester && semester > 0 && !firstVisit ? semester : selectSemester}
-                >
-                  <option value={selectSemester} key="no-chosen" disabled>
-                    {selectSemester}
-                  </option>
+            <div className="select-wrapper">
+              <select
+                className="form-control"
+                id="semesterDropdownControl"
+                aria-label={selectSemester}
+                onChange={handleSelectedSemester}
+                defaultValue={semester && semester > 0 && !firstVisit ? semester : selectSemester}
+              >
+                <option value={selectSemester} key="no-chosen" disabled>
+                  {selectSemester}
+                </option>
 
-                  {semesterList &&
-                    semesterList.map(sem => (
-                      <option id={sem} key={sem} value={sem}>
-                        {`${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
+                {semesterList &&
+                  semesterList.map(sem => (
+                    <option id={sem} key={sem} value={sem}>
+                      {`${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
                         ${sem.toString().match(/.{1,4}/g)[0]}`}
-                      </option>
-                    ))}
-                </select>
-              </div>
+                    </option>
+                  ))}
+              </select>
             </div>
           </div>
         </form>
