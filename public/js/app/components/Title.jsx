@@ -63,10 +63,9 @@ const Title = ({ courseCode, header, title, language: langIndex, progress, showP
 Title.propTypes = {
   courseCode: PropTypes.string.isRequired,
   language: PropTypes.oneOf([0, 1]).isRequired,
-  title: PropTypes.oneOf([
-    '',
+  title: PropTypes.oneOfType([
     PropTypes.string,
-    PropTypes.shape({ credits: PropTypes.oneOf([PropTypes.string, PropTypes.number]), name: PropTypes.string }),
+    PropTypes.shape({ credits: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), name: PropTypes.string }),
   ]).isRequired,
 }
 
