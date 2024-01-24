@@ -34,7 +34,7 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
           {`${labelBeforeCreateMemoLink} `}
           <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
           {` ${labelAfterCreateMemoLink} `}
-          <a href={`https://intra.kth.se/${linkLocale}utbildning/utbildningsadministr/om-kursen/kurs-pm`}>
+          <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/kurs-pm`}>
             {labelCourseMemoGuideLink}
           </a>
           .
