@@ -95,7 +95,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-extended": "^4.0.2",
     "lint-staged": "^15.1.0",
-    "mini-css-extract-plugin": "^2.7.6",
+    "mini-css-extract-plugin": "^2.8.0",
     "nodemon": "^3.0.1",
     "null-loader": "^4.0.1",
     "path": "^0.12.7",
