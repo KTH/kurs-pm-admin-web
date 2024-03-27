@@ -1,3 +1,4 @@
+/* eslint-disable import/order */
 const server = require('@kth/server')
 
 // Now read the server config etc.
@@ -7,7 +8,7 @@ const AppRouter = require('kth-node-express-routing').PageRouter
 const { getPaths } = require('kth-node-express-routing')
 
 if (config.appInsights && config.appInsights.instrumentationKey) {
-  let appInsights = require('applicationinsights')
+  const appInsights = require('applicationinsights')
   appInsights
     .setup(config.appInsights.instrumentationKey)
     .setAutoDependencyCorrelation(true)
@@ -33,7 +34,7 @@ const _addProxy = uri => `${config.proxyPrefixPath.uri}${uri}`
 const log = require('@kth/log')
 const packageFile = require('../package.json')
 
-let logConfiguration = {
+const logConfiguration = {
   name: packageFile.name,
   app: packageFile.name,
   env: process.env.NODE_ENV,
@@ -73,6 +74,7 @@ require('./views/helpers')
  * ******************************
  */
 const accessLog = require('kth-node-access-log')
+
 server.use(accessLog(config.logging.accessLog))
 
 /* ****************************
@@ -86,7 +88,7 @@ const express = require('express')
 // Removes the "X-Powered-By: Express header" that shows the underlying Express framework
 server.disable('x-powered-by')
 
-/// Files/statics routes--
+// / Files/statics routes--
 
 const staticOption = { maxAge: 365 * 24 * 3600 * 1000 } // 365 days in ms is maximum
 
@@ -118,6 +120,7 @@ server.set('case sensitive routing', true)
  */
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+
 server.use(bodyParser.json())
 server.use(bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 1000000 }))
 server.use(cookieParser())
@@ -127,6 +130,7 @@ server.use(cookieParser())
  * ***********************
  */
 const session = require('@kth/session')
+
 const options = config.session
 options.sessionOptions.secret = config.sessionSecret
 server.use(session(options))
@@ -136,6 +140,7 @@ server.use(session(options))
  * ************************
  */
 const { languageHandler } = require('@kth/kth-node-web-common/lib/language')
+
 server.use(config.proxyPrefixPath.uri, languageHandler)
 
 /* ******************************
@@ -201,6 +206,7 @@ server.use(
     proxyPrefixPath: config.proxyPrefixPath.uri,
     hostUrl: config.hostUrl,
     redisConfig: config.cache.cortinaBlock.redis,
+    useStyle10: false,
   })
 )
 
@@ -223,6 +229,7 @@ server.use(
  */
 
 const fileUpload = require('express-fileupload')
+
 server.use(fileUpload())
 server.use(bodyParser.json({ limit: '50mb' }))
 server.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
