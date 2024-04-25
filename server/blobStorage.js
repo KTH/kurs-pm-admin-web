@@ -1,7 +1,7 @@
 const { BlobServiceClient } = require('@azure/storage-blob')
 
-const serverConfig = require('./configuration').server
 const log = require('@kth/log')
+const serverConfig = require('./configuration').server
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -14,13 +14,12 @@ const BLOB_SERVICE_SAS_URL = serverConfig.fileStorage.kursPMStorage.blobServiceS
 const blobServiceClient = new BlobServiceClient(BLOB_SERVICE_SAS_URL)
 
 /* --- creates an unique id for uploaded file */
-const createID = () => {
-  return 'x4xxxyxxxxxx'.replace(/[xy]/g, function (c) {
+const createID = () =>
+  'x4xxxyxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0
     const v = c === 'x' ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
-}
 
 const getTodayDate = (fileDate = true) => {
   const today = new Date()

@@ -5,7 +5,6 @@
  */
 const os = require('os')
 
-const errorHandler = require('@kth/kth-node-web-common/lib/error')
 const { getPaths } = require('kth-node-express-routing')
 const language = require('@kth/kth-node-web-common/lib/language')
 const { monitorRequest } = require('@kth/monitor')
@@ -160,7 +159,6 @@ function _about(req, res) {
  */
 async function _monitor(req, res) {
   try {
-    const apiConfig = config.nodeApi
     await monitorRequest(req, res, [
       ...(api
         ? Object.keys(api).map(apiKey => ({
