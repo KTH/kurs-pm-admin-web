@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 import React, { useEffect, useReducer } from 'react'
 import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
@@ -109,7 +110,7 @@ function AdminPage() {
   }
 
   function sendRequest(id, file, e) {
-    return new Promise((resolve, reject) => {
+    return new Promise(() => {
       const req = new XMLHttpRequest()
       req.upload.addEventListener('progress', fileEvent => {
         if (fileEvent.lengthComputable) {
@@ -118,7 +119,7 @@ function AdminPage() {
         }
       })
 
-      req.onreadystatechange = function () {
+      req.onreadystatechange = function onReadyStateChange() {
         if (this.readyState == 4 && this.status == 200) {
           fileProgress.pm = 0
           setState({
@@ -169,7 +170,7 @@ function AdminPage() {
 
   function handleRemoveFile(fileName = '') {
     if (fileName.length > 0 || state.memoFile.length > 0) {
-      webContext.deleteFileInStorage(state.memoFile).then(result => {
+      webContext.deleteFileInStorage(state.memoFile).then(() => {
         setState({ memoFile: '', hasNewUploadedFilePM: false })
       })
     }
@@ -209,7 +210,7 @@ function AdminPage() {
     ev.preventDefault()
     if (progress === 'edit') {
       if (webContext.semesters.length === 0) {
-        return webContext.getCourseInformation(courseCode, webContext.username, webContext.language).then(courseData =>
+        return webContext.getCourseInformation(courseCode, webContext.username, webContext.language).then(() =>
           setState({
             isPreviewMode: false,
             progress: 'back_new',
@@ -232,7 +233,7 @@ function AdminPage() {
     }
   }
 
-  function handleCancel(ev) {
+  function handleCancel() {
     const { memoFile } = state
     if (memoFile.length > 0) {
       handleRemoveFile()

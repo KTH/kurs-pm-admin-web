@@ -4,8 +4,8 @@
  * to call code in the javascript modules.
  */
 
-var $ = require('jquery')
+const $ = require('jquery')
 
-$(function () {
+$(() => {
   $('h1').text(' ♫ ♬ ♪ ♩ ♪ node-web updated from JS  ♫ ♬ ♪ ♩ ♪ ')
 })

@@ -12,7 +12,7 @@ const { createServerSideContext } = require('../ssr-context/createServerSideCont
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
-const { getKoppsCourseData, getDetailedKoppsCourseRounds } = require('../apiCalls/koppsCourseData')
+const { getKoppsCourseData } = require('../apiCalls/koppsCourseData')
 const i18n = require('../../i18n')
 const { parseCourseCode } = require('../utils/courseCodeParser')
 const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
@@ -27,7 +27,7 @@ async function _postMemoData(req, res, next) {
     return httpResponse.json(res, body)
   } catch (err) {
     log.error('Exception from _postMemoData ', { error: err })
-    next(err)
+    return next(err)
   }
 }
 
@@ -40,7 +40,7 @@ async function _getUsedRounds(req, res, next) {
     return httpResponse.json(res, body)
   } catch (error) {
     log.error('Exception from _getUsedRounds ', { error })
-    next(error)
+    return next(error)
   }
 }
 
@@ -53,7 +53,7 @@ async function _getKoppsCourseData(req, res, next) {
     return httpResponse.json(res, koppsCourseData)
   } catch (err) {
     log.error('Exception from koppsAPI ', { error: err })
-    next(err)
+    return next(err)
   }
 }
 
@@ -69,7 +69,7 @@ async function _saveFileToStorage(req, res, next) {
     return httpResponse.json(res, fileName)
   } catch (error) {
     log.error('Exception from saveFileToStorage ', { error })
-    next(error)
+    return next(error)
   }
 }
 
@@ -80,7 +80,7 @@ async function _updateFileInStorage(req, res, next) {
     return httpResponse.json(res, response)
   } catch (error) {
     log.error('Exception from updateFileInStorage ', { error })
-    next(error)
+    return next(error)
   }
 }
 
@@ -92,7 +92,7 @@ async function _deleteFileInStorage(res, req, next) {
     return httpResponse.json(res.res)
   } catch (error) {
     log.error('Exception from _deleteFileInStorage ', { error })
-    next(error)
+    return next(error)
   }
 }
 
@@ -143,7 +143,7 @@ async function getIndex(req, res, next) {
       context: webContext,
     })
 
-    res.render('admin/index', {
+    return res.render('admin/index', {
       compressedData,
       debug: 'debug' in req.query,
       instrumentationKey: serverConfig.appInsights.instrumentationKey,
@@ -155,7 +155,7 @@ async function getIndex(req, res, next) {
     })
   } catch (err) {
     log.error('Error in getIndex', { error: err })
-    next(err)
+    return next(err)
   }
 }
 

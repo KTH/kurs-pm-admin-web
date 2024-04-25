@@ -93,6 +93,7 @@ const messageHaveNotRights = lang => ({
 })
 
 module.exports.requireRole = (...roles) =>
+  // eslint-disable-next-line consistent-return
   async function _hasCourseAcceptedRoles(req, res, next) {
     const lang = language.getLanguage(res)
     const { id, preview: previewParam } = req.params
