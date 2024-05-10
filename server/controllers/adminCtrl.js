@@ -146,7 +146,6 @@ async function getIndex(req, res, next) {
     return res.render('admin/index', {
       compressedData,
       debug: 'debug' in req.query,
-      instrumentationKey: serverConfig.appInsights.instrumentationKey,
       html: view,
       title: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
       lang,
