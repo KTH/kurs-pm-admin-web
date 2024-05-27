@@ -14,22 +14,12 @@ function UpLoad(props) {
 
   //* --- Shows uploded file if file exists otherwise upload button --- */
   return (
-    <div className={notValid.indexOf(type) > -1 ? 'not-valid' : ''}>
+    <div className={notValid.indexOf(type) > -1 ? 'not-valid' : undefined}>
       {file && file.length > 0 ? (
-        <span>
-          <br />
-          <div className="inline-flex">
-            <p className="upload-text"> {file} </p>
-            <div
-              role="button"
-              tabIndex={0}
-              className="iconContainer icon-trash-can"
-              id={'remove_' + id}
-              onClick={removeFile}
-              onKeyPress={removeFile}
-            ></div>
-          </div>
-        </span>
+        <div className="inline-flex">
+          <p className="upload-text"> {file} </p>
+          <button className="kth-icon-button icon-trash-can" type="button" id={`remove_${id}`} onClick={removeFile} />
+        </div>
       ) : (
         <label className="custom-file-upload">
           <input type="file" id={id} onChange={onChange} />

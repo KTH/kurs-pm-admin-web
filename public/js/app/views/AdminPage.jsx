@@ -1,8 +1,9 @@
 /* eslint-disable consistent-return */
 import React, { useEffect, useReducer } from 'react'
-import { Row, Col, Form, Label, Alert } from 'reactstrap'
+import { Row, Col, Form, Label } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
 import Button from '../components-shared/Button'
+import Alert from '../components-shared/Alert'
 
 // Components
 import Title from '../components/Title'
@@ -353,9 +354,7 @@ function AdminPage() {
             {/*                               PAGE1: MEMO MENU                             */}
             {/* ************************************************************************************ */}
             {webContext.semesters.length === 0 ? (
-              <Row key="no-rounds" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="info"> {translate.alert_no_rounds_selected} </Alert>
-              </Row>
+              <Alert type="info"> {translate.alert_no_rounds_selected} </Alert>
             ) : (
               <MemoMenu
                 editMode={editMode}
@@ -373,9 +372,7 @@ function AdminPage() {
             )}
           </>
         ) : (
-          <Row key="error-message" className="w-100 my-0 mx-auto upper-alert">
-            <Alert color="info"> {webContext.errorMessage}</Alert>
-          </Row>
+          <Alert type="info"> {webContext.errorMessage}</Alert>
         )}
       </div>
     )
@@ -385,11 +382,7 @@ function AdminPage() {
         {/* ************************************************************************************ */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
         {/* ************************************************************************************ */}
-        {(webContext.errorMessage.length > 0 && (
-          <Row key="error-message-alert" className="w-100 my-0 mx-auto upper-alert">
-            <Alert color="info">{webContext.errorMessage}</Alert>
-          </Row>
-        )) || (
+        {(webContext.errorMessage.length > 0 && <Alert type="info">{webContext.errorMessage}</Alert>) || (
           <div>
             <Title
               title={webContext.courseTitle}
@@ -424,49 +417,32 @@ function AdminPage() {
             </div>
 
             {/* Existing PDF memo alert */}
-            {state.usedRoundSelected > 0 && (
-              <Row key="have-published-memo-message-alert" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="info"> {translate.alert_have_published_memo}</Alert>
-              </Row>
-            )}
+            {state.usedRoundSelected > 0 && <Alert type="info"> {translate.alert_have_published_memo}</Alert>}
             {/* Accessability alert */}
             {progress === 'edit' && (
-              <Row key="think-about-accessability-message-alert" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="info">
-                  {`${translate.alert_accessability_link_before} `}
-                  <a href={ACCESSABILITY_INTRANET_LINK[langIndex]} rel="noreferrer" target="_blank">
-                    {translate.alert_label_accessability_link}
-                  </a>
-                  {` ${translate.alert_accessability_link_after} `}
-                  {state.usedRoundSelected < 1 && (
-                    <>
-                      {` ${translate.alert_web_memo_support} `}
-                      <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
-                        {translate.label_link_web_based_draft_memo}
-                      </a>
-                      {`.`}
-                    </>
-                  )}
-                </Alert>
-              </Row>
+              <Alert type="info">
+                {`${translate.alert_accessability_link_before} `}
+                <a href={ACCESSABILITY_INTRANET_LINK[langIndex]} rel="noreferrer" target="_blank">
+                  {translate.alert_label_accessability_link}
+                </a>
+                {` ${translate.alert_accessability_link_after} `}
+                {state.usedRoundSelected < 1 && (
+                  <>
+                    {` ${translate.alert_web_memo_support} `}
+                    <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langIndex === 0 ? 'en' : 'sv'}`}>
+                      {translate.label_link_web_based_draft_memo}
+                    </a>
+                    {`.`}
+                  </>
+                )}
+              </Alert>
             )}
             {/* ----- ALERTS ----- */}
 
-            {state.alert.length > 0 && (
-              <Row key="dynamic-alert-message" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="info">{state.alert} </Alert>
-              </Row>
-            )}
-            {alertSuccess.length > 0 && (
-              <Row key="success-alert" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="success">{alertSuccess} </Alert>
-              </Row>
-            )}
-            {state.alertError.length > 0 && (
-              <Row key="error-alert" className="w-100 my-0 mx-auto upper-alert">
-                <Alert color="danger">{state.alertError} </Alert>
-              </Row>
-            )}
+            {state.alert.length > 0 && <Alert type="info">{state.alert} </Alert>}
+            {alertSuccess.length > 0 && <Alert type="success">{alertSuccess} </Alert>}
+            {state.alertError.length > 0 && <Alert type="warning">{state.alertError} </Alert>}
+
             {/* ************************************************************************************ */}
             {/*                                   PREVIEW                                           */}
             {/* ************************************************************************************ */}

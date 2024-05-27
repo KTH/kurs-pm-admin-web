@@ -40,8 +40,6 @@ $blue-link: #006cb7;
 $red: #e01f28;
 $white: #fff;
 
-$btn-link-height: 20px;
-
 %bordered-area {
   border: 1px solid $borderGrey;
   border-radius: 0.25rem;
@@ -434,13 +432,15 @@ span.right-links {
   margin: auto;
 }
 
-.icon-trash-can {
-  background-image: url('https://app.kth.se/style/static/kth-style/img/kth-style/icons/delete-blue.svg');
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  margin-top: 5px;
-  margin-left: 10px;
+.kth-icon-button.icon-trash-can {
+  &::before {
+    background-image: url('https://app.kth.se/style/static/kth-style/img/kth-style/icons/delete-blue.svg');
+    background-repeat: no-repeat;
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .fa,

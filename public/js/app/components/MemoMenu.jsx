@@ -1,7 +1,8 @@
 import React, { useReducer } from 'react'
-import { Alert, Form, FormGroup, Label, Input, Row } from 'reactstrap'
+import { Form, FormGroup, Label, Input, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
+import Alert from '../components-shared/Alert'
 import Button from '../components-shared/Button'
 
 // Custom components
@@ -180,11 +181,7 @@ function MemoMenu(props) {
         </form>
       </div>
 
-      {alertMsg.length > 0 && (
-        <Row key="smth-wrong" className="w-100 my-0 mx-auto upper-alert">
-          <Alert color="danger">{` ${alertMsg}`}</Alert>
-        </Row>
-      )}
+      {alertMsg.length > 0 && <Alert type="warning">{` ${alertMsg}`}</Alert>}
 
       {/** *********************************************************************************** */}
       {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
