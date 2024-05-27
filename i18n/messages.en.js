@@ -5,6 +5,8 @@ module.exports = {
   messages: {
     date_format_short: '%d-%b-%Y',
 
+    language_link_lang_sv: 'Svenska',
+
     error_bad_request: 'Sorry, the server cannot or will not process the request',
     error_not_found: "Sorry, we can't find your requested page",
     error_course_not_found: 'Sorry, there is no course with course code ',

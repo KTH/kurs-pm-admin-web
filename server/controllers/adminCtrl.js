@@ -150,6 +150,7 @@ async function getIndex(req, res, next) {
       title: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
       lang,
       toolbarUrl: serverConfig.toolbar.url,
+      theme: 'student-web',
       proxyPrefix,
       description: i18n.messages[lang === 'en' ? 0 : 1].messages.title,
     })
