@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { ProgressBar } from '@kth/kth-reactstrap/dist/components/utbildningsinfo'
-import { PageHeading } from '@kth/kth-reactstrap/dist/components/studinfo'
 import { Alert, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { ADMIN_COURSE_PM_DATA } from '../util/constants'
+import ProgressBar from '../components-shared/ProgressBar'
+import PageHeading from '../components-shared/PageHeading'
 
 const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
   const langAbbr = langIndex === 0 ? 'en' : 'sv'
@@ -51,11 +51,15 @@ const Title = ({ courseCode, header, title, language: langIndex, progress, showP
 
   const courseName = `${courseCode} ${courseTitle} ${creditUnit}`
 
+  const currentStepIndex = progress - 1
+
   return (
     <div>
-      <PageHeading subHeading={courseCode && courseName}>{header}</PageHeading>
+      <PageHeading heading={header} subHeading={courseCode && courseName} />
       {progress === 1 && <ShowInfoKTHrecommendation courseCode={courseCode} langIndex={langIndex} />}
-      {showProgressBar && <ProgressBar active={progress} pages={i18n.messages[langIndex].messages.pagesProgressBar} />}
+      {showProgressBar && (
+        <ProgressBar current={currentStepIndex} steps={i18n.messages[langIndex].messages.pagesProgressBar} />
+      )}
     </div>
   )
 }

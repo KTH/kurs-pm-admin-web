@@ -1,7 +1,9 @@
 import React, { useReducer } from 'react'
-import { Alert, Form, FormGroup, Label, Input, Button, Row, Col } from 'reactstrap'
+import { Alert, Form, FormGroup, Label, Input, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
+import Button from '../components-shared/Button'
+
 // Custom components
 import InfoModal from './InfoModal'
 import RoundLabel from './RoundLabel'
@@ -248,21 +250,21 @@ function MemoMenu(props) {
       {/** *********************************************************************************** */}
       {/*                              BUTTONS FOR MEMO MENU                                  */}
       {/** *********************************************************************************** */}
-      <Row className="button-container text-center">
-        <Col sm="12" lg="4" />
-        <Col sm="12" lg="4">
-          <Button className="alert alert-secondary" id="cancel" key="cancel" onClick={toggleModal}>
+      <div className="control-buttons">
+        <div />
+        <div>
+          <Button variant="secondary" id="cancel" key="cancel" onClick={toggleModal}>
             {translate.btn_cancel}
           </Button>
-        </Col>
-        <Col sm="12" lg="4">
+        </div>
+        <div>
           {!firstVisit && !canOnlyPreview && (
-            <Button className="next" color="success" id="new" key="new" onClick={goToEditMode} disabled={firstVisit}>
+            <Button variant="next" id="new" key="new" onClick={goToEditMode} disabled={firstVisit}>
               {translate.btn_add_memo}
             </Button>
           )}
-        </Col>
-      </Row>
+        </div>
+      </div>
       {/** *********************************************************************************** */}
       {/*                               MODALS FOR CANCEL                                     */}
       {/** *********************************************************************************** */}
