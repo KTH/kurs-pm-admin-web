@@ -1,9 +1,9 @@
 import React from 'react'
-import { Button, UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap'
+import { UncontrolledPopover, PopoverHeader, PopoverBody } from 'reactstrap'
 
 const InfoButton = ({ id, textObj, addClass }) => (
   <div className={addClass || ''}>
-    <Button id={id} type="button" className="btn-info-modal btn btn-secondary" />
+    <button id={id} type="button" className="btn-info-modal" />
     <UncontrolledPopover trigger="legacy" placement="auto" target={id}>
       <PopoverHeader>{textObj.header}</PopoverHeader>
       <PopoverBody>

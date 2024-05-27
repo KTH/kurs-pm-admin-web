@@ -1,6 +1,7 @@
 import React from 'react'
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap'
+import { Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap'
 import i18n from '../../../../i18n/index'
+import Button from '../components-shared/Button'
 
 // Custom components
 
@@ -29,9 +30,6 @@ function InfoModal(props) {
 
   return (
     <div>
-      {type === 'info' && (
-        <Button id={type} type="button" onClick={toggle} className="btn-info-modal btn btn-secondary" />
-      )}
       <Modal isOpen={isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
         <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
         <ModalBody>
@@ -41,11 +39,11 @@ function InfoModal(props) {
           <p dangerouslySetInnerHTML={{ __html: infoText.body }} />
         </ModalBody>
         <ModalFooter>
-          <Button id={type} color="secondary" onClick={toggle}>
+          <Button id={type} variant="secondary" onClick={toggle}>
             {infoText.btnCancel}
           </Button>
           {infoText.btnConfirm && (
-            <Button color="secondary" onClick={_handleConfirmToParent}>
+            <Button variant="secondary" onClick={_handleConfirmToParent}>
               {infoText.btnConfirm}
             </Button>
           )}

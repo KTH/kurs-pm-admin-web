@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Alert, Row } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { ADMIN_COURSE_PM_DATA } from '../util/constants'
+import Alert from '../components-shared/Alert'
 import ProgressBar from '../components-shared/ProgressBar'
 import PageHeading from '../components-shared/PageHeading'
 
@@ -20,9 +20,8 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
   } = i18n.messages[langIndex].messages.alert_recommendation
 
   return (
-    <Row key="show-recommendation-about-alternatives" className="w-100 my-0 mx-auto upper-alert">
-      <Alert color="info">
-        <h4>{alertHeader}</h4>
+    <div>
+      <Alert type="info" header={alertHeader}>
         <p>
           {`${accessibilityResponsibility} `}
           <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/riktilinjer-1.1184855`}>
@@ -40,7 +39,7 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
           .
         </p>
       </Alert>
-    </Row>
+    </div>
   )
 }
 
