@@ -116,6 +116,10 @@ module.exports = {
 
   koppsApi: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
 
+  toolbar: {
+    url: getEnv('TOOLBAR_URL', devDefaults('https://www-r.referens.sys.kth.se/social/toolbar/widget.js')),
+  },
+
   fileStorage: {
     kursPMStorage: {
       containerName: getEnv('STORAGE_CONTAINER_NAME', devStorageContainerName),
