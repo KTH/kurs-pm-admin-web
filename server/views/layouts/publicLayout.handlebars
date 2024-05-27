@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang={{lang}}>
+<html lang="{{lang}}">
 
 <head>
   <title>KTH | {{title}}</title>
@@ -14,6 +14,7 @@
   {{/if}}
 
   {{prefixStyle '/static/kth-style/css/kth-bootstrap.css' 'styles' 'screen'}}
+  {{prefixStyle '/assets/fonts.css' 'styles' 'screen'}}
   {{prefixStyle '/static/app.css' 'styles' 'screen'}}
 
   {{{render 'styles'}}}
@@ -29,7 +30,7 @@
 
 <body>
   {{> kthHeader }}
-  <div class="container start main">
+  <div class="kth-content">
     <div class="row">
         {{{body}}}
     </div>
