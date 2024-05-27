@@ -1,7 +1,8 @@
 /* eslint-disable consistent-return */
 import React, { useEffect, useReducer } from 'react'
-import { Row, Col, Button, Form, Label, Alert } from 'reactstrap'
+import { Row, Col, Form, Label, Alert } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
+import Button from '../components-shared/Button'
 
 // Components
 import Title from '../components/Title'
@@ -530,32 +531,31 @@ function AdminPage() {
                 {/* In case user can edit, othervise only preview is avalilable without control button  */}
                 {/* ************************************************************************************ */}
                 {webContext.status !== 'preview' && (
-                  <Row className="button-container text-center">
-                    <Col sm="4" className="align-left-sm-center">
-                      <Button className="back" color="secondary" id="back" key="back" onClick={handleBack}>
+                  <div className="control-buttons">
+                    <div>
+                      <Button variant="previous" id="back" key="back" onClick={handleBack}>
                         {isPreviewMode ? translate.btn_back_edit : translate.btn_back}
                       </Button>
-                    </Col>
-                    <Col sm="3" className="align-right-sm-center">
-                      <Button color="secondary" id="cancel" key="cancel" onClick={toggleModal}>
+                    </div>
+                    <div>
+                      <Button variant="secondary" id="cancel" key="cancel" onClick={toggleModal}>
                         {translate.btn_cancel}
                       </Button>
-                    </Col>
-                    <Col sm="3"></Col>
-                    <Col sm="2">
+                    </div>
+                    <div>
                       <span>
                         {(isPreviewMode && (
-                          <Button color="success" id="publish" key="publish" onClick={toggleModal}>
+                          <Button variant="success" id="publish" key="publish" onClick={toggleModal}>
                             {translate.btn_publish}
                           </Button>
                         )) || (
-                          <Button className="next" color="success" id="preview" key="preview" onClick={handlePreview}>
+                          <Button variant="next" id="preview" key="preview" onClick={handlePreview}>
                             {translate.btn_preview}
                           </Button>
                         )}
                       </span>
-                    </Col>
-                  </Row>
+                    </div>
+                  </div>
                 )}
               </Col>
             </Row>
