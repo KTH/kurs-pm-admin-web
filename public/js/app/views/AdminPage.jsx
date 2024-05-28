@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import React, { useEffect, useReducer } from 'react'
-import { Row, Col, Form, Label } from 'reactstrap'
+import { Form, Label } from 'reactstrap'
 import { useWebContext } from '../context/WebContext'
 import Button from '../components-shared/Button'
 import Alert from '../components-shared/Alert'
@@ -378,7 +378,7 @@ function AdminPage() {
     )
   else
     return (
-      <div key="kurs-pm-form-container" className="kip-container" id="kurs-pm-form-container">
+      <div className="kip-container" id="kurs-pm-form-container">
         {/* ************************************************************************************ */}
         {/*                     PAGE 2: EDIT  AND  PAGE 3: PREVIEW                               */}
         {/* ************************************************************************************ */}
@@ -394,12 +394,12 @@ function AdminPage() {
             />
             <div className="page-header-wrapper">
               {/* ---- Selected semester---- */}
-              <div className="page-header-container section-50">
+              <div className="page-header-container">
                 <h4>{translate.header_semester}</h4>
                 <p className="no-wrap">{semesterName}</p>
               </div>
               {/* ---- Name of selected memo(s) ---- */}
-              <div className="page-header-container section-50">
+              <div className="page-header-container">
                 <h4>{translate.header_course_offering}</h4>
                 <p>
                   {chosenRoundsList.map(round => (
@@ -418,6 +418,7 @@ function AdminPage() {
 
             {/* Existing PDF memo alert */}
             {state.usedRoundSelected > 0 && <Alert type="info"> {translate.alert_have_published_memo}</Alert>}
+
             {/* Accessability alert */}
             {progress === 'edit' && (
               <Alert type="info">
@@ -447,94 +448,80 @@ function AdminPage() {
             {/*                                   PREVIEW                                           */}
             {/* ************************************************************************************ */}
             {webContext.newMemoList.length > 0 && isPreviewMode && (
-              <Row className="preview-form">
-                <Col>
-                  <h2 className="section-50">{translate.header_preview}</h2>
-                  <h3>{translate.subheader_preview}</h3>
+              <div className="preview-form">
+                <h2>{translate.header_preview}</h2>
+                <h3>{translate.subheader_preview}</h3>
 
-                  <a className="pdf-link" href={`${storageUri}${state.memoFile}`} target="_blank" rel="noreferrer">
-                    {`${translate.link_pm} ${courseCode} ${semesterName}-${applicationCodes.sort().join('-')}`}
-                  </a>
-                </Col>
-              </Row>
+                <a className="pdf-link" href={`${storageUri}${state.memoFile}`} target="_blank" rel="noreferrer">
+                  {`${translate.link_pm} ${courseCode} ${semesterName}-${applicationCodes.sort().join('-')}`}
+                </a>
+              </div>
             )}
 
             {/* ----- FORM ----- */}
 
-            <Row key="form" id="form-container">
-              <Col sm="12" lg="12">
-                {/* ************************************************************************************ */}
-                {/*                                 EDIT FORM                                               */}
-                {/* ************************************************************************************ */}
+            <div id="form-container">
+              {/* ************************************************************************************ */}
+              {/*                                 EDIT FORM                                               */}
+              {/* ************************************************************************************ */}
 
-                {webContext.newMemoList.length > 0 && !isPreviewMode && (
-                  <Form className="admin-form">
-                    {/* FORM - FIRST COLUMN */}
-                    <Row className="form-group">
-                      <Col sm="6">
-                        <h2 className="section-50">{translate.header_upload_memo}</h2>
-                        <FormHeaderAndInfo
-                          translate={translate}
-                          headerId={'header_upload'}
-                          infoId={'info_upload_course_memo'}
-                        />
-                        <p>
-                          <Label>{translate.header_upload_file_pm}</Label>
-                        </p>
-                        {/** ------- PM-FILE UPLOAD --------- */}
-
-                        <UpLoad
-                          id="pm"
-                          key="pm"
-                          handleUpload={handleUploadFile}
-                          progress={fileProgress.pm}
-                          path={proxyPrefixPath.uri}
-                          file={state.memoFile}
-                          notValid={state.notValid}
-                          handleRemoveFile={handleRemoveFile}
-                          type="memoFile"
-                        />
-                        <br />
-                        <br />
-                      </Col>
-
-                      <Col sm="4"></Col>
-                    </Row>
-                  </Form>
-                )}
-                {/* ************************************************************************************ */}
-                {/*                                BUTTONS FOR PAG 2 AND 3                              */}
-                {/* In case user can edit, othervise only preview is avalilable without control button  */}
-                {/* ************************************************************************************ */}
-                {webContext.status !== 'preview' && (
-                  <div className="control-buttons">
-                    <div>
-                      <Button variant="previous" id="back" key="back" onClick={handleBack}>
-                        {isPreviewMode ? translate.btn_back_edit : translate.btn_back}
-                      </Button>
-                    </div>
-                    <div>
-                      <Button variant="secondary" id="cancel" key="cancel" onClick={toggleModal}>
-                        {translate.btn_cancel}
-                      </Button>
-                    </div>
-                    <div>
-                      <span>
-                        {(isPreviewMode && (
-                          <Button variant="success" id="publish" key="publish" onClick={toggleModal}>
-                            {translate.btn_publish}
-                          </Button>
-                        )) || (
-                          <Button variant="next" id="preview" key="preview" onClick={handlePreview}>
-                            {translate.btn_preview}
-                          </Button>
-                        )}
-                      </span>
-                    </div>
+              {webContext.newMemoList.length > 0 && !isPreviewMode && (
+                <Form className="admin-form">
+                  {/* FORM - FIRST COLUMN */}
+                  <div className="form-group">
+                    <h2>{translate.header_upload_memo}</h2>
+                    <FormHeaderAndInfo
+                      translate={translate}
+                      headerId={'header_upload'}
+                      infoId={'info_upload_course_memo'}
+                    />
+                    <Label>{translate.header_upload_file_pm}</Label>
+                    <UpLoad
+                      id="pm"
+                      key="pm"
+                      handleUpload={handleUploadFile}
+                      progress={fileProgress.pm}
+                      path={proxyPrefixPath.uri}
+                      file={state.memoFile}
+                      notValid={state.notValid}
+                      handleRemoveFile={handleRemoveFile}
+                      type="memoFile"
+                    />
                   </div>
-                )}
-              </Col>
-            </Row>
+                </Form>
+              )}
+              {/* ************************************************************************************ */}
+              {/*                                BUTTONS FOR PAG 2 AND 3                              */}
+              {/* In case user can edit, othervise only preview is avalilable without control button  */}
+              {/* ************************************************************************************ */}
+              {webContext.status !== 'preview' && (
+                <div className="control-buttons">
+                  <div>
+                    <Button variant="previous" id="back" key="back" onClick={handleBack}>
+                      {isPreviewMode ? translate.btn_back_edit : translate.btn_back}
+                    </Button>
+                  </div>
+                  <div>
+                    <Button variant="secondary" id="cancel" key="cancel" onClick={toggleModal}>
+                      {translate.btn_cancel}
+                    </Button>
+                  </div>
+                  <div>
+                    <span>
+                      {(isPreviewMode && (
+                        <Button variant="success" id="publish" key="publish" onClick={toggleModal}>
+                          {translate.btn_publish}
+                        </Button>
+                      )) || (
+                        <Button variant="next" id="preview" key="preview" onClick={handlePreview}>
+                          {translate.btn_preview}
+                        </Button>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
             {/* ************************************************************************************ */}
             {/*                               MODALS FOR PUBLISH AND CANCEL                         */}
             {/* ************************************************************************************ */}

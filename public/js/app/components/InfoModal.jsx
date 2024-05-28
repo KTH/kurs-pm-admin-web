@@ -1,9 +1,7 @@
 import React from 'react'
-import { Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap'
+import { Modal, ModalBody, ModalFooter } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import Button from '../components-shared/Button'
-
-// Custom components
 
 function InfoModal(props) {
   const {
@@ -29,27 +27,28 @@ function InfoModal(props) {
   }
 
   return (
-    <div>
-      <Modal isOpen={isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
-        <ModalHeader toggle={toggle}>{infoText.header}</ModalHeader>
-        <ModalBody>
-          {courseCode && <p>{`${header_course}: ${courseCode}`}</p>}
-          {semester && <p>{`${header_semester}: ${semester}`}</p>}
-          {courseOfferings && <p>{`${header_course_offering}: ${courseOfferings}`}</p>}
-          <p dangerouslySetInnerHTML={{ __html: infoText.body }} />
-        </ModalBody>
-        <ModalFooter>
-          <Button id={type} variant="secondary" onClick={toggle}>
-            {infoText.btnCancel}
+    <Modal isOpen={isOpen} toggle={toggle} className={className} fade={fadeModal} id={id}>
+      <div className="modal-header">
+        <h4 className="modal-title">{infoText.header}</h4>
+        <button type="button" className="kth-icon-button close" aria-label={infoText.btnCancel} onClick={toggle} />
+      </div>
+      <ModalBody>
+        {courseCode && <p>{`${header_course}: ${courseCode}`}</p>}
+        {semester && <p>{`${header_semester}: ${semester}`}</p>}
+        {courseOfferings && <p>{`${header_course_offering}: ${courseOfferings}`}</p>}
+        <p dangerouslySetInnerHTML={{ __html: infoText.body }} />
+      </ModalBody>
+      <ModalFooter>
+        <Button id={type} variant="secondary" onClick={toggle}>
+          {infoText.btnCancel}
+        </Button>
+        {infoText.btnConfirm && (
+          <Button variant="secondary" onClick={_handleConfirmToParent}>
+            {infoText.btnConfirm}
           </Button>
-          {infoText.btnConfirm && (
-            <Button variant="secondary" onClick={_handleConfirmToParent}>
-              {infoText.btnConfirm}
-            </Button>
-          )}
-        </ModalFooter>
-      </Modal>
-    </div>
+        )}
+      </ModalFooter>
+    </Modal>
   )
 }
 
