@@ -20,26 +20,24 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
   } = i18n.messages[langIndex].messages.alert_recommendation
 
   return (
-    <div>
-      <Alert type="info" header={alertHeader}>
-        <p>
-          {`${accessibilityResponsibility} `}
-          <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/riktilinjer-1.1184855`}>
-            {labelControlInfoLink}
-          </a>
-          .
-        </p>
-        <p>
-          {`${labelBeforeCreateMemoLink} `}
-          <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
-          {` ${labelAfterCreateMemoLink} `}
-          <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/kurs-pm`}>
-            {labelCourseMemoGuideLink}
-          </a>
-          .
-        </p>
-      </Alert>
-    </div>
+    <Alert type="info" header={alertHeader}>
+      <p>
+        {`${accessibilityResponsibility} `}
+        <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/riktilinjer-1.1184855`}>
+          {labelControlInfoLink}
+        </a>
+        .
+      </p>
+      <p>
+        {`${labelBeforeCreateMemoLink} `}
+        <a href={`${ADMIN_COURSE_PM_DATA}${courseCode}?l=${langAbbr}`}>{labelCreateMemoLink}</a>
+        {` ${labelAfterCreateMemoLink} `}
+        <a href={`https://intra.kth.se/${linkLocale}utbildning/systemstod/om-kursen/kurs-pm/kurs-pm`}>
+          {labelCourseMemoGuideLink}
+        </a>
+        .
+      </p>
+    </Alert>
   )
 }
 

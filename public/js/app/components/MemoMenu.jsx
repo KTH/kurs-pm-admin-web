@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react'
-import { Form, FormGroup, Label, Input, Row } from 'reactstrap'
+import { Form, FormGroup, Label, Input } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
 import Alert from '../components-shared/Alert'
@@ -119,9 +119,10 @@ function MemoMenu(props) {
     window.location = `${SERVICE_URL.admin}${context.courseCode}?serv=pm&event=cancel`
   }
 
-  function toggleModal(ev) {
+  function toggleModal(ev, id) {
+    const modalid = id || ev.target.id
     const { modalOpen } = state
-    modalOpen[ev.target.id] = !modalOpen[ev.target.id]
+    modalOpen[modalid] = !modalOpen[modalid]
     setState({
       modalOpen,
     })
@@ -144,16 +145,14 @@ function MemoMenu(props) {
     usedRoundsWithWebVer,
   } = state
   return (
-    <div className="First--Step--Choose--Parameters container" id="YearAndRounds">
+    <div className="memo-menu" id="YearAndRounds">
       {/** *********************************************************************************** */}
       {/*                                  SEMESTER DROPDOWN                                  */}
       {/** *********************************************************************************** */}
 
-      <div className="inline-flex flex-column padding-top-30">
-        <h2 className="section-50">{translate.header_memo_menu}</h2>
+      <div>
+        <h2>{translate.header_memo_menu}</h2>
         <FormHeaderAndInfo infoId="info_select_semester" header={selectSemester} translate={translate} />
-      </div>
-      <div className="col-4 nopadding">
         <form>
           <div className="form-group">
             <div className="select-wrapper">
@@ -187,7 +186,7 @@ function MemoMenu(props) {
       {/*                              SELECT BUTTONS FOR  ROUNDS                             */}
       {/** *********************************************************************************** */}
       {collapseOpen && (
-        <Row className="w-100 my-0 mx-auto">
+        <div>
           {semester.length > 0 && (
             <Form>
               <FormHeaderAndInfo
@@ -196,13 +195,13 @@ function MemoMenu(props) {
                 translate={translate}
               />
 
-              <div className="selectBlock">
+              <div>
                 {/** *********************************************************************************** */}
                 {/*                           ROUND LIST FOR SELECTED SEMESTER                          */}
                 {/** *********************************************************************************** */}
                 {roundList[semester].length > 0 && (
                   <>
-                    <p>{translate.intro_new}</p>
+                    <p className="form-intro-paragraph">{translate.intro_new}</p>
                     {roundList[semester].map(round => {
                       const { canBeAccessedByUser, applicationCode } = round
                       const hasBeenUsed = usedRounds.includes(applicationCode) || false
@@ -210,7 +209,7 @@ function MemoMenu(props) {
                       const hasPublishedPdf = hasBeenUsed && !hasWebVersion
                       return (
                         (round.state === 'APPROVED' || round.state === 'FULL') && (
-                          <FormGroup className="form-check" id="rounds" key={applicationCode}>
+                          <FormGroup className="form-check" key={applicationCode}>
                             <Input
                               type="checkbox"
                               id={applicationCode}
@@ -242,7 +241,7 @@ function MemoMenu(props) {
               </div>
             </Form>
           )}
-        </Row>
+        </div>
       )}
       {/** *********************************************************************************** */}
       {/*                              BUTTONS FOR MEMO MENU                                  */}

@@ -16,7 +16,7 @@ function UpLoad(props) {
   return (
     <div className={notValid.indexOf(type) > -1 ? 'not-valid' : undefined}>
       {file && file.length > 0 ? (
-        <div className="inline-flex">
+        <div className="upload-text-wrapper">
           <p className="upload-text"> {file} </p>
           <button className="kth-icon-button icon-trash-can" type="button" id={`remove_${id}`} onClick={removeFile} />
         </div>
