@@ -83,29 +83,7 @@ Later you will use it as a _BLOB_SERVICE_SAS_URL_ in secrets together with a nam
 
 ### Secrets for Development
 
-Secrets during local development are ALWAYS stored in a `.env`-file in the root of your project. This file should be in .gitignore.
-
-IMPORTANT: In Prod env, save URL:s in docker file but secrets in secrets.env
-
-```
-KOPPS_URI=https://api-r.referens.sys.kth.se/api/kopps/v2/?defaultTimeout=5000
-KURS_PM_API_URI=http://localhost:3003/api/kurs-pm
-KURS_PM_API_KEY=[secret key to connect to kurs-pm-api]
-LOGGING_LEVEL=DEBUG [only for dev env]
-SESSION_SECRET=[something random]
-SESSION_KEY=kurs-pm-admin-web.sid
-OIDC_APPLICATION_ID=<FROM ADFS>
-OIDC_CLIENT_SECRET=<FROM ADFS>
-OIDC_TOKEN_SECRET=<Random string>
-REDIS_URI=[connection string to redis]
-/*If you want to start your server on another port, add the following two variables, else use default ones from serversettings.js*/
-SERVER_PORT=[your port for the server]
-SERVER_HOST_URL=http://localhost:[SERVER_PORT]
-BLOB_SERVICE_SAS_URL=[f.e., https://kursinfostoragestage.blob.core.windows.net/?[generated parameters]&spr=https&sig=[generated signature]
-STORAGE_CONTAINER_NAME=memo-blob-container
-```
-
-These settings are also available in an `env.in` file.
+Secrets during local development are stored in a gitignored `.env` file (`env.in` can be used as template for your `.env` file). More details about environment variable setup and secrets can be found in [confluence](https://confluence.sys.kth.se/confluence/x/OYKBDQ).
 
 ### Install
 
