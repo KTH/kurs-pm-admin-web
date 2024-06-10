@@ -1,3 +1,5 @@
+const { roundIsNotOutdated } = require('../server/utils/helpers')
+
 /* eslint-disable no-useless-escape */
 const paramRegex = /\/(:[^\/\s]*)/g
 
@@ -49,15 +51,6 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
   return false
 }
 
-function removeRoundsOlderThanPreviousYear(checkDate) {
-  const dateToCheck = new Date(checkDate)
-  const dateToCheckYear = dateToCheck.getFullYear()
-  const today = new Date()
-  const currentYear = today.getFullYear()
-
-  return dateToCheckYear >= currentYear - 1
-}
-
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
 function handleCourseData(courseObject, courseCode, userName, language) {
   if (!courseObject) {
@@ -88,7 +81,7 @@ function handleCourseData(courseObject, courseCode, userName, language) {
     const thisStore = this
     courseObject.termsWithCourseRounds.forEach(({ term: semester, rounds: semesterRounds }) => {
       const rounds = semesterRounds.filter(
-        round => removeRoundsOlderThanPreviousYear(round.lastTuitionDate) && round.state !== 'CANCELLED'
+        round => roundIsNotOutdated(round.lastTuitionDate) && round.state !== 'CANCELLED'
       )
       if (rounds.length > 0) {
         if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(semester)
