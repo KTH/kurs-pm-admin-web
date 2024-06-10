@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const paramRegex = /\/(:[^\/\s]*)/g
 
 function _paramReplace(path, params) {
@@ -48,6 +49,15 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
   return false
 }
 
+function removeRoundsOlderThanPreviousYear(checkDate) {
+  const dateToCheck = new Date(checkDate)
+  const dateToCheckYear = dateToCheck.getFullYear()
+  const today = new Date()
+  const currentYear = today.getFullYear()
+
+  return dateToCheckYear >= currentYear - 1
+}
+
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
 function handleCourseData(courseObject, courseCode, userName, language) {
   if (!courseObject) {
@@ -76,10 +86,15 @@ function handleCourseData(courseObject, courseCode, userName, language) {
     }
 
     const thisStore = this
-    courseObject.termsWithCourseRounds.map(({ term: semester, rounds: semesterRounds }) => {
-      if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(semester)
+    courseObject.termsWithCourseRounds.forEach(({ term: semester, rounds: semesterRounds }) => {
+      const rounds = semesterRounds.filter(
+        round => removeRoundsOlderThanPreviousYear(round.lastTuitionDate) && round.state !== 'CANCELLED'
+      )
+      if (rounds.length > 0) {
+        if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(semester)
+      }
 
-      if (!thisStore.roundData.hasOwnProperty(semester)) {
+      if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'semester')) {
         thisStore.roundData[semester] = []
         thisStore.roundAccess[semester] = {}
       }
@@ -104,6 +119,7 @@ function handleCourseData(courseObject, courseCode, userName, language) {
     }
     throw err
   }
+  return null
 }
 
 function createCommonContextFunctions() {
