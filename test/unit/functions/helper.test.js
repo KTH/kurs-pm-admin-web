@@ -24,9 +24,8 @@ describe('roundIsNotOutdated', () => {
     expect(roundIsNotOutdated(date)).toBe(true)
   })
 
-  it('should return false for the first day of two years ago', () => {
-    const twoYearsAgo = new Date().getFullYear() - 2
-    const date = new Date(`${twoYearsAgo}-01-01`).toISOString()
-    expect(roundIsNotOutdated(date)).toBe(false)
+  it('should return error for an invalid date', () => {
+    const date = 'fghtk'
+    expect(() => roundIsNotOutdated(date)).toThrow('Invalid date')
   })
 })

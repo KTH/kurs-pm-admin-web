@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useCallback } from 'react'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
@@ -9,6 +9,7 @@ import Button from '../components-shared/Button'
 import InfoModal from './InfoModal'
 import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
+import SemesterDropdown from './SemesterDropdown'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
@@ -58,7 +59,7 @@ function MemoMenu(props) {
     })
   }
 
-  function handleSelectedSemester(ev) {
+  const handleSelectedSemester = useCallback(ev => {
     ev.preventDefault()
     getUsedRounds(ev.target.value)
     setState({
@@ -68,7 +69,7 @@ function MemoMenu(props) {
       rounds: [],
       newSemester: true,
     })
-  }
+  }, [])
 
   // ** ********************** CHECKBOXES AND RADIO BUTTONS **************************** */
   // ** ******************************************************************************** */
@@ -155,27 +156,12 @@ function MemoMenu(props) {
         <FormHeaderAndInfo infoId="info_select_semester" header={selectSemester} translate={translate} />
         <form>
           <div className="form-group">
-            <div className="select-wrapper">
-              <select
-                className="form-control"
-                id="semesterDropdownControl"
-                aria-label={selectSemester}
-                onChange={handleSelectedSemester}
-                defaultValue={semester && semester > 0 && !firstVisit ? semester : selectSemester}
-              >
-                <option value={selectSemester} key="no-chosen" disabled>
-                  {selectSemester}
-                </option>
-
-                {semesterList &&
-                  semesterList.map(sem => (
-                    <option id={sem} key={sem} value={sem}>
-                      {`${translate.course_short_semester[sem.toString().match(/.{1,4}/g)[1]]} 
-                        ${sem.toString().match(/.{1,4}/g)[0]}`}
-                    </option>
-                  ))}
-              </select>
-            </div>
+            <SemesterDropdown
+              chooseSemesterLabel={selectSemester}
+              handleSelectedSemester={handleSelectedSemester}
+              semesterList={semesterList}
+              langIndex={context.language}
+            />
           </div>
         </form>
       </div>
