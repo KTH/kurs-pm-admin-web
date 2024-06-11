@@ -1,7 +1,6 @@
 const { roundIsNotOutdated } = require('../server/utils/helpers')
 
-/* eslint-disable no-useless-escape */
-const paramRegex = /\/(:[^\/\s]*)/g
+const paramRegex = /\/(:[^/\s]*)/g
 
 function _paramReplace(path, params) {
   let tmpPath = path
@@ -55,7 +54,7 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
 function handleCourseData(courseObject, courseCode, userName, language) {
   if (!courseObject) {
     this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
-    return undefined
+    return
   }
   try {
     const { course, formattedGradeScales, termsWithCourseRounds } = courseObject
@@ -79,12 +78,13 @@ function handleCourseData(courseObject, courseCode, userName, language) {
     }
 
     const thisStore = this
-    courseObject.termsWithCourseRounds.forEach(({ term: semester, rounds: semesterRounds }) => {
+    courseObject.termsWithCourseRounds.forEach(term => {
+      const { term: semester, rounds: semesterRounds } = term
       const rounds = semesterRounds.filter(
         round => roundIsNotOutdated(round.lastTuitionDate) && round.state !== 'CANCELLED'
       )
       if (rounds.length > 0) {
-        if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(semester)
+        if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(term)
       }
 
       if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'semester')) {
@@ -112,7 +112,6 @@ function handleCourseData(courseObject, courseCode, userName, language) {
     }
     throw err
   }
-  return null
 }
 
 function createCommonContextFunctions() {

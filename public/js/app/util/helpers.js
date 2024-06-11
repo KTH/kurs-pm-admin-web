@@ -48,4 +48,18 @@ const formatRoundName = (language, shortName, semester, applicationCode) => {
       }-${applicationCode}`
 }
 
-export { formatDate, getTodayDate, getDateFormat, isValidDate, formatRoundName }
+function convertLangToIndex(langShortName) {
+  return langShortName === 'en' ? 0 : 1
+}
+
+const seasonStr = (language, semesterRaw) => {
+  if (!semesterRaw) return ''
+  const isLangANumber = typeof language === 'number'
+  const langIndex = isLangANumber ? language : convertLangToIndex(language)
+  const { course_short_semester } = i18n.messages[langIndex].messages
+  const termStringAsSeason = `${course_short_semester[semesterRaw.toString()[4]]}${semesterRaw.toString().slice(0, 4)}`
+
+  return termStringAsSeason
+}
+
+export { formatDate, getTodayDate, getDateFormat, isValidDate, formatRoundName, seasonStr, convertLangToIndex }

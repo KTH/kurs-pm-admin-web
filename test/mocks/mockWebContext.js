@@ -12,7 +12,7 @@ const usedRounds = {
     },
   ],
 }
-const mockWebContext = (userLang = 'en') => {
+const mockWebContext = () => {
   const routerWithData = {
     ...storeFunctions,
     language: 1,
@@ -27,7 +27,7 @@ const mockWebContext = (userLang = 'en') => {
       useSsl: false,
     },
     usedRounds,
-    semesters: ['20211', '20202', '20201', '20192'],
+    semesters: [{ term: '20211' }, { term: '20202' }, { term: '20201' }, { term: '20192' }],
     roundData: {
       20192: [
         {
@@ -127,7 +127,7 @@ const mockWebContext = (userLang = 'en') => {
     },
     tempData: null,
     statistics: { examinationGrade: 99, endDate: null, registeredStudents: 10 },
-    getUsedRounds(semester) {
+    getUsedRounds() {
       return Promise.resolve(usedRounds)
     },
   }
