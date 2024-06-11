@@ -13,7 +13,8 @@ function SemesterDropdown({ chooseSemesterLabel, handleSelectedSemester, semeste
     <div className="select-wrapper">
       <select
         className="form-control"
-        id="semesterDropdownControl"
+        data-testid="select-terms"
+        id="term-list"
         aria-label={chooseSemesterLabel}
         onChange={handleChange}
         defaultValue="PLACEHOLDER"
@@ -26,7 +27,7 @@ function SemesterDropdown({ chooseSemesterLabel, handleSelectedSemester, semeste
 
         {semesterList &&
           semesterList.map(({ term }) => (
-            <option id={term} key={term} value={term}>
+            <option data-testid="select-option" id={`itemFor-${term}`} key={term} value={term}>
               {seasonStr(langIndex, term)}
             </option>
           ))}
