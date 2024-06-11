@@ -22,11 +22,6 @@ const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
 const setup = () => render(<RenderMemoMenu userLang="en" />)
 
 describe('User language: English. Component <RenderMemoMenu>', () => {
-  // eslint-disable-next-line jest/no-done-callback
-  test('renders a course development page', done => {
-    setup()
-    done()
-  })
   test('renders headers h2', () => {
     setup()
     const allH3Headers = screen.getAllByRole('heading', { level: 2 })
@@ -48,7 +43,8 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
   <select
     aria-label="Välj termin"
     class="form-control"
-    id="semesterDropdownControl"
+    data-testid="select-terms"
+    id="term-list"
   >
     <option
       style="display: none;"
@@ -56,25 +52,29 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
       Välj termin
     </option>
     <option
-      id="20211"
+      data-testid="select-option"
+      id="itemFor-20211"
       value="20211"
     >
       VT 2021
     </option>
     <option
-      id="20202"
+      data-testid="select-option"
+      id="itemFor-20202"
       value="20202"
     >
       HT 2020
     </option>
     <option
-      id="20201"
+      data-testid="select-option"
+      id="itemFor-20201"
       value="20201"
     >
       VT 2020
     </option>
     <option
-      id="20192"
+      data-testid="select-option"
+      id="itemFor-20192"
       value="20192"
     >
       HT 2019
