@@ -47,23 +47,21 @@ function MemoMenu(props) {
   // ********************************************************************************** */
   // eslint-disable-next-line react/sort-comp
 
-  function getUsedRounds(semester) {
-    return context.getUsedRounds(context.courseData.courseCode, semester).then(() => {
-      setState({
-        semester,
-        usedRounds: context.usedRounds.usedRoundsApplicationCodeList || [],
-        usedRoundsWithWebVer: context.usedRounds.roundsApplicationCodeWithWebVersion || {},
-        lastSelected: state.lastSelected,
-        alertMsg: '',
+  const handleSelectedSemester = useCallback(selectedSemester => {
+    function getUsedRounds(semester) {
+      return context.getUsedRounds(context.courseData.courseCode, semester).then(() => {
+        setState({
+          semester,
+          usedRounds: context.usedRounds.usedRoundsApplicationCodeList || [],
+          usedRoundsWithWebVer: context.usedRounds.roundsApplicationCodeWithWebVersion || {},
+          lastSelected: state.lastSelected,
+          alertMsg: '',
+        })
       })
-    })
-  }
-
-  const handleSelectedSemester = useCallback(ev => {
-    ev.preventDefault()
-    getUsedRounds(ev.target.value)
+    }
+    getUsedRounds(selectedSemester)
     setState({
-      semester: ev.target.value,
+      semester: selectedSemester,
       collapseOpen: true,
       firstVisit: false,
       rounds: [],
@@ -161,6 +159,7 @@ function MemoMenu(props) {
               handleSelectedSemester={handleSelectedSemester}
               semesterList={semesterList}
               langIndex={context.language}
+              selectedSemester={semester}
             />
           </div>
         </form>

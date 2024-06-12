@@ -1,4 +1,4 @@
-const { roundIsNotOutdated } = require('../server/utils/helpers')
+const { roundIsNotOutdated } = require('../server/utils-shared/helpers')
 
 const paramRegex = /\/(:[^/\s]*)/g
 
