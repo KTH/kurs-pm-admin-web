@@ -47,11 +47,6 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
     id="term-list"
   >
     <option
-      style="display: none;"
-    >
-      Välj termin
-    </option>
-    <option
       data-testid="select-option"
       id="itemFor-20211"
       value="20211"
