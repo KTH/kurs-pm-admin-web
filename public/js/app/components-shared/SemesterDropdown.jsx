@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React from 'react'
 import { seasonStr } from '../utils-shared/helpers'
 
 function SemesterDropdown({ chooseSemesterLabel, handleSelectedSemester, semesterList, langIndex, selectedSemester }) {
@@ -22,10 +22,9 @@ function SemesterDropdown({ chooseSemesterLabel, handleSelectedSemester, semeste
             {chooseSemesterLabel}
           </option>
         )}
-
         {semesterList &&
-          semesterList.map(({ term }) => (
-            <option data-testid="select-option" id={`itemFor-${term}`} key={term} value={term}>
+          semesterList.map(({ term }, index) => (
+            <option data-testid="select-option" id={`itemFor-${term}`} key={index} value={term}>
               {seasonStr(langIndex, term)}
             </option>
           ))}
@@ -34,4 +33,4 @@ function SemesterDropdown({ chooseSemesterLabel, handleSelectedSemester, semeste
   )
 }
 
-export default memo(SemesterDropdown)
+export default SemesterDropdown
