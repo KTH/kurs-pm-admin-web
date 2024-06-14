@@ -1,4 +1,4 @@
-import React, { useReducer, useCallback } from 'react'
+import React, { useReducer } from 'react'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
@@ -6,10 +6,10 @@ import Alert from '../components-shared/Alert'
 import Button from '../components-shared/Button'
 
 // Custom components
+import SemesterDropdown from '../components-shared/SemesterDropdown'
 import InfoModal from './InfoModal'
 import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
-import SemesterDropdown from './SemesterDropdown'
 
 const paramsReducer = (state, action) => ({ ...state, ...action })
 
@@ -47,7 +47,7 @@ function MemoMenu(props) {
   // ********************************************************************************** */
   // eslint-disable-next-line react/sort-comp
 
-  const handleSelectedSemester = useCallback(selectedSemester => {
+  const handleSelectedSemester = selectedSemester => {
     function getUsedRounds(semester) {
       return context.getUsedRounds(context.courseData.courseCode, semester).then(() => {
         setState({
@@ -67,7 +67,7 @@ function MemoMenu(props) {
       rounds: [],
       newSemester: true,
     })
-  }, [])
+  }
 
   // ** ********************** CHECKBOXES AND RADIO BUTTONS **************************** */
   // ** ******************************************************************************** */
