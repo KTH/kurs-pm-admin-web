@@ -24,9 +24,9 @@ const setup = () => render(<RenderMemoMenu userLang="en" />)
 describe('User language: English. Component <RenderMemoMenu>', () => {
   test('renders headers h2', () => {
     setup()
-    const allH3Headers = screen.getAllByRole('heading', { level: 2 })
-    expect(allH3Headers.length).toBe(1)
-    expect(allH3Headers[0]).toHaveTextContent('Välj kursomgång')
+    const allH2Headers = screen.getAllByRole('heading', { level: 2 })
+    expect(allH2Headers.length).toBe(1)
+    expect(allH2Headers[0]).toHaveTextContent('Välj kursomgång')
   })
   test('renders headers h3', () => {
     setup()
