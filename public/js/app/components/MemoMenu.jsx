@@ -6,7 +6,8 @@ import Alert from '../components-shared/Alert'
 import Button from '../components-shared/Button'
 
 // Custom components
-import SemesterDropdown from '../components-shared/SemesterDropdown'
+import { seasonStr } from '../utils-shared/helpers'
+import Dropdown from '../components-shared/Dropdown'
 import InfoModal from './InfoModal'
 import RoundLabel from './RoundLabel'
 import FormHeaderAndInfo from './FormHeaderAndInfo'
@@ -130,6 +131,10 @@ function MemoMenu(props) {
   // ** **************************** OTHER ******************************* */
 
   const { semesterList, roundList } = props
+  const convertedSemesterList = semesterList.map(({ term }) => ({
+    value: term,
+    text: seasonStr(context.language, term),
+  }))
   const translate = i18n.messages[context.language].messages
   const { select_semester: selectSemester } = translate
   const {
@@ -154,11 +159,10 @@ function MemoMenu(props) {
         <FormHeaderAndInfo infoId="info_select_semester" header={selectSemester} translate={translate} />
         <form>
           <div className="form-group">
-            <SemesterDropdown
-              chooseSemesterLabel={selectSemester}
-              handleSelectedSemester={handleSelectedSemester}
-              semesterList={semesterList}
-              langIndex={context.language}
+            <Dropdown
+              placeholderText={selectSemester}
+              onChange={handleSelectedSemester}
+              options={convertedSemesterList}
               selectedSemester={semester}
             />
           </div>
