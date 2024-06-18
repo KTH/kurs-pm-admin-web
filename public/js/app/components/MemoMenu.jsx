@@ -131,7 +131,7 @@ function MemoMenu(props) {
   // ** **************************** OTHER ******************************* */
 
   const { semesterList, roundList } = props
-  const convertedSemesterList = semesterList.map(({ term }) => ({
+  const semesterDropdownOptions = semesterList.map(({ term }) => ({
     value: term,
     text: seasonStr(context.language, term),
   }))
@@ -162,7 +162,7 @@ function MemoMenu(props) {
             <Dropdown
               placeholderText={selectSemester}
               onChange={handleSelectedSemester}
-              options={convertedSemesterList}
+              options={semesterDropdownOptions}
               selectedSemester={semester}
             />
           </div>
