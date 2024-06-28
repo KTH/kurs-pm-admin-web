@@ -43,33 +43,29 @@ describe('User language: English. Component <RenderMemoMenu>', () => {
   <select
     aria-label="Välj termin"
     class="form-control"
-    data-testid="select-terms"
-    id="term-list"
   >
     <option
-      data-testid="select-option"
-      id="itemFor-20211"
+      style="display: none;"
+      value="Välj termin"
+    >
+      Välj termin
+    </option>
+    <option
       value="20211"
     >
       VT 2021
     </option>
     <option
-      data-testid="select-option"
-      id="itemFor-20202"
       value="20202"
     >
       HT 2020
     </option>
     <option
-      data-testid="select-option"
-      id="itemFor-20201"
       value="20201"
     >
       VT 2020
     </option>
     <option
-      data-testid="select-option"
-      id="itemFor-20192"
       value="20192"
     >
       HT 2019
