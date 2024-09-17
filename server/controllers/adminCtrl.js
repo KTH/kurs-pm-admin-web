@@ -13,6 +13,7 @@ const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
 const { getKoppsCourseData } = require('../apiCalls/koppsCourseData')
+const { getLadokCourseData } = require('../apiCalls/ladokApi')
 const i18n = require('../../i18n')
 const { parseCourseCode } = require('../utils/courseCodeParser')
 const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
@@ -126,10 +127,13 @@ async function getIndex(req, res, next) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
       const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
+      const ladokData = await getLadokCourseData(courseCode, lang)
       if (statusCode >= HTTP_CODE_400) {
         webContext.errorMessage = statusMessage // TODO: ERROR?????
+      } else if (ladokData.statusCode >= HTTP_CODE_400) {
+        webContext.errorMessage = ladokData.message
       } else {
-        await webContext.handleCourseData(body, courseCode, username, lang)
+        await webContext.handleCourseData(ladokData, body, courseCode, username, lang)
       }
     }
     const compressedData = getCompressedData(webContext)

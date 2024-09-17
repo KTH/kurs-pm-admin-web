@@ -51,34 +51,33 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
 }
 
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
-function handleCourseData(courseObject, courseCode, userName, language) {
-  if (!courseObject) {
+function handleCourseData(ladokCourseObject, koppsCourseObject, courseCode, userName, language) {
+  if (!koppsCourseObject) {
     this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
     return
   }
   try {
-    const { course, formattedGradeScales, termsWithCourseRounds } = courseObject
+    const { termsWithCourseRounds } = koppsCourseObject
+    const { benamning, omfattning } = ladokCourseObject
 
     this.courseData = {
       courseCode,
-      gradeScale: formattedGradeScales,
       semesterObjectList: {},
     }
     this.courseTitle = {
-      name: course.title[this.language === 0 ? 'en' : 'sv'],
-      credits: course.credits.toString().indexOf('.') < 0 ? course.credits + '.0' : course.credits,
+      name: benamning,
+      credits: omfattning,
     }
 
-    for (let semesterIndex = 0; semesterIndex < courseObject.termsWithCourseRounds.length; semesterIndex++) {
+    for (let semesterIndex = 0; semesterIndex < koppsCourseObject.termsWithCourseRounds.length; semesterIndex++) {
       const { term: roundSemester, rounds } = termsWithCourseRounds[semesterIndex]
-
       this.courseData.semesterObjectList[roundSemester] = {
         rounds,
       }
     }
 
     const thisStore = this
-    courseObject.termsWithCourseRounds.forEach(term => {
+    koppsCourseObject.termsWithCourseRounds.forEach(term => {
       const { term: semester, rounds: semesterRounds } = term
       const rounds = semesterRounds.filter(
         round => roundIsNotOutdated(round.lastTuitionDate) && round.state !== 'CANCELLED'
