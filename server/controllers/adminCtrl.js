@@ -137,7 +137,7 @@ async function getIndex(req, res, next) {
       } else if (ladokData.statusCode >= HTTP_CODE_400) {
         webContext.errorMessage = ladokData.message
       } else {
-        await webContext.handleCourseData(courseData, courseCode, username, lang)
+        await webContext.handleCourseData(courseData, courseCode)
       }
     }
     const compressedData = getCompressedData(webContext)
