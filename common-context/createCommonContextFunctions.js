@@ -73,29 +73,29 @@ function handleCourseData(courseData, courseCode) {
     ladokCourseRounds.forEach(round => {
       if (groupedLadokCourseRounds.length > 0) {
         groupedLadokCourseRounds.forEach(group => {
-          if (Object.prototype.hasOwnProperty.call(group, round.startperiod.inDigits)) {
-            group[round.startperiod.inDigits].push(round)
+          if (group.term == round.startperiod.inDigits) {
+            group.rounds.push(round)
           } else {
-            groupedLadokCourseRounds.push({ [round.startperiod.inDigits]: [round] })
+            groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
           }
         })
       } else {
-        groupedLadokCourseRounds.push({ [round.startperiod.inDigits]: [round] })
+        groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
       }
     })
 
-    groupedLadokCourseRounds.forEach(semester => {
-      const [term] = Object.keys(semester)
+    groupedLadokCourseRounds.forEach(group => {
+      const { term } = group
 
-      if (thisStore.semesters.indexOf(term) < 0) thisStore.semesters.push({ term, semester })
+      if (thisStore.semesters.indexOf(term) < 0) thisStore.semesters.push({ term, rounds: group.rounds })
 
-      if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'semester')) {
+      if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'term')) {
         thisStore.roundData[term] = []
         thisStore.roundAccess[term] = {}
       }
 
       // TODO: Need to handle state somehow instead of just hardcoding it
-      thisStore.roundData[term] = semester[term].map(
+      thisStore.roundData[term] = group.rounds.map(
         round =>
           (round.tillfalleskod = {
             courseCode: this.courseCode,
