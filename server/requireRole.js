@@ -55,13 +55,6 @@ async function _isAdminOfCourseSchool(courseCode, user) {
   const courseSchoolCode = await ladokCourseData.getCourseSchoolCode(courseCode)
   log.debug('Fetched courseSchoolCode to define user role', { courseSchoolCode, userSchools })
 
-  if (courseSchoolCode === 'missing_school_code' || courseSchoolCode === 'kopps_get_fails') {
-    log.info('Has problems with fetching school code to define if user is a school admin', {
-      message: courseSchoolCode,
-    })
-    return false
-  }
-
   const hasSchoolCodeInAdminGroup = userSchools.includes(courseSchoolCode.toLowerCase())
   log.debug('User admin role', { hasSchoolCodeInAdminGroup })
 
