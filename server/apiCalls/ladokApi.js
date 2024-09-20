@@ -3,9 +3,15 @@
 const { createApiClient } = require('om-kursen-ladok-client')
 const serverConfig = require('../configuration').server
 
+const client = createApiClient(serverConfig.ladokMellanlagerApi)
+
 async function getLadokCourseData(courseCode, lang) {
-  const client = createApiClient(serverConfig.ladokMellanlagerApi)
   const course = await client.getLatestCourseVersion(courseCode, lang)
+  return course
+}
+
+async function getCourseRoundsData(courseCode, lang) {
+  const course = await client.getActiveCourseRounds(courseCode, lang)
   return course
 }
 
@@ -23,5 +29,6 @@ async function getCourseSchoolCode(courseCode) {
 
 module.exports = {
   getLadokCourseData,
+  getCourseRoundsData,
   getCourseSchoolCode,
 }

@@ -22,24 +22,6 @@ async function getKoppsCourseData(courseCode) {
     return err
   }
 }
-
-async function getCourseSchool(courseCode) {
-  try {
-    const { body: course, statusCode } = await koppsApi.getAsync(`course/${encodeURIComponent(courseCode)}`)
-    if (!course || statusCode !== 200) return 'kopps_get_fails'
-
-    const { school } = course
-    if (!school) return 'missing_school_code'
-    const { code } = school
-    if (!code) return 'missing_school_code'
-    return code
-  } catch (err) {
-    log.debug('api call to getCourseSchool has failed:', { message: err })
-
-    return err
-  }
-}
 module.exports = {
-  getCourseSchool,
   getKoppsCourseData,
 }

@@ -1,5 +1,3 @@
-const { roundIsNotOutdated } = require('../server/utils-shared/helpers')
-
 const paramRegex = /\/(:[^/\s]*)/g
 
 function _paramReplace(path, params) {
@@ -51,13 +49,13 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
 }
 
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
-function handleCourseData(ladokCourseObject, koppsCourseObject, courseCode, userName, language) {
-  if (!koppsCourseObject) {
-    this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
+function handleCourseData(courseData, courseCode) {
+  const { ladokCourseRounds, ladokData: ladokCourseObject } = courseData
+  if (!ladokCourseObject) {
+    this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från Ladok'
     return
   }
   try {
-    const { termsWithCourseRounds } = koppsCourseObject
     const { benamning, omfattning } = ladokCourseObject
 
     this.courseData = {
@@ -69,39 +67,45 @@ function handleCourseData(ladokCourseObject, koppsCourseObject, courseCode, user
       credits: omfattning,
     }
 
-    for (let semesterIndex = 0; semesterIndex < koppsCourseObject.termsWithCourseRounds.length; semesterIndex++) {
-      const { term: roundSemester, rounds } = termsWithCourseRounds[semesterIndex]
-      this.courseData.semesterObjectList[roundSemester] = {
-        rounds,
-      }
-    }
-
     const thisStore = this
-    koppsCourseObject.termsWithCourseRounds.forEach(term => {
-      const { term: semester, rounds: semesterRounds } = term
-      const rounds = semesterRounds.filter(
-        round => roundIsNotOutdated(round.lastTuitionDate) && round.state !== 'CANCELLED'
-      )
-      if (rounds.length > 0) {
-        if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(term)
+
+    const groupedLadokCourseRounds = []
+    ladokCourseRounds.forEach(round => {
+      if (groupedLadokCourseRounds.length > 0) {
+        groupedLadokCourseRounds.forEach(group => {
+          if (Object.prototype.hasOwnProperty.call(group, round.startperiod.inDigits)) {
+            group[round.startperiod.inDigits].push(round)
+          } else {
+            groupedLadokCourseRounds.push({ [round.startperiod.inDigits]: [round] })
+          }
+        })
+      } else {
+        groupedLadokCourseRounds.push({ [round.startperiod.inDigits]: [round] })
       }
+    })
+
+    groupedLadokCourseRounds.forEach(semester => {
+      const [term] = Object.keys(semester)
+
+      if (thisStore.semesters.indexOf(term) < 0) thisStore.semesters.push({ term, semester })
 
       if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'semester')) {
-        thisStore.roundData[semester] = []
-        thisStore.roundAccess[semester] = {}
+        thisStore.roundData[term] = []
+        thisStore.roundAccess[term] = {}
       }
 
-      thisStore.roundData[semester] = semesterRounds.map(
+      // TODO: Need to handle state somehow instead of just hardcoding it
+      thisStore.roundData[term] = semester[term].map(
         round =>
-          (round.applicationCode = {
+          (round.tillfalleskod = {
             courseCode: this.courseCode,
-            language: round.language[language],
-            shortName: round.shortName,
-            startDate: round.firstTuitionDate,
+            language: round.undervisningssprak.name,
+            shortName: round.kortnamn,
+            startDate: round.forstaUndervisningsdatum.date,
             ladokUID: round.ladokUID,
-            applicationCode: round.applicationCode,
-            canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, semester),
-            state: round.state,
+            applicationCode: round.tillfalleskod,
+            canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, term),
+            state: 'APPROVED',
           })
       )
     })
