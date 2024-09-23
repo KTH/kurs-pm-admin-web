@@ -79,28 +79,6 @@ function getUsedRounds(courseCode, semester) {
       throw err
     })
 }
-/** ***************************************************************************************************************************************** */
-/*                                             GET COURSE INFORMATION ACTION (KOPPS - API)                                                    */
-/** ***************************************************************************************************************************************** */
-function getCourseInformation(courseCode, userName, lang = 'sv') {
-  this.courseCode = courseCode
-  return axios
-    .get(this.buildApiUrl(this.paths.api.koppsCourseData.uri, { courseCode, language: lang }))
-    .then(({ status, statusText, data }) => {
-      if (status >= HTTP_CODE_400) {
-        this.errorMessage = statusText
-        return 'ERROR-' + status
-      }
-      this.handleCourseData(data, courseCode, userName, lang)
-      return data
-    })
-    .catch(err => {
-      if (err.response) {
-        throw new Error(err.message)
-      }
-      throw err
-    })
-}
 
 function createMemoData(semester, rounds) {
   // Creates a list with memo object with information from selected rounds
@@ -128,7 +106,6 @@ function addClientFunctionsToWebContext() {
   const functions = {
     createMemoData,
     deleteFileInStorage,
-    getCourseInformation,
     getUsedRounds,
     postMemoData,
     updateFileInStorage,

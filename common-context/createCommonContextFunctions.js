@@ -48,6 +48,24 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
   return false
 }
 
+const groupLadokCourseRounds = ladokCourseRounds => {
+  const groupedLadokCourseRounds = []
+  ladokCourseRounds.forEach(round => {
+    if (groupedLadokCourseRounds.length > 0) {
+      groupedLadokCourseRounds.forEach(group => {
+        if (group.term == round.startperiod.inDigits) {
+          group.rounds.push(round)
+        } else {
+          groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
+        }
+      })
+    } else {
+      groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
+    }
+  })
+  return groupedLadokCourseRounds
+}
+
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
 function handleCourseData(courseData, courseCode) {
   const { ladokCourseRounds, ladokData: ladokCourseObject } = courseData
@@ -68,21 +86,7 @@ function handleCourseData(courseData, courseCode) {
     }
 
     const thisStore = this
-
-    const groupedLadokCourseRounds = []
-    ladokCourseRounds.forEach(round => {
-      if (groupedLadokCourseRounds.length > 0) {
-        groupedLadokCourseRounds.forEach(group => {
-          if (group.term == round.startperiod.inDigits) {
-            group.rounds.push(round)
-          } else {
-            groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
-          }
-        })
-      } else {
-        groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
-      }
-    })
+    const groupedLadokCourseRounds = groupLadokCourseRounds(ladokCourseRounds)
 
     groupedLadokCourseRounds.forEach(group => {
       const { term } = group
@@ -125,4 +129,4 @@ function createCommonContextFunctions() {
   return context
 }
 
-module.exports = { createCommonContextFunctions }
+module.exports = { createCommonContextFunctions, groupLadokCourseRounds }
