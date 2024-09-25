@@ -12,7 +12,7 @@ const { createServerSideContext } = require('../ssr-context/createServerSideCont
 const api = require('../api')
 const { runBlobStorage, updateMetaData, deleteBlob } = require('../blobStorage')
 const memoApi = require('../apiCalls/memoApi')
-const { getKoppsCourseData } = require('../apiCalls/koppsCourseData')
+const { getLadokCourseData, getCourseRoundsData } = require('../apiCalls/ladokApi')
 const i18n = require('../../i18n')
 const { parseCourseCode } = require('../utils/courseCodeParser')
 const { HTTP_CODE_400 } = require('../../common/ErrorUtils')
@@ -41,19 +41,6 @@ async function _getUsedRounds(req, res, next) {
   } catch (error) {
     log.error('Exception from _getUsedRounds ', { error })
     return next(error)
-  }
-}
-
-// ------- COURSE DATA FROM KOPPS-API   ------- /
-async function _getKoppsCourseData(req, res, next) {
-  const { courseCode } = req.params
-  log.info('_getKoppsCourseData with code:' + courseCode)
-  try {
-    const koppsCourseData = await getKoppsCourseData(courseCode)
-    return httpResponse.json(res, koppsCourseData)
-  } catch (err) {
-    log.error('Exception from koppsAPI ', { error: err })
-    return next(err)
   }
 }
 
@@ -125,11 +112,15 @@ async function getIndex(req, res, next) {
     if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
-      const { body, statusCode, statusMessage } = await getKoppsCourseData(courseCode, lang)
-      if (statusCode >= HTTP_CODE_400) {
-        webContext.errorMessage = statusMessage // TODO: ERROR?????
+
+      const ladokData = await getLadokCourseData(courseCode, lang)
+      const ladokCourseRounds = await getCourseRoundsData(courseCode, lang)
+      const courseData = { ladokCourseRounds, ladokData }
+
+      if (ladokData.statusCode >= HTTP_CODE_400) {
+        webContext.errorMessage = ladokData.message
       } else {
-        await webContext.handleCourseData(body, courseCode, username, lang)
+        await webContext.handleCourseData(courseData, courseCode)
       }
     }
     const compressedData = getCompressedData(webContext)
@@ -164,7 +155,6 @@ module.exports = {
   getIndex,
   postMemoData: _postMemoData,
   getUsedRounds: _getUsedRounds,
-  getKoppsCourseData: _getKoppsCourseData,
   saveFileToStorage: _saveFileToStorage,
   updateFileInStorage: _updateFileInStorage,
   deleteFileInStorage: _deleteFileInStorage,

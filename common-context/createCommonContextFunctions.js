@@ -1,5 +1,3 @@
-const { roundIsNotOutdated } = require('../server/utils-shared/helpers')
-
 const paramRegex = /\/(:[^/\s]*)/g
 
 function _paramReplace(path, params) {
@@ -50,59 +48,68 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
   return false
 }
 
+const groupLadokCourseRounds = ladokCourseRounds => {
+  const groupedLadokCourseRounds = []
+  ladokCourseRounds.forEach(round => {
+    if (groupedLadokCourseRounds.length > 0) {
+      groupedLadokCourseRounds.forEach(group => {
+        if (group.term == round.startperiod.inDigits) {
+          group.rounds.push(round)
+        } else {
+          groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
+        }
+      })
+    } else {
+      groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
+    }
+  })
+  return groupedLadokCourseRounds
+}
+
 // --- Building up courseTitle, courseData, semesters and roundData and check access for rounds ---//
-function handleCourseData(courseObject, courseCode, userName, language) {
-  if (!courseObject) {
-    this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från kopps'
+function handleCourseData(courseData, courseCode) {
+  const { ladokCourseRounds, ladokData: ladokCourseObject } = courseData
+  if (!ladokCourseObject) {
+    this.errorMessage = 'Whoopsi daisy... kan just nu inte hämta data från Ladok'
     return
   }
   try {
-    const { course, formattedGradeScales, termsWithCourseRounds } = courseObject
+    const { benamning, omfattning } = ladokCourseObject
 
     this.courseData = {
       courseCode,
-      gradeScale: formattedGradeScales,
       semesterObjectList: {},
     }
     this.courseTitle = {
-      name: course.title[this.language === 0 ? 'en' : 'sv'],
-      credits: course.credits.toString().indexOf('.') < 0 ? course.credits + '.0' : course.credits,
-    }
-
-    for (let semesterIndex = 0; semesterIndex < courseObject.termsWithCourseRounds.length; semesterIndex++) {
-      const { term: roundSemester, rounds } = termsWithCourseRounds[semesterIndex]
-
-      this.courseData.semesterObjectList[roundSemester] = {
-        rounds,
-      }
+      name: benamning,
+      credits: omfattning,
     }
 
     const thisStore = this
-    courseObject.termsWithCourseRounds.forEach(term => {
-      const { term: semester, rounds: semesterRounds } = term
-      const rounds = semesterRounds.filter(
-        round => roundIsNotOutdated(round.lastTuitionDate) && round.state !== 'CANCELLED'
-      )
-      if (rounds.length > 0) {
-        if (thisStore.semesters.indexOf(semester) < 0) thisStore.semesters.push(term)
+    const groupedLadokCourseRounds = groupLadokCourseRounds(ladokCourseRounds)
+
+    groupedLadokCourseRounds.forEach(group => {
+      const { term } = group
+
+      if (thisStore.semesters.indexOf(term) < 0) thisStore.semesters.push({ term, rounds: group.rounds })
+
+      if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'term')) {
+        thisStore.roundData[term] = []
+        thisStore.roundAccess[term] = {}
       }
 
-      if (!Object.prototype.hasOwnProperty.call(thisStore.roundData, 'semester')) {
-        thisStore.roundData[semester] = []
-        thisStore.roundAccess[semester] = {}
-      }
-
-      thisStore.roundData[semester] = semesterRounds.map(
+      // TODO: Need to handle state somehow instead of just hardcoding it
+      thisStore.roundData[term] = group.rounds.map(
         round =>
-          (round.applicationCode = {
+          (round.tillfalleskod = {
             courseCode: this.courseCode,
-            language: round.language[language],
-            shortName: round.shortName,
-            startDate: round.firstTuitionDate,
+            language: round.undervisningssprak.name,
+            shortName: round.kortnamn,
+            startDate: round.forstaUndervisningsdatum.date,
             ladokUID: round.ladokUID,
-            applicationCode: round.applicationCode,
-            canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, semester),
-            state: round.state,
+            applicationCode: round.tillfalleskod,
+            canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, term),
+            state: 'APPROVED',
           })
       )
     })
@@ -122,4 +129,4 @@ function createCommonContextFunctions() {
   return context
 }
 
-module.exports = { createCommonContextFunctions }
+module.exports = { createCommonContextFunctions, groupLadokCourseRounds }

@@ -211,15 +211,6 @@ function AdminPage() {
   function handleBack(ev) {
     ev.preventDefault()
     if (progress === 'edit') {
-      if (webContext.semesters.length === 0) {
-        return webContext.getCourseInformation(courseCode, webContext.username, webContext.language).then(() =>
-          setState({
-            isPreviewMode: false,
-            progress: 'back_new',
-            alert: '',
-          })
-        )
-      }
       setState({
         isPreviewMode: false,
         progress: 'back_new',
