@@ -193,7 +193,6 @@ server.use(
   cortinaMiddleware({
     blockApiUrl: config.blockApi.blockUrl,
     redisConfig: config.cache.cortinaBlock.redis,
-    redisKey: config.cache.cortinaBlock.redisKey,
   })
 )
 
