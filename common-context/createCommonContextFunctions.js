@@ -50,19 +50,18 @@ const resolveUserAccessRights = (member, round, courseCode, semester) => {
 
 const groupLadokCourseRounds = ladokCourseRounds => {
   const groupedLadokCourseRounds = []
+
   ladokCourseRounds.forEach(round => {
-    if (groupedLadokCourseRounds.length > 0) {
-      groupedLadokCourseRounds.forEach(group => {
-        if (group.term == round.startperiod.inDigits) {
-          group.rounds.push(round)
-        } else {
-          groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
-        }
-      })
+    const term = round.startperiod.inDigits
+    const group = groupedLadokCourseRounds.find(g => g.term === term)
+
+    if (group) {
+      group.rounds.push(round)
     } else {
-      groupedLadokCourseRounds.push({ term: round.startperiod.inDigits, rounds: [round] })
+      groupedLadokCourseRounds.push({ term, rounds: [round] })
     }
   })
+
   return groupedLadokCourseRounds
 }
 
@@ -98,7 +97,6 @@ function handleCourseData(courseData, courseCode) {
         thisStore.roundAccess[term] = {}
       }
 
-      // TODO: Need to handle state somehow instead of just hardcoding it
       thisStore.roundData[term] = group.rounds.map(
         round =>
           (round.tillfalleskod = {
@@ -109,7 +107,8 @@ function handleCourseData(courseData, courseCode) {
             ladokUID: round.ladokUID,
             applicationCode: round.tillfalleskod,
             canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, term),
-            state: 'APPROVED',
+            status: round.status?.code,
+            isFull: round.fullsatt,
           })
       )
     })
