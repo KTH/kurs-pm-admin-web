@@ -108,7 +108,7 @@ function handleCourseData(courseData, courseCode) {
             applicationCode: round.tillfalleskod,
             canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, term),
             status: round.status?.code,
-            isFull: round.fullsatt,
+            full: round.fullsatt,
           })
       )
     })

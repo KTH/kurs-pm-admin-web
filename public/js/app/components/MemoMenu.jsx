@@ -200,7 +200,7 @@ function MemoMenu(props) {
                       return (
                         (round.status === LadokStatusCode.Started ||
                           round.status === LadokStatusCode.Complete ||
-                          round.isFull) && (
+                          round.full) && (
                           <FormGroup className="form-check" key={applicationCode}>
                             <Input
                               type="checkbox"

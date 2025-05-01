@@ -40,7 +40,7 @@ const mockWebContext = () => {
           startDate: '2019-08-26',
           targetGroup: [],
           status: 'S2',
-          isFull: true,
+          full: true,
         },
         {
           endDate: '2020-01-14',
@@ -52,7 +52,7 @@ const mockWebContext = () => {
           startDate: '2019-10-28',
           targetGroup: [],
           status: 'S3',
-          isFull: false,
+          full: false,
         },
       ],
       20201: [
@@ -66,7 +66,7 @@ const mockWebContext = () => {
           startDate: '2020-01-15',
           targetGroup: [],
           status: 'S2',
-          isFull: false,
+          full: false,
         },
         {
           endDate: '2020-06-01',
@@ -102,7 +102,7 @@ const mockWebContext = () => {
           startDate: '2020-10-26',
           targetGroup: [],
           status: 'S3',
-          isFull: true,
+          full: true,
         },
       ],
       20211: [
