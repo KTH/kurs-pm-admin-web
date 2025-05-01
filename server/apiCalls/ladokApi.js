@@ -11,8 +11,9 @@ async function getLadokCourseData(courseCode, lang) {
 }
 
 async function getCourseRoundsData(courseCode, lang) {
-  const course = await client.getAllCourseRounds(courseCode, lang)
-  return course
+  const previousYear = new Date().getFullYear() - 1
+  const rounds = await client.getCourseRoundsFromPeriod(courseCode, `VT${previousYear}`, lang)
+  return rounds
 }
 
 async function getCourseSchoolCode(courseCode) {
