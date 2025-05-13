@@ -5,6 +5,13 @@ import userEvent from '@testing-library/user-event'
 import MemoMenu from '../../../public/js/app/components/MemoMenu'
 import mockWebContext from '../../mocks/mockWebContext'
 
+jest.mock('@kth/om-kursen-ladok-client', () => ({
+  LadokStatusCode: {
+    Started: 'S2',
+    Complete: 'S3',
+  },
+}))
+
 const RenderMemoMenu = ({ userLang = 'en', status = 'new', ...rest }) => {
   const rS = mockWebContext(userLang, status)
   return (

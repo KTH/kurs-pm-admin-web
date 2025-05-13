@@ -1,6 +1,6 @@
 'use strict'
 
-const { createApiClient } = require('om-kursen-ladok-client')
+const { createApiClient } = require('@kth/om-kursen-ladok-client')
 const serverConfig = require('../configuration').server
 
 const client = createApiClient(serverConfig.ladokMellanlagerApi)
@@ -11,8 +11,11 @@ async function getLadokCourseData(courseCode, lang) {
 }
 
 async function getCourseRoundsData(courseCode, lang) {
-  const course = await client.getActiveCourseRounds(courseCode, lang)
-  return course
+  // TODO: Add endpoint to ladok client for retieving data from previous year onward
+  // See requirements in https://kth-se.atlassian.net/browse/KUI-1492
+  const previousYear = new Date().getFullYear() - 1
+  const rounds = await client.getCourseRoundsFromPeriod(courseCode, `VT${previousYear}`, lang)
+  return rounds
 }
 
 async function getCourseSchoolCode(courseCode) {
