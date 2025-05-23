@@ -26,6 +26,7 @@
     "@azure/storage-blob": "^12.18.0",
     "@kth/api-call": "^4.1.0",
     "@kth/appinsights": "^0.4.0",
+    "@kth/cortina-block": "^7.0.0",
     "@kth/kth-node-passport-oidc": "^5.2.0",
     "@kth/kth-node-response": "^1.0.7",
     "@kth/kth-node-web-common": "^9.3.1",
@@ -105,7 +106,7 @@
     "webpack-cli": "^5.1.4"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "jshintConfig": {
     "maxerr": 5
