@@ -268,12 +268,6 @@ appRoute.get(
 
   Admin.getUsedRounds
 )
-appRoute.get(
-  'api.koppsCourseData',
-  _addProxy('/api/memo-admin/getKoppsCourseDataByCourse/:courseCode/:language'),
-  oidc.silentLogin,
-  Admin.getKoppsCourseData
-)
 appRoute.post(
   'storage.saveFile',
   _addProxy('/storage/saveFile/:semester/:courseCode/:rounds'),

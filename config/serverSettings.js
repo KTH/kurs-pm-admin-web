@@ -61,6 +61,15 @@ module.exports = {
     memoApi: getEnv('KURS_PM_API_KEY', devDefaults('9876')),
   },
 
+  ladokMellanlagerApi: {
+    clientId: getEnv('LADOK_AUTH_CLIENT_ID', null),
+    clientSecret: getEnv('LADOK_AUTH_CLIENT_SECRET', null),
+    tokenUrl: getEnv('LADOK_AUTH_TOKEN_URL', null),
+    scope: getEnv('LADOK_AUTH_SCOPE', null),
+    baseUrl: getEnv('LADOK_BASE_URL', null),
+    ocpApimSubscriptionKey: getEnv('LADOK_OCP_APIM_SUBSCRIPTION_KEY', null),
+  },
+
   // Authentication
   auth: {
     // app.kursinfo.superuser = personer tillagda där ska kunna lägga till folk som adminanvändare

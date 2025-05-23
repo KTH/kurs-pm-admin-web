@@ -5,7 +5,7 @@ const language = require('@kth/kth-node-web-common/lib/language')
 const log = require('@kth/log')
 const i18n = require('../i18n')
 
-const koppsCourseData = require('./apiCalls/koppsCourseData')
+const ladokCourseData = require('./apiCalls/ladokApi')
 const { parseCourseCodeAndRounds } = require('./utils/courseCodeParser')
 
 function _hasCourseResponsibleGroup(courseCode, courseInitials, user, rounds, role, isPreview) {
@@ -52,10 +52,10 @@ async function _isAdminOfCourseSchool(courseCode, user) {
   const userSchools = schools().filter(schoolCode => userGroups.includes(`app.kursinfo.${schoolCode}`))
 
   if (userSchools.length === 0) return false
-  const courseSchoolCode = await koppsCourseData.getCourseSchool(courseCode)
+  const courseSchoolCode = await ladokCourseData.getCourseSchoolCode(courseCode)
   log.debug('Fetched courseSchoolCode to define user role', { courseSchoolCode, userSchools })
 
-  if (courseSchoolCode === 'missing_school_code' || courseSchoolCode === 'kopps_get_fails') {
+  if (courseSchoolCode === 'missing_school_code' || courseSchoolCode === 'ladok_get_fails') {
     log.info('Has problems with fetching school code to define if user is a school admin', {
       message: courseSchoolCode,
     })

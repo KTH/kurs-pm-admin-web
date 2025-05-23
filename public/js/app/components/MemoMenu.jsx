@@ -1,5 +1,6 @@
 import React, { useReducer } from 'react'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
+import { LadokStatusCode } from '@kth/om-kursen-ladok-client'
 import i18n from '../../../../i18n/index'
 import { SERVICE_URL } from '../util/constants'
 import Alert from '../components-shared/Alert'
@@ -197,7 +198,9 @@ function MemoMenu(props) {
                       const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(applicationCode) || false
                       const hasPublishedPdf = hasBeenUsed && !hasWebVersion
                       return (
-                        (round.state === 'APPROVED' || round.state === 'FULL') && (
+                        (round.status === LadokStatusCode.Started ||
+                          round.status === LadokStatusCode.Complete ||
+                          round.full) && (
                           <FormGroup className="form-check" key={applicationCode}>
                             <Input
                               type="checkbox"
