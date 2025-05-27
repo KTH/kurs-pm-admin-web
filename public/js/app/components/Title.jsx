@@ -43,10 +43,8 @@ const ShowInfoKTHrecommendation = ({ courseCode, langIndex }) => {
 
 const Title = ({ courseCode, header, title, language: langIndex, progress, showProgressBar }) => {
   const { credits: courseCredits, name: courseTitle } = title
-  const credits = courseCredits && !courseCredits.toString().includes('.') ? courseCredits + '.0' : courseCredits || ''
-  const creditUnit = langIndex === 0 ? `${credits} credits` : `${credits.toString().replace('.', ',')} hp` || ''
 
-  const courseName = `${courseCode} ${courseTitle} ${creditUnit}`
+  const courseName = `${courseCode} ${courseTitle} ${courseCredits?.formattedWithUnit}`
 
   const currentStepIndex = progress - 1
 
