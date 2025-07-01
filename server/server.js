@@ -168,8 +168,10 @@ const oidc = new OpenIDConnect(server, passport, {
   failureRedirect: _addProxy(''),
   // eslint-disable-next-line no-unused-vars
   extendUser: (user, claims) => {
-    const { username, memberOf } = claims
-    // eslint-disable-next-line no-param-reassign
+    const { username, memberOf, kthid } = claims
+
+    user.kthId = kthid
+
     user.username = username
     user.isSuperUser = memberOf.includes(config.auth.superuserGroup)
     user.isKursinfoAdmin = memberOf.includes(config.auth.kursinfoAdmins)
@@ -244,7 +246,7 @@ appRoute.get(
   oidc.login,
   requireRole(
     'isCourseResponsible',
-    'isExaminator',
+    'isExaminer',
     'isKursinfoAdmin',
     'isSuperUser',
     'isCourseTeacher',
@@ -256,7 +258,7 @@ appRoute.get(
   'system.gateway',
   _addProxy('/silent'),
   oidc.silentLogin,
-  requireRole('isCourseResponsible', 'isExaminator', 'isKursinfoAdmin', 'isSuperUser', 'isCourseTeacher'),
+  requireRole('isCourseResponsible', 'isExaminer', 'isKursinfoAdmin', 'isSuperUser', 'isCourseTeacher'),
   Admin.getIndex
 )
 

@@ -24,30 +24,6 @@ function buildApiUrl(path, params) {
   return [host, newPath].join('')
 }
 
-const resolveUserAccessRights = (member, round, courseCode, semester) => {
-  const { memberOfCourseRelatedGroups, otherRoles } = member
-  const { isExaminator, isKursinfoAdmin, isSchoolAdmin, isSuperUser } = otherRoles
-
-  const memberOfStr = memberOfCourseRelatedGroups.toString()
-  if (isExaminator || isKursinfoAdmin || isSchoolAdmin || isSuperUser) {
-    return true
-  }
-  // TODO: We are using ladokRoundId for now because UG Rest Api is not updated with application codes. Once the api is updated then we can use application code here
-  const roundCourseResponsiblesGroup = `${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.courseresponsible`
-
-  if (memberOfStr.includes(roundCourseResponsiblesGroup)) {
-    return true
-  }
-
-  const roundCourseTeachersGroup = `${courseCode.toUpperCase()}.${semester}.${round.ladokRoundId}.teachers`
-
-  if (memberOfStr.includes(roundCourseTeachersGroup)) {
-    return true
-  }
-
-  return false
-}
-
 const groupLadokCourseRounds = ladokCourseRounds => {
   const groupedLadokCourseRounds = []
 
@@ -100,13 +76,13 @@ function handleCourseData(courseData, courseCode) {
       thisStore.roundData[term] = group.rounds.map(
         round =>
           (round.tillfalleskod = {
-            courseCode: this.courseCode,
+            courseCode,
             language: round.undervisningssprak.name,
             shortName: round.kortnamn,
             startDate: round.forstaUndervisningsdatum.date,
             ladokUID: round.ladokUID,
             applicationCode: round.tillfalleskod,
-            canBeAccessedByUser: resolveUserAccessRights(this.member, round, this.courseCode, term),
+            userAccessDenied: round.userAccessDenied,
             status: round.status?.code,
             full: round.fullsatt,
           })

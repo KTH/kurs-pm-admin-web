@@ -7,7 +7,6 @@ const usedRounds = {
   memoList: [
     {
       courseMemoFileName: 'memo-EF1111HT2019_2.pdf',
-      ugKeys: ['EF1111.examiner', 'EF1111.20192.2.courseresponsible'],
       user: 'elenara',
     },
   ],
@@ -32,7 +31,7 @@ const mockWebContext = () => {
       20192: [
         {
           endDate: '2019-10-25',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: 'd',
           language: 'English',
           applicationCode: '2',
@@ -44,7 +43,7 @@ const mockWebContext = () => {
         },
         {
           endDate: '2020-01-14',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: '6413t1tt685',
           language: 'English',
           applicationCode: '1',
@@ -58,7 +57,7 @@ const mockWebContext = () => {
       20201: [
         {
           endDate: '2020-03-14',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: 'ca29ft7a3',
           language: 'English',
           applicationCode: '2',
@@ -70,7 +69,7 @@ const mockWebContext = () => {
         },
         {
           endDate: '2020-06-01',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: 'c38bc898-f2f4-11e8-9614-d09e533d4323',
           language: 'English',
           applicationCode: '1',
@@ -83,7 +82,7 @@ const mockWebContext = () => {
       20202: [
         {
           endDate: '2020-10-23',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: '3,f-,',
           language: 'English',
           applicationCode: '2',
@@ -94,7 +93,7 @@ const mockWebContext = () => {
         },
         {
           endDate: '2021-01-15',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: '208f6ed8-36b6-11ea-b8cf-f5b51a134413',
           language: 'English',
           applicationCode: '1',
@@ -108,7 +107,7 @@ const mockWebContext = () => {
       20211: [
         {
           endDate: '2021-03-19',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: 'c1217dba-3612-11ea-b8cf-f5b51a134413',
           language: 'English',
           applicationCode: '2',
@@ -119,7 +118,7 @@ const mockWebContext = () => {
         },
         {
           endDate: '2021-06-08',
-          canBeAccessedByUser: true,
+          userAccessDenied: false,
           ladokUID: 'b5ah3989f-36k13',
           language: 'English',
           applicationCode: '1',

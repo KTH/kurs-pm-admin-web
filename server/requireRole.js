@@ -1,45 +1,12 @@
 'use strict'
 
-const { hasGroup } = require('@kth/kth-node-passport-oidc')
 const language = require('@kth/kth-node-web-common/lib/language')
 const log = require('@kth/log')
 const i18n = require('../i18n')
 
 const ladokCourseData = require('./apiCalls/ladokApi')
-const { parseCourseCodeAndRounds } = require('./utils/courseCodeParser')
-
-function _hasCourseResponsibleGroup(courseCode, courseInitials, user, rounds, role, isPreview) {
-  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
-  const groups = user.memberOf
-  const startWith = `edu.courses.${courseInitials}.${courseCode}.` // TODO: What to do with years 20192. ?
-  if (rounds === undefined || rounds.length === 0) {
-    const endWith = '.' + role
-    if (groups && groups.length > 0) {
-      for (let i = 0; i < groups.length; i++) {
-        if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(endWith) >= 0) {
-          return true
-        }
-      }
-    }
-  } else {
-    const endString = '.' + role
-    let endWith = ''
-    if (groups && groups.length > 0) {
-      for (let round = 0; round < rounds.length; round++) {
-        endWith = rounds[round] + endString
-        for (let i = 0; i < groups.length; i++) {
-          if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(endWith) >= 0) {
-            return true
-          }
-          if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(role) >= 0 && isPreview) {
-            return true
-          }
-        }
-      }
-    }
-  }
-  return false
-}
+const { parseCourseCode } = require('./utils/courseCodeParser')
+const { getEmployeeRoleForCourse } = require('./apiCalls/ugRestApi')
 
 const schools = () => ['abe', 'eecs', 'itm', 'cbh', 'sci']
 
@@ -70,67 +37,47 @@ async function _isAdminOfCourseSchool(courseCode, user) {
   return hasSchoolCodeInAdminGroup
 }
 
-function _hasThisTypeGroup(courseCode, courseInitials, user, employeeType) {
-  // 'edu.courses.SF.SF1624.20192.1.courseresponsible'
-  // 'edu.courses.SF.SF1624.20182.9.teachers'
-
-  const groups = user.memberOf
-  const startWith = `edu.courses.${courseInitials}.${courseCode}.` // TODO: What to do with years 20192. ?
-  const endWith = `.${employeeType}`
-  if (groups && groups.length > 0) {
-    for (let i = 0; i < groups.length; i++) {
-      if (groups[i].indexOf(startWith) >= 0 && groups[i].indexOf(endWith) >= 0) {
-        return true
-      }
-    }
-  }
-  return false
-}
-
 const messageHaveNotRights = lang => ({
   status: 403,
   message: i18n.message('message_have_not_rights', lang),
 })
 
-module.exports.requireRole = (...roles) =>
+module.exports.requireRole = (...requiredRoles) =>
   // eslint-disable-next-line consistent-return
   async function _hasCourseAcceptedRoles(req, res, next) {
     const lang = language.getLanguage(res)
-    const { id, preview: previewParam } = req.params
     const { user = {} } = req.session.passport
-    const isPreview = previewParam && previewParam === 'preview'
+    const { id } = req.params
 
-    const { courseCode, rounds } = parseCourseCodeAndRounds(id.toUpperCase())
+    const courseCode = parseCourseCode(id.toUpperCase())
 
-    const courseInitials = courseCode.slice(0, 2).toUpperCase()
-    // TODO: Add date for courseresponsible
-    const basicUserCourseRoles = {
-      isCourseResponsible: _hasCourseResponsibleGroup(
-        courseCode,
-        courseInitials,
-        user,
-        rounds,
-        'courseresponsible',
-        isPreview
-      ),
-      isCourseTeacher: _hasThisTypeGroup(courseCode, courseInitials, user, 'teachers'),
-      isExaminator: hasGroup(`edu.courses.${courseInitials}.${courseCode}.examiner`, user),
+    // Determine the user's role in the course as a whole (not a specific round)
+    const { isCourseCoordinator, isCourseTeacher, isExaminer } = await getEmployeeRoleForCourse(user.kthId, courseCode)
+
+    // Build a full list of role flags
+    const roles = {
+      isCourseCoordinator,
+      isCourseTeacher,
+      isExaminer,
       isKursinfoAdmin: user.isKursinfoAdmin,
       isSuperUser: user.isSuperUser,
+      isSchoolAdmin: null, // Will be resolved below if needed
     }
 
-    req.session.passport.user.roles = basicUserCourseRoles
+    // Check if the user has at least one of the required roles
+    const isAuthorized = requiredRoles.some(role => roles[role])
+    if (isAuthorized) return next()
 
-    const hasBasicAuthorizedRole = roles.reduce((prev, curr) => prev || basicUserCourseRoles[curr], false)
+    // If the required roles do NOT include school admin, deny access
+    if (!requiredRoles.includes('isSchoolAdmin')) {
+      return next(messageHaveNotRights(lang))
+    }
 
-    if (hasBasicAuthorizedRole) return next()
+    // Otherwise, check whether the user is a school admin for the given course
+    const isScoolAdmin = await _isAdminOfCourseSchool(courseCode, user)
+    req.session.passport.user.isSchoolAdmin = isScoolAdmin
 
-    if (!hasBasicAuthorizedRole && !roles.includes('isSchoolAdmin')) return next(messageHaveNotRights(lang))
-
-    _isAdminOfCourseSchool(courseCode, user).then(isAdminOfCourseSchool => {
-      req.session.passport.user.roles.isSchoolAdmin = isAdminOfCourseSchool
-
-      if (isAdminOfCourseSchool) return next()
-      else return next(messageHaveNotRights(lang))
-    })
+    // Allow or deny access based on school admin status
+    if (isScoolAdmin) return next()
+    else return next(messageHaveNotRights(lang))
   }

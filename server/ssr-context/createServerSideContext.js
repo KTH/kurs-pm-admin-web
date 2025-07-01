@@ -3,14 +3,8 @@
 // @ts-check
 const { createCommonContextFunctions } = require('../../common-context/createCommonContextFunctions')
 
-function setMemberInfo(loggedInUser, courseCode, username) {
+function setMemberInfo(courseCode, username) {
   this.courseCode = courseCode
-  const { memberOf, roles } = loggedInUser
-
-  this.member = {
-    memberOfCourseRelatedGroups: memberOf.filter(member => member.indexOf(this.courseCode) > -1),
-    otherRoles: roles,
-  }
   this.username = username
 }
 

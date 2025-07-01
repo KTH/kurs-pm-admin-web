@@ -193,7 +193,7 @@ function MemoMenu(props) {
                   <>
                     <p className="form-intro-paragraph">{translate.intro_new}</p>
                     {roundList[semester].map(round => {
-                      const { canBeAccessedByUser, applicationCode } = round
+                      const { userAccessDenied, applicationCode } = round
                       const hasBeenUsed = usedRounds.includes(applicationCode) || false
                       const hasWebVersion = Object.keys(usedRoundsWithWebVer).includes(applicationCode) || false
                       const hasPublishedPdf = hasBeenUsed && !hasWebVersion
@@ -209,7 +209,7 @@ function MemoMenu(props) {
                               onChange={handleRoundCheckbox}
                               checked={rounds.includes(applicationCode)}
                               name={applicationCode}
-                              disabled={!canBeAccessedByUser || hasWebVersion}
+                              disabled={userAccessDenied || hasWebVersion}
                               data-hasfile={hasPublishedPdf}
                             />
                             <Label key={'Label' + applicationCode} for={applicationCode}>
