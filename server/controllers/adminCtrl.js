@@ -108,19 +108,19 @@ async function getIndex(req, res, next) {
     /* ------- Settings ------- */
     webContext.setBrowserConfig(browserConfig, paths, serverConfig.hostUrl)
     webContext.setLanguage(lang)
-    await webContext.setMemberInfo(loggedInUser, courseCode, username)
+    webContext.setMemberInfo(courseCode, username)
     if (!memoId) {
       /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
 
       const ladokData = await getLadokCourseData(courseCode, lang)
-      const ladokCourseRounds = await getCourseRoundsData(courseCode, lang)
+      const ladokCourseRounds = await getCourseRoundsData(courseCode, lang, loggedInUser)
       const courseData = { ladokCourseRounds, ladokData }
 
       if (ladokData.statusCode >= HTTP_CODE_400) {
         webContext.errorMessage = ladokData.message
       } else {
-        await webContext.handleCourseData(courseData, courseCode)
+        webContext.handleCourseData(courseData, courseCode)
       }
     }
     const compressedData = getCompressedData(webContext)

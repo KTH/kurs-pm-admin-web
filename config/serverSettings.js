@@ -25,6 +25,8 @@ const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/
 const devSessionKey = devDefaults('kurs-pm-admin-web.sid')
 const devSessionUseRedis = devDefaults(true)
 const devRedis = devDefaults('redis://localhost:6379/')
+const devUgRestAuthApiTokenUri = devDefaults('https://login.ref.ug.kth.se/adfs/')
+const devUgRestApiUri = devDefaults('https://integral-api.sys.kth.se/test/ug')
 const devStorageContainerName = devDefaults('memo-blob-container')
 
 // END DEFAULT SETTINGS
@@ -104,6 +106,18 @@ module.exports = {
     cortinaBlock: {
       redis: unpackRedisConfig('REDIS_URI', devRedis),
     },
+  },
+
+  // UG API auth properties
+  ugAuth: {
+    authTokenURL: getEnv('UG_REST_AUTH_API_TOKEN_URI', devUgRestAuthApiTokenUri),
+    authClientId: getEnv('UG_REST_AUTH_CLIENT_ID', null),
+    authClientSecret: getEnv('UG_REST_AUTH_CLIENT_SECRET', null),
+  },
+  // ug redis api base url
+  ugRestApiURL: {
+    url: getEnv('UG_REST_API_URI', devUgRestApiUri),
+    key: getEnv('UG_REST_API_SUBSCRIPTION_KEY', null),
   },
 
   // Session

@@ -5,25 +5,10 @@ import { getDateFormat, formatRoundName } from '../util/helpers'
 
 const FIRST_VERSION = 1
 
-const NotAuthorizedPublishMessage = ({ languageIndex }) => {
-  const translate = i18n.messages[languageIndex].messages
-  const url =
-    languageIndex === 0
-      ? 'https://intra.kth.se/en/utbildning/utbildningsadministr/om-kursen/kurs-pm/kurs-pm-1.1079198'
-      : 'https://intra.kth.se/utbildning/utbildningsadministr/om-kursen/kurs-pm/kurs-pm-1.1079198'
-  return (
-    <>
-      {` ${translate.not_authorized_publish_new} `}
-      <a href={url} target="_blank" className="external-link" rel="noreferrer">
-        {translate.not_authorized_publish_new_link_label}
-      </a>
-    </>
-  )
-}
 const WebBasedMemoLabelAndLink = ({ courseCode, translate, memoStatus, memoEndPoint, roundInputLabel, version }) => {
   const hasMemoInfo = memoEndPoint && version && memoStatus && courseCode
 
-  if (!hasMemoInfo) return <span className="no-access">{` ${translate.has_web_based_memo}`}</span>
+  if (!hasMemoInfo) return <small>{` ${translate.has_web_based_memo}`}</small>
 
   const wasEverPublished = (memoStatus === 'draft' && version > FIRST_VERSION) || memoStatus === 'published'
 
@@ -36,14 +21,14 @@ const WebBasedMemoLabelAndLink = ({ courseCode, translate, memoStatus, memoEndPo
   }${courseCode}?memoEndPoint=${memoEndPoint}`
 
   return (
-    <span className="no-access">
+    <small>
       {` ${translate.has_web_based_memo} ${translate.label_before_link_web_based_memo} `}
 
       <a href={linkHref} aria-label={`${translate.link_web_based_memo} ${roundInputLabel}`}>
         {labelLink}
       </a>
       {` ${translate.label_after_link_web_based_memo}`}
-    </span>
+    </small>
   )
 }
 
@@ -67,31 +52,27 @@ const RoundLabel = ({
   webVersionInfo, // if web-based memo exist then provide memoEndPoint to display in the link
 }) => {
   const translate = i18n.messages[language].messages
-  const { courseCode, applicationCode, canBeAccessedByUser } = round
+  const { courseCode, applicationCode, userAccessDenied } = round
 
   const roundInputLabel = roundFullName(language, semester, round)
 
-  if (showAccessInfo && !canBeAccessedByUser)
+  if (showAccessInfo && userAccessDenied)
     return (
-      <span key={'round-' + applicationCode}>
-        {roundInputLabel}
-        <span className="no-access">
-          <NotAuthorizedPublishMessage languageIndex={language} />
-        </span>{' '}
+      <span key={'round-' + applicationCode} className={'text-muted fst-italic fw-light'}>
+        {roundInputLabel} <small aria-hidden="true">{translate.not_authorized_publish_new}</small>
       </span>
     )
 
   if (showAccessInfo && hasPublishedPdf)
     return (
       <span key={'round-' + applicationCode}>
-        {roundInputLabel}
-        <span className="no-access">{` ${translate.has_published_memo}`}</span>{' '}
+        {roundInputLabel} <small aria-hidden="true">{translate.has_published_memo}</small>{' '}
       </span>
     )
 
   if (hasWebVersion)
     return (
-      <span key={'round-' + applicationCode}>
+      <span key={'round-' + applicationCode} className={'text-muted fst-italic fw-light'}>
         {roundInputLabel}
         <WebBasedMemoLabelAndLink
           courseCode={courseCode}

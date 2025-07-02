@@ -27,14 +27,14 @@ localhost:3000/kursinfoadmin/pm/:courseCode
 
 ### API:s
 
-Application is fetching data from KOPPS-API for:
+Application is fetching data from LADOK for:
 
 - Course title
 - Course offerings which are/were active for this course
 
 Application is fetching data from KURS-PM-API for:
 
-- Fetch course offerings which have a published course memo to sort per termin and filter course offerings fetched from KOPPS-API.
+- Fetch course offerings which have a published course memo to sort per termin and filter course offerings fetched from LADOK.
 
 - Fetch information about course memo file and course offering it saved for if user want to replace a published course memo file
 
