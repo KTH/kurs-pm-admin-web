@@ -97,7 +97,6 @@ function _final(err, req, res, next) {
         layout: 'errorLayout',
         message: err.message,
         showMessage: err.showMessage || false,
-        showKoppsLink: statusCode === 403,
         friendly: _getFriendlyErrorMessage(lang, statusCode),
         error: isProd ? {} : err,
         status: statusCode,

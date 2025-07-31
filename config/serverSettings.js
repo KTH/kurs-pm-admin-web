@@ -7,13 +7,7 @@
  * *************************************************
  *
  */
-const {
-  getEnv,
-  devDefaults,
-  unpackKOPPSConfig,
-  unpackRedisConfig,
-  unpackNodeApiConfig,
-} = require('kth-node-configuration')
+const { getEnv, devDefaults, unpackRedisConfig, unpackNodeApiConfig } = require('kth-node-configuration')
 const { safeGet } = require('safe-utils')
 
 // DEFAULT SETTINGS used for dev, if you want to override these for you local environment, use env-vars in .env
@@ -21,7 +15,6 @@ const devPort = devDefaults(3000)
 const devSsl = devDefaults(false)
 const devUrl = devDefaults('http://localhost:' + devPort)
 const devmemoApi = devDefaults('https://api-r.referens.sys.kth.se/api/kurs-pm?defaultTimeout=10000')
-const devKoppsApi = devDefaults('https://api-r.referens.sys.kth.se/api/kopps/v2/')
 const devSessionKey = devDefaults('kurs-pm-admin-web.sid')
 const devSessionUseRedis = devDefaults(true)
 const devRedis = devDefaults('redis://localhost:6379/')
@@ -136,8 +129,6 @@ module.exports = {
     },
     redisOptions: unpackRedisConfig('REDIS_URI', devRedis),
   },
-
-  koppsApi: unpackKOPPSConfig('KOPPS_URI', devKoppsApi),
 
   toolbar: {
     url: getEnv('TOOLBAR_URL', devDefaults('https://www-r.referens.sys.kth.se/social/toolbar/widget.js')),
