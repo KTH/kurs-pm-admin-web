@@ -110,7 +110,7 @@ async function getIndex(req, res, next) {
     webContext.setLanguage(lang)
     webContext.setMemberInfo(courseCode, username)
     if (!memoId) {
-      /** ------- Got course code -> prepare course data from kopps for Page 1  ------- */
+      /** ------- Got course code -> prepare course data from ladok for Page 1  ------- */
       log.debug(' getIndex, get course data for : ', { id: thisId })
 
       const ladokData = await getLadokCourseData(courseCode, lang)
