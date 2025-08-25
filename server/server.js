@@ -173,8 +173,8 @@ const oidc = new OpenIDConnect(server, passport, {
     user.kthId = kthid
 
     user.username = username
-    user.isSuperUser = memberOf.includes(config.auth.superuserGroup)
-    user.isKursinfoAdmin = memberOf.includes(config.auth.kursinfoAdmins)
+    user.isSuperUser = memberOf?.includes(config.auth.superuserGroup)
+    user.isKursinfoAdmin = memberOf?.includes(config.auth.kursinfoAdmins)
 
     user.memberOf = typeof memberOf === 'string' ? [memberOf] : memberOf
   },
