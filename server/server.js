@@ -245,7 +245,7 @@ appRoute.get(
   _addProxy('/:id'),
   oidc.login,
   requireRole(
-    'isCourseResponsible',
+    'isCourseCoordinator',
     'isExaminer',
     'isKursinfoAdmin',
     'isSuperUser',
@@ -258,7 +258,7 @@ appRoute.get(
   'system.gateway',
   _addProxy('/silent'),
   oidc.silentLogin,
-  requireRole('isCourseResponsible', 'isExaminer', 'isKursinfoAdmin', 'isSuperUser', 'isCourseTeacher'),
+  requireRole('isCourseCoordinator', 'isExaminer', 'isKursinfoAdmin', 'isSuperUser', 'isCourseTeacher'),
   Admin.getIndex
 )
 
