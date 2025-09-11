@@ -56,7 +56,7 @@ function handleCourseData(courseData, courseCode) {
       semesterObjectList: {},
     }
     this.courseTitle = {
-      name: benamning,
+      name: benamning.name,
       credits: omfattning,
     }
 
